@@ -157,7 +157,7 @@ export const savePlacesAsLeads = createServerFn({ method: "POST" })
       has_website: p.has_website,
       rating: p.rating ?? null,
       reviews_count: p.reviews_count ?? null,
-      tier: p.has_website ? "morno" : "quente",
+      tier: (p.has_website ? "morno" : "quente") as "frio" | "morno" | "quente",
       status: "base" as const,
       source: "google_places",
       score: p.has_website ? 40 : 70,
