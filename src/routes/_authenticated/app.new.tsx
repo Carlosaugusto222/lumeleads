@@ -1,9 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useEffect, useMemo, useState } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Sparkles, Loader2 } from "lucide-react";
+import { Sparkles, Loader2, PenLine, Users } from "lucide-react";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { generateSite } from "@/lib/sites.functions";
+import { listLeads } from "@/lib/leads.functions";
 
 const newSiteSearchSchema = z.object({
   businessName: z.string().optional(),
@@ -35,8 +36,13 @@ export const Route = createFileRoute("/_authenticated/app/new")({
 function NewSite() {
   const navigate = useNavigate();
   const gen = useServerFn(generateSite);
+  const listLeadsFn = useServerFn(listLeads);
   const search = Route.useSearch();
 
+  const [mode, setMode] = useState<"lead" | "manual">(
+    search.businessName || search.leadId ? "lead" : "lead",
+  );
+  const [selectedLeadId, setSelectedLeadId] = useState<string>(search.leadId ?? "");
   const [businessName, setBusinessName] = useState(search.businessName ?? "");
   const [sector, setSector] = useState(search.sector ?? "");
   const [audience, setAudience] = useState(search.audience ?? "");
@@ -44,6 +50,25 @@ function NewSite() {
   const [tone, setTone] = useState<"profissional" | "descontraido" | "premium" | "amigavel">(
     "profissional",
   );
+
+  const { data: leads, isLoading: loadingLeads } = useQuery({
+    queryKey: ["leads"],
+    queryFn: () => listLeadsFn(),
+  });
+
+  const selectedLead = useMemo(
+    () => leads?.find((l) => l.id === selectedLeadId),
+    [leads, selectedLeadId],
+  );
+
+  // Auto-prefill fields when a lead is chosen
+  useEffect(() => {
+    if (mode !== "lead" || !selectedLead) return;
+    setBusinessName(selectedLead.name);
+    setSector(selectedLead.category ?? "");
+    setAudience(selectedLead.city ? `Clientes em ${selectedLead.city}` : "");
+    setOffer(`Site profissional para ${selectedLead.name}`);
+  }, [selectedLead, mode]);
 
   const mut = useMutation({
     mutationFn: () =>
@@ -60,8 +85,29 @@ function NewSite() {
       <div className="mb-8">
         <h1 className="font-display text-3xl font-bold">Novo site</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Conte para a IA sobre o seu negócio. Ela cuida do resto.
+          Escolha um lead do seu CRM ou preencha manualmente.
         </p>
+      </div>
+
+      <div className="mb-4 grid grid-cols-2 gap-2 rounded-xl border border-border/60 bg-card/40 p-1">
+        <Button
+          type="button"
+          variant={mode === "lead" ? "default" : "ghost"}
+          size="sm"
+          onClick={() => setMode("lead")}
+          className="justify-center"
+        >
+          <Users className="h-4 w-4" /> Usar um lead do CRM
+        </Button>
+        <Button
+          type="button"
+          variant={mode === "manual" ? "default" : "ghost"}
+          size="sm"
+          onClick={() => setMode("manual")}
+          className="justify-center"
+        >
+          <PenLine className="h-4 w-4" /> Preencher manualmente
+        </Button>
       </div>
 
       <form
@@ -75,6 +121,38 @@ function NewSite() {
         }}
         className="space-y-5 rounded-2xl border border-border/60 bg-card/60 p-6"
       >
+        {mode === "lead" && (
+          <div className="space-y-2">
+            <Label>Escolha um lead *</Label>
+            <Select value={selectedLeadId} onValueChange={setSelectedLeadId}>
+              <SelectTrigger>
+                <SelectValue
+                  placeholder={loadingLeads ? "Carregando leads..." : "Selecione um lead"}
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {(leads ?? []).length === 0 && !loadingLeads ? (
+                  <div className="px-2 py-3 text-sm text-muted-foreground">
+                    Nenhum lead salvo ainda. Vá em Buscar Leads.
+                  </div>
+                ) : (
+                  (leads ?? []).map((l) => (
+                    <SelectItem key={l.id} value={l.id}>
+                      {l.name}
+                      {l.city ? ` — ${l.city}` : ""}
+                    </SelectItem>
+                  ))
+                )}
+              </SelectContent>
+            </Select>
+            {selectedLead && (
+              <p className="text-xs text-muted-foreground">
+                Categoria: {selectedLead.category ?? "—"} · Cidade: {selectedLead.city ?? "—"}
+              </p>
+            )}
+          </div>
+        )}
+
         <div className="space-y-2">
           <Label htmlFor="bn">Nome do negócio *</Label>
           <Input
