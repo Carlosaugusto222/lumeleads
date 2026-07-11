@@ -4,6 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { Sparkles, Loader2 } from "lucide-react";
+import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,18 +19,28 @@ import {
 } from "@/components/ui/select";
 import { generateSite } from "@/lib/sites.functions";
 
+const newSiteSearchSchema = z.object({
+  businessName: z.string().optional(),
+  sector: z.string().optional(),
+  audience: z.string().optional(),
+  offer: z.string().optional(),
+  leadId: z.string().optional(),
+});
+
 export const Route = createFileRoute("/_authenticated/app/new")({
+  validateSearch: newSiteSearchSchema,
   component: NewSite,
 });
 
 function NewSite() {
   const navigate = useNavigate();
   const gen = useServerFn(generateSite);
+  const search = Route.useSearch();
 
-  const [businessName, setBusinessName] = useState("");
-  const [sector, setSector] = useState("");
-  const [audience, setAudience] = useState("");
-  const [offer, setOffer] = useState("");
+  const [businessName, setBusinessName] = useState(search.businessName ?? "");
+  const [sector, setSector] = useState(search.sector ?? "");
+  const [audience, setAudience] = useState(search.audience ?? "");
+  const [offer, setOffer] = useState(search.offer ?? "");
   const [tone, setTone] = useState<"profissional" | "descontraido" | "premium" | "amigavel">(
     "profissional",
   );
