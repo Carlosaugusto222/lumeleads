@@ -54,7 +54,7 @@ function AppShell() {
           Sitelume
         </Link>
         <nav className="flex-1 space-y-0.5 px-3">
-          {NAV.map((item) => {
+          {items.map((item) => {
             const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
             const Icon = item.icon;
             return (
@@ -90,7 +90,7 @@ function AppShell() {
           <Button size="sm" variant="ghost" onClick={handleSignOut}><LogOut className="h-4 w-4" /></Button>
         </div>
         <div className="flex gap-1 overflow-x-auto px-3 pb-2">
-          {NAV.map((item) => {
+          {items.map((item) => {
             const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
             return (
               <Link key={item.to} to={item.to}
