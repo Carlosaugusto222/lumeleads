@@ -145,6 +145,7 @@ export const searchPlaces = createServerFn({ method: "POST" })
       await new Promise((r) => setTimeout(r, 1500));
     }
 
+    await context.supabase.rpc("increment_usage", { _user_id: context.userId, _searches: 1, _saved: 0 });
     return { results };
   });
 
