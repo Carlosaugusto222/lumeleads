@@ -129,15 +129,14 @@ function BuscarPage() {
           </div>
           <div className="space-y-1.5">
             <Label className="text-xs">Categoria</Label>
-            <Input
-              list="cats"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              placeholder="Ex: Barbearia"
-            />
-            <datalist id="cats">
-              {COMMON_CATEGORIES.map((c) => <option key={c} value={c} />)}
-            </datalist>
+            <Select value={category} onValueChange={setCategory}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent className="max-h-72">
+                {COMMON_CATEGORIES.map((c) => (
+                  <SelectItem key={c} value={c}>{c}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="flex items-end">
             <Button
