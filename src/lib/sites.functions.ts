@@ -183,7 +183,12 @@ export const updateSite = createServerFn({ method: "POST" })
         title: z.string().min(1).max(120).optional(),
         content: siteContentSchema.optional(),
         theme: z
-          .object({ primary: z.string(), accent: z.string() })
+          .object({
+            primary: z.string(),
+            accent: z.string(),
+            background: z.string().optional(),
+            text: z.string().optional(),
+          })
           .optional(),
       })
       .parse(input),
