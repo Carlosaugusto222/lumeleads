@@ -44,10 +44,22 @@ export type PlaceResult = {
 export const searchPlaces = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) => searchInput.parse(i))
-  .handler(async ({ data }): Promise<{ results: PlaceResult[] }> => {
+  .handler(async ({ data, context }): Promise<{ results: PlaceResult[] }> => {
     const lovableKey = process.env.LOVABLE_API_KEY;
     const mapsKey = process.env.GOOGLE_MAPS_API_KEY;
     if (!lovableKey || !mapsKey) throw new Error("Google Maps não configurado");
+
+    const { plan, usage } = await loadPlanAndUsage(context.supabase, context.userId);
+    if (!plan) throw new Error("Plano não encontrado");
+    if (plan.monthly_searches !== -1 && (usage.searches ?? 0) >= plan.monthly_searches) {
+      throw new Error(`Limite mensal de ${plan.monthly_searches} buscas atingido no plano ${plan.name}.`);
+    }
+    if (data.categorySlug) {
+      const { data: cat } = await context.supabase.from("categories").select("min_plan, label").eq("slug", data.categorySlug).maybeSingle();
+      if (cat && (PLAN_RANK[cat.min_plan] ?? 1) > (PLAN_RANK[plan.id] ?? 1)) {
+        throw new Error(`Categoria "${cat.label}" indisponível no plano ${plan.name}.`);
+      }
+    }
 
     const textQuery = `${data.category} em ${data.city}, ${data.state}, ${data.country}`;
     const fieldMask = [
