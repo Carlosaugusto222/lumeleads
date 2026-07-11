@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/select";
 import { generateSite } from "@/lib/sites.functions";
 import { listLeads } from "@/lib/leads.functions";
-import { suggestPalettes, fetchPlacePhotos, type Palette as PaletteType } from "@/lib/site-wizard.functions";
+import { suggestPalettes, fetchPlacePhotos, fetchInstagramPhotos, type Palette as PaletteType } from "@/lib/site-wizard.functions";
 
 const newSiteSearchSchema = z.object({
   leadId: z.string().optional(),
@@ -50,6 +50,8 @@ function NewSite() {
   const listLeadsFn = useServerFn(listLeads);
   const suggestFn = useServerFn(suggestPalettes);
   const photosFn = useServerFn(fetchPlacePhotos);
+  const igFn = useServerFn(fetchInstagramPhotos);
+  const [igHandle, setIgHandle] = useState("");
 
   const [step, setStep] = useState(0);
   const [mode, setMode] = useState<"lead" | "manual">(search.leadId ? "lead" : "lead");
@@ -108,6 +110,17 @@ function NewSite() {
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao buscar fotos"),
   });
+
+  const igMut = useMutation({
+    mutationFn: () => igFn({ data: { handle: igHandle || socials.instagram } }),
+    onSuccess: ({ photos: p }) => {
+      if (!p.length) toast.info("Nenhuma foto pública encontrada no perfil.");
+      else toast.success(`${p.length} foto(s) do Instagram adicionadas`);
+      setPhotos((prev) => Array.from(new Set([...prev, ...p])).slice(0, 12));
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao buscar Instagram"),
+  });
+
 
   const genMut = useMutation({
     mutationFn: () =>
@@ -284,7 +297,22 @@ function NewSite() {
             </div>
 
             <div className="flex gap-2">
-              <Input value={photoUrl} onChange={(e) => setPhotoUrl(e.target.value)} placeholder="Cole uma URL de imagem (Instagram, site, etc)" />
+              <Input value={igHandle} onChange={(e) => setIgHandle(e.target.value)}
+                placeholder="@perfil do Instagram (público)" />
+              <Button type="button" variant="outline"
+                onClick={() => {
+                  const h = (igHandle || socials.instagram).trim();
+                  if (!h) return toast.error("Informe um @perfil do Instagram");
+                  igMut.mutate();
+                }}
+                disabled={igMut.isPending}>
+                {igMut.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wand2 className="h-4 w-4" />}
+                Instagram
+              </Button>
+            </div>
+
+            <div className="flex gap-2">
+              <Input value={photoUrl} onChange={(e) => setPhotoUrl(e.target.value)} placeholder="Cole uma URL de imagem" />
               <Button type="button" onClick={() => {
                 if (!photoUrl) return;
                 try { new URL(photoUrl); } catch { toast.error("URL inválida"); return; }

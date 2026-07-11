@@ -108,3 +108,58 @@ export const fetchPlacePhotos = createServerFn({ method: "POST" })
     }
     return { photos: urls };
   });
+
+// ---------- Instagram public profile photos (via Firecrawl) ----------
+
+const igInput = z.object({
+  handle: z.string().min(1).max(60),
+});
+
+export const fetchInstagramPhotos = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => igInput.parse(i))
+  .handler(async ({ data }): Promise<{ photos: string[] }> => {
+    const key = process.env.FIRECRAWL_API_KEY;
+    if (!key) throw new Error("Firecrawl não configurado. Conecte em Conectores.");
+    const handle = data.handle.replace(/^@/, "").replace(/[^a-zA-Z0-9._]/g, "");
+    if (!handle) throw new Error("Handle inválido");
+    const url = `https://www.instagram.com/${handle}/`;
+
+    const res = await fetch("https://api.firecrawl.dev/v2/scrape", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        url,
+        formats: ["html", "links"],
+        onlyMainContent: false,
+        waitFor: 3000,
+      }),
+    });
+    if (!res.ok) {
+      const t = await res.text();
+      throw new Error(`Firecrawl [${res.status}]: ${t.slice(0, 200)}`);
+    }
+    const json = (await res.json()) as {
+      data?: { html?: string; links?: string[]; metadata?: { ogImage?: string } };
+    };
+    const html = json.data?.html ?? "";
+    const found = new Set<string>();
+    // og:image (profile pic / hero)
+    const og = json.data?.metadata?.ogImage;
+    if (og) found.add(og);
+    // extract <img src> and srcset urls pointing to instagram cdn
+    const re = /https?:\/\/[^"'\s)]+\.(?:jpg|jpeg|png|webp)(?:\?[^"'\s)]*)?/gi;
+    for (const m of html.matchAll(re)) {
+      const u = m[0];
+      if (/cdninstagram|fbcdn/.test(u)) found.add(u);
+      if (found.size >= 12) break;
+    }
+    // fallback links
+    for (const l of json.data?.links ?? []) {
+      if (/cdninstagram|fbcdn/.test(l) && /\.(jpg|jpeg|png|webp)/i.test(l)) {
+        found.add(l);
+        if (found.size >= 12) break;
+      }
+    }
+    return { photos: Array.from(found).slice(0, 12) };
+  });

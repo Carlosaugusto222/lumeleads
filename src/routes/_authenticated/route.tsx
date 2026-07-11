@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, redirect, Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { LogOut, LayoutDashboard, Users, Kanban, CalendarDays, Sparkles, CreditCard, Globe, Search, Shield } from "lucide-react";
+import { LogOut, LayoutDashboard, Users, Kanban, CalendarDays, Sparkles, CreditCard, Globe, Search, Shield, Settings } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getMyPlan } from "@/lib/plans.functions";
@@ -73,7 +73,15 @@ function AppShell() {
             );
           })}
         </nav>
-        <div className="border-t border-border/50 p-3">
+        <div className="border-t border-border/50 p-3 space-y-1">
+          <Link to="/app/settings"
+            className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors ${
+              pathname.startsWith("/app/settings")
+                ? "bg-primary/15 text-primary"
+                : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+            }`}>
+            <Settings className="h-4 w-4" /> Configurações
+          </Link>
           <Button size="sm" variant="ghost" onClick={handleSignOut} className="w-full justify-start text-muted-foreground">
             <LogOut className="h-4 w-4" /> Sair
           </Button>
