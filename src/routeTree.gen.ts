@@ -20,6 +20,7 @@ import { Route as AuthenticatedAppCrmRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedAppBuscarRouteImport } from './routes/_authenticated/app.buscar'
 import { Route as AuthenticatedAppBillingRouteImport } from './routes/_authenticated/app.billing'
 import { Route as AuthenticatedAppAgendaRouteImport } from './routes/_authenticated/app.agenda'
+import { Route as AuthenticatedAppAdminRouteImport } from './routes/_authenticated/app.admin'
 import { Route as AuthenticatedAppSitesIndexRouteImport } from './routes/_authenticated/app.sites.index'
 import { Route as AuthenticatedAppSitesIdRouteImport } from './routes/_authenticated/app.sites.$id'
 
@@ -77,6 +78,11 @@ const AuthenticatedAppAgendaRoute = AuthenticatedAppAgendaRouteImport.update({
   path: '/app/agenda',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAppAdminRoute = AuthenticatedAppAdminRouteImport.update({
+  id: '/app/admin',
+  path: '/app/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAppSitesIndexRoute =
   AuthenticatedAppSitesIndexRouteImport.update({
     id: '/app/sites/',
@@ -93,6 +99,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/s/$slug': typeof SSlugRoute
+  '/app/admin': typeof AuthenticatedAppAdminRoute
   '/app/agenda': typeof AuthenticatedAppAgendaRoute
   '/app/billing': typeof AuthenticatedAppBillingRoute
   '/app/buscar': typeof AuthenticatedAppBuscarRoute
@@ -107,6 +114,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/s/$slug': typeof SSlugRoute
+  '/app/admin': typeof AuthenticatedAppAdminRoute
   '/app/agenda': typeof AuthenticatedAppAgendaRoute
   '/app/billing': typeof AuthenticatedAppBillingRoute
   '/app/buscar': typeof AuthenticatedAppBuscarRoute
@@ -123,6 +131,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/s/$slug': typeof SSlugRoute
+  '/_authenticated/app/admin': typeof AuthenticatedAppAdminRoute
   '/_authenticated/app/agenda': typeof AuthenticatedAppAgendaRoute
   '/_authenticated/app/billing': typeof AuthenticatedAppBillingRoute
   '/_authenticated/app/buscar': typeof AuthenticatedAppBuscarRoute
@@ -139,6 +148,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/s/$slug'
+    | '/app/admin'
     | '/app/agenda'
     | '/app/billing'
     | '/app/buscar'
@@ -153,6 +163,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/s/$slug'
+    | '/app/admin'
     | '/app/agenda'
     | '/app/billing'
     | '/app/buscar'
@@ -168,6 +179,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/s/$slug'
+    | '/_authenticated/app/admin'
     | '/_authenticated/app/agenda'
     | '/_authenticated/app/billing'
     | '/_authenticated/app/buscar'
@@ -265,6 +277,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppAgendaRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/admin': {
+      id: '/_authenticated/app/admin'
+      path: '/app/admin'
+      fullPath: '/app/admin'
+      preLoaderRoute: typeof AuthenticatedAppAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/app/sites/': {
       id: '/_authenticated/app/sites/'
       path: '/app/sites'
@@ -283,6 +302,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAppAdminRoute: typeof AuthenticatedAppAdminRoute
   AuthenticatedAppAgendaRoute: typeof AuthenticatedAppAgendaRoute
   AuthenticatedAppBillingRoute: typeof AuthenticatedAppBillingRoute
   AuthenticatedAppBuscarRoute: typeof AuthenticatedAppBuscarRoute
@@ -295,6 +315,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAppAdminRoute: AuthenticatedAppAdminRoute,
   AuthenticatedAppAgendaRoute: AuthenticatedAppAgendaRoute,
   AuthenticatedAppBillingRoute: AuthenticatedAppBillingRoute,
   AuthenticatedAppBuscarRoute: AuthenticatedAppBuscarRoute,

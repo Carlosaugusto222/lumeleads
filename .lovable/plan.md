@@ -1,80 +1,81 @@
-# Plataforma de Geração de Landing Pages com IA
+# Planos, Limites e Super Admin
 
-Uma plataforma em português (BR) inspirada em useleadsite.com: o usuário descreve seu negócio, a IA gera uma landing page completa, e ele pode publicá-la em uma URL pública.
+## 1. Definição dos planos
 
-## Escopo do V1
 
-1. **Landing page pública** (marketing) — apresenta o produto e leva ao cadastro
-2. **Auth** — cadastro/login com e-mail+senha e Google
-3. **Dashboard** — lista de sites gerados pelo usuário
-4. **Gerador IA** — formulário → IA gera conteúdo estruturado da landing → preview
-5. **Editor básico** — ajustar textos, cores e imagens do site gerado
-6. **Publicação** — cada site fica acessível em `/s/{slug}` público
+| Plano    | Categorias | Buscas/mês | Leads salvos/mês | Busca detalhada (bairro/municípios) |
+| -------- | ---------- | ---------- | ---------------- | ----------------------------------- |
+| Gratuito | 5          | 70         | 100              | não                                 |
+| Starter  | 15         | 300        | 1.000            | não                                 |
+| Pro      | 40         | 1.500      | 5.000            | sim                                 |
+| Business | Todas (56) | Ilimitado  | Ilimitado        | sim                                 |
 
-Domínios customizados ficam fora do V1 (complexidade de DNS/SSL); adicionamos depois com instruções específicas.
 
-## Fluxo do usuário
+Cada categoria fica marcada com o plano mínimo (`gratuito | starter | pro | business`). Na UI de busca, categorias acima do plano do usuário aparecem bloqueadas com badge "Disponível no Starter/Pro/Business" (igual ao print).
 
-```text
-Landing (/) ──► Cadastro/Login (/auth)
-                     │
-                     ▼
-              Dashboard (/app)
-                     │
-        ┌────────────┼────────────┐
-        ▼            ▼            ▼
-    Novo site   Meus sites   Editar site
-    (/app/new)              (/app/sites/$id)
-        │                        │
-        ▼                        ▼
-   Gera com IA ──► Preview ──► Publica
-                                 │
-                                 ▼
-                    Site público (/s/$slug)
-```
+## 2. Banco (migração)
 
-## Design
+- `plans` (seed fixo): `id text pk`, `name`, `max_categories int`, `monthly_searches int` (`-1` = ilimitado), `monthly_saved_leads int`, `detailed_search bool`, `price_cents int`, `sort_order`.
+- `categories`: `slug pk`, `label`, `min_plan text fk plans.id`, `active bool`.
+- `subscriptions`: `user_id pk fk auth.users`, `plan_id fk plans.id default 'gratuito'`, `renews_at timestamptz`, `updated_at`. Trigger cria linha "gratuito" no signup.
+- `usage_counters`: `user_id`, `period` (`YYYY-MM`), `searches int`, `saved_leads int`, pk `(user_id, period)`.
+- `app_role` enum já usa padrão: criar `user_roles(user_id, role app_role)` + função `has_role(uuid, app_role) security definer`.
+- RLS: usuário lê seu `subscriptions`/`usage_counters`; admin (via `has_role`) lê/edita tudo; `plans` e `categories` públicos para `authenticated` (SELECT).
+- GRANTs em cada tabela conforme regras. Sem `anon`.
 
-Inspirado mas original — vibe SaaS moderno brasileiro, não cópia visual. Paleta escura com acento vibrante (roxo/azul elétrico), tipografia bold no hero, cards com bordas suaves e microanimações discretas. Copy 100% em PT-BR.
+## 3. Server functions (lógica de plano)
 
-## Rotas
+`src/lib/plans.functions.ts`:
 
-- `/` — landing marketing (hero, como funciona, exemplos, preços, CTA)
-- `/auth` — login/cadastro (e-mail+senha + Google)
-- `/app` — dashboard: lista de sites do usuário
-- `/app/new` — formulário de briefing + geração IA
-- `/app/sites/$id` — editor + preview + publicar/despublicar
-- `/s/$slug` — site público gerado (SSR, indexável)
+- `getMyPlan()` → devolve plano, uso do mês, categorias permitidas.
+- `listCategories()` → todas categorias com `min_plan` (público autenticado).
 
-## Dados (Lovable Cloud)
+`src/lib/places.functions.ts` (ajustar):
 
-- `profiles` — dados básicos do usuário (nome)
-- `sites` — id, user_id, slug (único), published (bool), theme (json: cores/fonte), content (json: seções da landing gerada), created_at
-- RLS: dono lê/escreve seus sites; sites com `published=true` são lidos por `anon` via política pública para renderizar `/s/$slug`
+- Antes da chamada Google: carrega plano + uso do mês. Se `searches >= monthly_searches` → erro "Limite mensal atingido". Se categoria não permitida → erro "Categoria indisponível no seu plano". Incrementa `searches` após sucesso.
+- `savePlacesAsLeads`: valida `saved_leads + N <= monthly_saved_leads`; incrementa contador.
 
-## IA
+`src/lib/admin.functions.ts` (novo, protegido por `has_role(admin)`):
 
-Lovable AI Gateway com structured output (Zod) — a partir do briefing (nome, setor, público, oferta, tom) retorna JSON tipado com: headline, subheadline, 3 benefícios, 3 depoimentos placeholder, seção sobre, CTA. Renderizado por um template React único no V1.
+- `adminListUsers({search, page})` → lista usuários com plano + uso + totais de leads.
+- `adminSetUserPlan({userId, planId})`.
+- `adminSetUserRole({userId, role, grant})`.
+- `adminUpdatePlan({planId, patch})` — edita limites de um plano.
+- `adminUpsertCategory({slug, label, minPlan, active})`.
+- `adminStats()` — totais globais (usuários, sites, leads, buscas do mês).
 
-## Detalhes técnicos
+## 4. UI
 
-- TanStack Start + Lovable Cloud (Supabase)
-- Auth: e-mail+senha + Google via Cloud
-- `/app/*` sob `_authenticated/` (gate gerenciado)
-- `/s/$slug` é rota pública com loader que faz select em `sites` com cliente publishable server-side; head() dinâmico com título/descrição do site
-- Geração IA em `createServerFn` protegido, gravando `content` em `sites`
-- Editor: form simples que atualiza `content` (sem drag-and-drop no V1)
-- Publicação = toggle `published` no site
+**Tela Buscar Leads (`app.buscar.tsx`)**
 
-## Fora do V1 (para depois)
+- Carrega `getMyPlan()` e `listCategories()` via `useQuery`.
+- Select de categorias agrupado por plano (Disponível no seu plano / Starter / Pro / Business) com itens acima do plano desabilitados e ícone de cadeado (bate com o print).
+- Linha de status: "5 de 53 categorias no plano Gratuito · 12/50 buscas usadas este mês".
+- Botão "Ver todos os planos →" abre `/app/billing`.
+- Trata erros de limite com toast.
 
-- Domínios customizados por site
-- Múltiplos templates
-- Editor drag-and-drop
-- Analytics dos sites publicados
-- Captura de leads nos sites (formulários que salvam no Cloud)
-- Planos pagos / Stripe
+**Super Admin (`/app/admin`)**
 
-## Próximo passo
+- Só visível na sidebar quando `has_role(admin)`.
+- Sub-rotas em abas: Visão geral (KPIs), Usuários (tabela + trocar plano + promover admin), Planos (editar limites/preços inline), Categorias (CRUD simples com `min_plan` select).
+- Guardada por `beforeLoad` que chama `getMyPlan` e redireciona se não for admin.
 
-Ao aprovar, ativo o Lovable Cloud, crio o schema, e construo landing + auth + dashboard + gerador + rota pública nessa ordem. Confirma?
+## 5. Regras de segurança
+
+- Toda função admin usa `requireSupabaseAuth` + checagem `has_role(userId,'admin')` no início do handler; nunca confia no cliente.
+- Contadores gravados server-side (nunca cliente).
+- Promoção a admin: primeiro admin é o usuário atual, feito por SQL de seed pedindo o email dele (vou perguntar).
+
+## 6. Entregáveis por ordem
+
+1. Migração (plans, categories seed com as 56 categorias, subscriptions, usage_counters, user_roles + has_role, triggers, RLS, GRANTs).
+2. `plans.functions.ts` + ajuste em `places.functions.ts`.
+3. `admin.functions.ts`.
+4. UI busca reformulada.
+5. Rotas `/app/admin/*` + link condicional na sidebar.
+6. Ajuste do `app.billing.tsx` para refletir os limites reais.
+
+## Perguntas antes de rodar a migração
+
+1. Confirma a tabela de limites acima? (posso ajustar números)
+2. Qual o email da sua conta para eu promover a admin no seed?

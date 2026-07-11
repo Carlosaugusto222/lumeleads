@@ -1,14 +1,15 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Search, Loader2, Globe, Star, MapPin, Phone, Plus, CheckSquare, Square } from "lucide-react";
+import { Search, Loader2, Globe, Star, MapPin, Phone, Plus, CheckSquare, Square, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup, SelectLabel } from "@/components/ui/select";
 import { searchPlaces, savePlacesAsLeads, type PlaceResult } from "@/lib/places.functions";
+import { getMyPlan } from "@/lib/plans.functions";
 
 export const Route = createFileRoute("/_authenticated/app/buscar")({
   component: BuscarPage,
@@ -24,48 +25,54 @@ const BR_STATES = [
   ["SE", "Sergipe"], ["TO", "Tocantins"],
 ] as const;
 
-const COMMON_CATEGORIES = [
-  "Barbearia", "Mecânica", "Pet Shop", "Restaurante", "Salão de Beleza",
-  "Academia", "Clínica Médica", "Lanchonete", "Loja de Roupas", "Odontologia",
-  "Advocacia", "Agência de Viagens", "Auto Elétrica", "Auto Peças", "Bar / Botequim",
-  "Borracharia", "Cafeteria", "Chaveiro", "Clínica Estética", "Concessionária",
-  "Contabilidade", "Creche / Escola Infantil", "Cursos / Treinamentos", "Eletricista",
-  "Eletroeletrônicos", "Encanador", "Escola de Idiomas", "Escola Particular",
-  "Farmácia", "Fisioterapia", "Floricultura", "Funilaria e Pintura", "Hamburgueria",
-  "Imobiliária", "Joalheria", "Laboratório de Exames", "Lava-Rápido", "Lavanderia",
-  "Loja de Calçados", "Manicure / Nail Art", "Marcenaria / Móveis", "Marmitaria",
-  "Material de Construção", "Nutrição", "Óptica", "Padaria", "Papelaria / Livraria",
-  "Pilates / Yoga", "Pintor", "Pizzaria", "Pousada / Hotel", "Psicologia",
-  "Seguradora", "Sorveteria", "Supermercado", "Veterinária",
-];
 
 function BuscarPage() {
   const searchFn = useServerFn(searchPlaces);
   const saveFn = useServerFn(savePlacesAsLeads);
+  const getPlanFn = useServerFn(getMyPlan);
   const qc = useQueryClient();
 
-  const [country] = useState("Brasil");
+  const planQ = useQuery({ queryKey: ["my-plan"], queryFn: () => getPlanFn() });
+
   const [state, setState] = useState("SP");
   const [city, setCity] = useState("");
-  const [category, setCategory] = useState("Barbearia");
+  const [categorySlug, setCategorySlug] = useState<string>("");
   const [limit, setLimit] = useState(20);
   const [results, setResults] = useState<PlaceResult[]>([]);
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
+  const plan = planQ.data?.plan;
+  const categories = planQ.data?.categories ?? [];
+  const allowed = new Set(planQ.data?.allowedSlugs ?? []);
+  const usage = planQ.data?.usage ?? { searches: 0, saved_leads: 0 };
+  const searchesLeft = plan
+    ? plan.monthly_searches === -1 ? "∞" : Math.max(0, plan.monthly_searches - usage.searches)
+    : "…";
+
+  const grouped = useMemo(() => {
+    const g: Record<string, typeof categories> = { gratuito: [], starter: [], pro: [], business: [] };
+    for (const c of categories) (g[c.min_plan] ??= []).push(c);
+    return g;
+  }, [categories]);
+
   const searchMut = useMutation({
-    mutationFn: () =>
-      searchFn({
+    mutationFn: () => {
+      const cat = categories.find((c) => c.slug === categorySlug);
+      return searchFn({
         data: {
-          country,
+          country: "Brasil",
           state: BR_STATES.find((s) => s[0] === state)?.[1] ?? state,
           city,
-          category,
+          category: cat?.label ?? categorySlug,
+          categorySlug,
           limit,
         },
-      }),
+      });
+    },
     onSuccess: (r) => {
       setResults(r.results);
       setSelected(new Set(r.results.map((x) => x.place_id)));
+      qc.invalidateQueries({ queryKey: ["my-plan"] });
       if (!r.results.length) toast.info("Nenhum resultado encontrado.");
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Erro na busca"),
@@ -80,6 +87,7 @@ function BuscarPage() {
       toast.success(`${r.inserted} leads adicionados`);
       qc.invalidateQueries({ queryKey: ["leads"] });
       qc.invalidateQueries({ queryKey: ["dash-stats"] });
+      qc.invalidateQueries({ queryKey: ["my-plan"] });
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao salvar"),
   });
@@ -94,20 +102,33 @@ function BuscarPage() {
     });
   }
 
+  const canSearch = Boolean(city && categorySlug && allowed.has(categorySlug) && !searchMut.isPending);
+
   return (
     <div className="mx-auto max-w-6xl px-6 py-8">
-      <header className="mb-6">
-        <h1 className="font-display text-3xl font-bold">Buscar Leads</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Encontre negócios locais por categoria e localização
-        </p>
+      <header className="mb-6 flex items-end justify-between gap-4 flex-wrap">
+        <div>
+          <h1 className="font-display text-3xl font-bold">Buscar Leads</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Encontre negócios locais por categoria e localização
+          </p>
+        </div>
+        {plan && (
+          <div className="rounded-xl border border-border/60 bg-card/60 px-4 py-2 text-xs">
+            Plano <b className="text-foreground">{plan.name}</b> ·{" "}
+            {allowed.size}/{categories.length} categorias · {usage.searches}/{plan.monthly_searches === -1 ? "∞" : plan.monthly_searches} buscas mês ·{" "}
+            {usage.saved_leads}/{plan.monthly_saved_leads === -1 ? "∞" : plan.monthly_saved_leads} leads salvos
+            {" · "}
+            <Link to="/app/billing" className="text-primary hover:underline">Ver planos →</Link>
+          </div>
+        )}
       </header>
 
       <div className="rounded-2xl border border-border/60 bg-card/60 p-4">
         <div className="grid gap-3 md:grid-cols-[110px_150px_1fr_1fr_auto]">
           <div className="space-y-1.5">
             <Label className="text-xs">País</Label>
-            <Select value={country} disabled>
+            <Select value="Brasil" disabled>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent><SelectItem value="Brasil">Brasil</SelectItem></SelectContent>
             </Select>
@@ -129,19 +150,38 @@ function BuscarPage() {
           </div>
           <div className="space-y-1.5">
             <Label className="text-xs">Categoria</Label>
-            <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent className="max-h-72">
-                {COMMON_CATEGORIES.map((c) => (
-                  <SelectItem key={c} value={c}>{c}</SelectItem>
-                ))}
+            <Select value={categorySlug} onValueChange={setCategorySlug}>
+              <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
+              <SelectContent className="max-h-80">
+                {(["gratuito", "starter", "pro", "business"] as const).map((tier) => {
+                  const items = grouped[tier] ?? [];
+                  if (!items.length) return null;
+                  const label = tier === "gratuito" ? "Gratuito" : tier === "starter" ? "Starter" : tier === "pro" ? "Pro" : "Business";
+                  return (
+                    <SelectGroup key={tier}>
+                      <SelectLabel className="text-[10px] uppercase tracking-wider">{label}</SelectLabel>
+                      {items.map((c) => {
+                        const locked = !allowed.has(c.slug);
+                        return (
+                          <SelectItem key={c.slug} value={c.slug} disabled={locked}>
+                            <span className="flex items-center gap-2">
+                              {locked && <Lock className="h-3 w-3 text-muted-foreground" />}
+                              {c.label}
+                              {locked && <span className="text-[10px] text-muted-foreground">— {label}+</span>}
+                            </span>
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectGroup>
+                  );
+                })}
               </SelectContent>
             </Select>
           </div>
           <div className="flex items-end">
             <Button
               onClick={() => searchMut.mutate()}
-              disabled={!city || !category || searchMut.isPending}
+              disabled={!canSearch}
               className="w-full bg-gradient-primary text-primary-foreground md:w-auto"
             >
               {searchMut.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
@@ -162,7 +202,10 @@ function BuscarPage() {
               <span>20</span><span>40</span><span>60</span>
             </div>
           </div>
-          <div className="text-sm font-semibold text-primary">{limit} leads</div>
+          <div className="text-right text-sm">
+            <div className="font-semibold text-primary">{limit} leads</div>
+            <div className="text-xs text-muted-foreground">{searchesLeft} buscas restantes</div>
+          </div>
         </div>
       </div>
 

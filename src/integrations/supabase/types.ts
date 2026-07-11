@@ -64,6 +64,44 @@ export type Database = {
           },
         ]
       }
+      categories: {
+        Row: {
+          active: boolean
+          created_at: string
+          label: string
+          min_plan: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          label: string
+          min_plan?: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          label?: string
+          min_plan?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "categories_min_plan_fkey"
+            columns: ["min_plan"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leads: {
         Row: {
           address: string | null
@@ -133,6 +171,45 @@ export type Database = {
           updated_at?: string
           user_id?: string
           website?: string | null
+        }
+        Relationships: []
+      }
+      plans: {
+        Row: {
+          created_at: string
+          detailed_search: boolean
+          id: string
+          max_categories: number
+          monthly_saved_leads: number
+          monthly_searches: number
+          name: string
+          price_cents: number
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          detailed_search?: boolean
+          id: string
+          max_categories: number
+          monthly_saved_leads: number
+          monthly_searches: number
+          name: string
+          price_cents?: number
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          detailed_search?: boolean
+          id?: string
+          max_categories?: number
+          monthly_saved_leads?: number
+          monthly_searches?: number
+          name?: string
+          price_cents?: number
+          sort_order?: number
+          updated_at?: string
         }
         Relationships: []
       }
@@ -231,14 +308,103 @@ export type Database = {
         }
         Relationships: []
       }
+      subscriptions: {
+        Row: {
+          created_at: string
+          plan_id: string
+          renews_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          plan_id?: string
+          renews_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          plan_id?: string
+          renews_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      usage_counters: {
+        Row: {
+          period: string
+          saved_leads: number
+          searches: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          period: string
+          saved_leads?: number
+          searches?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          period?: string
+          saved_leads?: number
+          searches?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      current_period: { Args: never; Returns: string }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      increment_usage: {
+        Args: { _saved: number; _searches: number; _user_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
+      app_role: "admin" | "user"
       appointment_status: "pendente" | "concluido" | "cancelado"
       lead_status:
         | "base"
@@ -375,6 +541,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      app_role: ["admin", "user"],
       appointment_status: ["pendente", "concluido", "cancelado"],
       lead_status: [
         "base",
