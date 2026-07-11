@@ -25,7 +25,6 @@ const BR_STATES = [
   ["SE", "Sergipe"], ["TO", "Tocantins"],
 ] as const;
 
-const PLAN_RANK: Record<string, number> = { gratuito: 1, starter: 2, pro: 3, business: 4 };
 
 function BuscarPage() {
   const searchFn = useServerFn(searchPlaces);
@@ -306,5 +305,3 @@ function Stat({ label, value, accent }: { label: string; value: number; accent?:
     </div>
   );
 }
-// PLAN_RANK reserved for future gating
-void PLAN_RANK;
