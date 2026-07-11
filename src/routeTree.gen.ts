@@ -15,6 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as SSlugRouteImport } from './routes/s.$slug'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app.index'
 import { Route as AuthenticatedAppNewRouteImport } from './routes/_authenticated/app.new'
+import { Route as AuthenticatedAppSitesIndexRouteImport } from './routes/_authenticated/app.sites.index'
 import { Route as AuthenticatedAppSitesIdRouteImport } from './routes/_authenticated/app.sites.$id'
 
 const AuthRoute = AuthRouteImport.update({
@@ -46,6 +47,12 @@ const AuthenticatedAppNewRoute = AuthenticatedAppNewRouteImport.update({
   path: '/app/new',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAppSitesIndexRoute =
+  AuthenticatedAppSitesIndexRouteImport.update({
+    id: '/app/sites/',
+    path: '/app/sites/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppSitesIdRoute = AuthenticatedAppSitesIdRouteImport.update({
   id: '/app/sites/$id',
   path: '/app/sites/$id',
@@ -59,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/app/new': typeof AuthenticatedAppNewRoute
   '/app/': typeof AuthenticatedAppIndexRoute
   '/app/sites/$id': typeof AuthenticatedAppSitesIdRoute
+  '/app/sites/': typeof AuthenticatedAppSitesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -67,6 +75,7 @@ export interface FileRoutesByTo {
   '/app/new': typeof AuthenticatedAppNewRoute
   '/app': typeof AuthenticatedAppIndexRoute
   '/app/sites/$id': typeof AuthenticatedAppSitesIdRoute
+  '/app/sites': typeof AuthenticatedAppSitesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -77,6 +86,7 @@ export interface FileRoutesById {
   '/_authenticated/app/new': typeof AuthenticatedAppNewRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
   '/_authenticated/app/sites/$id': typeof AuthenticatedAppSitesIdRoute
+  '/_authenticated/app/sites/': typeof AuthenticatedAppSitesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -87,8 +97,16 @@ export interface FileRouteTypes {
     | '/app/new'
     | '/app/'
     | '/app/sites/$id'
+    | '/app/sites/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/s/$slug' | '/app/new' | '/app' | '/app/sites/$id'
+  to:
+    | '/'
+    | '/auth'
+    | '/s/$slug'
+    | '/app/new'
+    | '/app'
+    | '/app/sites/$id'
+    | '/app/sites'
   id:
     | '__root__'
     | '/'
@@ -98,6 +116,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/new'
     | '/_authenticated/app/'
     | '/_authenticated/app/sites/$id'
+    | '/_authenticated/app/sites/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -151,6 +170,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppNewRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/sites/': {
+      id: '/_authenticated/app/sites/'
+      path: '/app/sites'
+      fullPath: '/app/sites/'
+      preLoaderRoute: typeof AuthenticatedAppSitesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/app/sites/$id': {
       id: '/_authenticated/app/sites/$id'
       path: '/app/sites/$id'
@@ -165,12 +191,14 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppNewRoute: typeof AuthenticatedAppNewRoute
   AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
   AuthenticatedAppSitesIdRoute: typeof AuthenticatedAppSitesIdRoute
+  AuthenticatedAppSitesIndexRoute: typeof AuthenticatedAppSitesIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppNewRoute: AuthenticatedAppNewRoute,
   AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
   AuthenticatedAppSitesIdRoute: AuthenticatedAppSitesIdRoute,
+  AuthenticatedAppSitesIndexRoute: AuthenticatedAppSitesIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
