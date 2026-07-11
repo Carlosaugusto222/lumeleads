@@ -14,6 +14,128 @@ export type Database = {
   }
   public: {
     Tables: {
+      appointments: {
+        Row: {
+          created_at: string
+          duration_min: number
+          id: string
+          lead_id: string | null
+          location: string | null
+          notes: string | null
+          starts_at: string
+          status: Database["public"]["Enums"]["appointment_status"]
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          duration_min?: number
+          id?: string
+          lead_id?: string | null
+          location?: string | null
+          notes?: string | null
+          starts_at: string
+          status?: Database["public"]["Enums"]["appointment_status"]
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          duration_min?: number
+          id?: string
+          lead_id?: string | null
+          location?: string | null
+          notes?: string | null
+          starts_at?: string
+          status?: Database["public"]["Enums"]["appointment_status"]
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointments_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leads: {
+        Row: {
+          address: string | null
+          category: string | null
+          city: string | null
+          country: string | null
+          created_at: string
+          email: string | null
+          has_website: boolean
+          id: string
+          name: string
+          notes: string | null
+          phone: string | null
+          rating: number | null
+          reviews_count: number | null
+          score: number
+          source: string | null
+          state: string | null
+          status: Database["public"]["Enums"]["lead_status"]
+          tier: Database["public"]["Enums"]["lead_tier"]
+          updated_at: string
+          user_id: string
+          website: string | null
+        }
+        Insert: {
+          address?: string | null
+          category?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          email?: string | null
+          has_website?: boolean
+          id?: string
+          name: string
+          notes?: string | null
+          phone?: string | null
+          rating?: number | null
+          reviews_count?: number | null
+          score?: number
+          source?: string | null
+          state?: string | null
+          status?: Database["public"]["Enums"]["lead_status"]
+          tier?: Database["public"]["Enums"]["lead_tier"]
+          updated_at?: string
+          user_id: string
+          website?: string | null
+        }
+        Update: {
+          address?: string | null
+          category?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          email?: string | null
+          has_website?: boolean
+          id?: string
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          rating?: number | null
+          reviews_count?: number | null
+          score?: number
+          source?: string | null
+          state?: string | null
+          status?: Database["public"]["Enums"]["lead_status"]
+          tier?: Database["public"]["Enums"]["lead_tier"]
+          updated_at?: string
+          user_id?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -34,6 +156,44 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      site_submissions: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          message: string | null
+          name: string
+          phone: string | null
+          site_id: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          message?: string | null
+          name: string
+          phone?: string | null
+          site_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          message?: string | null
+          name?: string
+          phone?: string | null
+          site_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "site_submissions_site_id_fkey"
+            columns: ["site_id"]
+            isOneToOne: false
+            referencedRelation: "sites"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       sites: {
         Row: {
@@ -79,7 +239,15 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      appointment_status: "pendente" | "concluido" | "cancelado"
+      lead_status:
+        | "base"
+        | "abordado"
+        | "agendado"
+        | "follow_up"
+        | "convertido"
+        | "perdido"
+      lead_tier: "frio" | "morno" | "quente"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -206,6 +374,17 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      appointment_status: ["pendente", "concluido", "cancelado"],
+      lead_status: [
+        "base",
+        "abordado",
+        "agendado",
+        "follow_up",
+        "convertido",
+        "perdido",
+      ],
+      lead_tier: ["frio", "morno", "quente"],
+    },
   },
 } as const
