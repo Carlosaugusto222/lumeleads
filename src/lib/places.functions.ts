@@ -171,6 +171,12 @@ export const savePlacesAsLeads = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) => saveInput.parse(i))
   .handler(async ({ data, context }) => {
+    const { plan, usage } = await loadPlanAndUsage(context.supabase, context.userId);
+    if (!plan) throw new Error("Plano não encontrado");
+    if (plan.monthly_saved_leads !== -1 && (usage.saved_leads ?? 0) + data.places.length > plan.monthly_saved_leads) {
+      const restante = Math.max(0, plan.monthly_saved_leads - (usage.saved_leads ?? 0));
+      throw new Error(`Limite mensal de ${plan.monthly_saved_leads} leads atingido. Restam ${restante} no plano ${plan.name}.`);
+    }
     const rows = data.places.map((p) => ({
       user_id: context.userId,
       name: p.name,
@@ -191,5 +197,7 @@ export const savePlacesAsLeads = createServerFn({ method: "POST" })
     }));
     const { error, count } = await context.supabase.from("leads").insert(rows, { count: "exact" });
     if (error) throw new Error(error.message);
-    return { inserted: count ?? rows.length };
+    const inserted = count ?? rows.length;
+    await context.supabase.rpc("increment_usage", { _user_id: context.userId, _searches: 0, _saved: inserted });
+    return { inserted };
   });
