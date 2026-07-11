@@ -152,10 +152,10 @@ export const updateSite = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ data, context }) => {
-    const patch: Record<string, unknown> = {};
+    const patch: Database["public"]["Tables"]["sites"]["Update"] = {};
     if (data.title) patch.title = data.title;
-    if (data.content) patch.content = data.content;
-    if (data.theme) patch.theme = data.theme;
+    if (data.content) patch.content = data.content as unknown as Database["public"]["Tables"]["sites"]["Update"]["content"];
+    if (data.theme) patch.theme = data.theme as unknown as Database["public"]["Tables"]["sites"]["Update"]["theme"];
     const { error } = await context.supabase.from("sites").update(patch).eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
