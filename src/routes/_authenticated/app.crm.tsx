@@ -305,7 +305,20 @@ function LeadDetailDialog({ lead, index, total, onClose, onPrev, onNext }: {
                   ) : (
                     <div className="rounded-lg border border-dashed p-4 text-sm text-muted-foreground">Esse lead ainda não tem site — ótima oportunidade de venda.</div>
                   )}
-                  <Button asChild size="sm"><Link to="/app/new">Criar site para este lead</Link></Button>
+                  <Button asChild size="sm">
+                    <Link
+                      to="/app/new"
+                      search={{
+                        businessName: lead.name,
+                        sector: lead.category ?? "",
+                        audience: lead.city ? `Clientes em ${lead.city}` : "",
+                        offer: `Site profissional para ${lead.name}`,
+                        leadId: lead.id,
+                      }}
+                    >
+                      Criar site para este lead
+                    </Link>
+                  </Button>
                 </TabsContent>
 
                 <TabsContent value="venda" className="mt-0 space-y-3">
