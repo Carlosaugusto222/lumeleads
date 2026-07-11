@@ -17,6 +17,7 @@ import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedAppNewRouteImport } from './routes/_authenticated/app.new'
 import { Route as AuthenticatedAppLeadsRouteImport } from './routes/_authenticated/app.leads'
 import { Route as AuthenticatedAppCrmRouteImport } from './routes/_authenticated/app.crm'
+import { Route as AuthenticatedAppBuscarRouteImport } from './routes/_authenticated/app.buscar'
 import { Route as AuthenticatedAppBillingRouteImport } from './routes/_authenticated/app.billing'
 import { Route as AuthenticatedAppAgendaRouteImport } from './routes/_authenticated/app.agenda'
 import { Route as AuthenticatedAppSitesIndexRouteImport } from './routes/_authenticated/app.sites.index'
@@ -61,6 +62,11 @@ const AuthenticatedAppCrmRoute = AuthenticatedAppCrmRouteImport.update({
   path: '/app/crm',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAppBuscarRoute = AuthenticatedAppBuscarRouteImport.update({
+  id: '/app/buscar',
+  path: '/app/buscar',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAppBillingRoute = AuthenticatedAppBillingRouteImport.update({
   id: '/app/billing',
   path: '/app/billing',
@@ -89,6 +95,7 @@ export interface FileRoutesByFullPath {
   '/s/$slug': typeof SSlugRoute
   '/app/agenda': typeof AuthenticatedAppAgendaRoute
   '/app/billing': typeof AuthenticatedAppBillingRoute
+  '/app/buscar': typeof AuthenticatedAppBuscarRoute
   '/app/crm': typeof AuthenticatedAppCrmRoute
   '/app/leads': typeof AuthenticatedAppLeadsRoute
   '/app/new': typeof AuthenticatedAppNewRoute
@@ -102,6 +109,7 @@ export interface FileRoutesByTo {
   '/s/$slug': typeof SSlugRoute
   '/app/agenda': typeof AuthenticatedAppAgendaRoute
   '/app/billing': typeof AuthenticatedAppBillingRoute
+  '/app/buscar': typeof AuthenticatedAppBuscarRoute
   '/app/crm': typeof AuthenticatedAppCrmRoute
   '/app/leads': typeof AuthenticatedAppLeadsRoute
   '/app/new': typeof AuthenticatedAppNewRoute
@@ -117,6 +125,7 @@ export interface FileRoutesById {
   '/s/$slug': typeof SSlugRoute
   '/_authenticated/app/agenda': typeof AuthenticatedAppAgendaRoute
   '/_authenticated/app/billing': typeof AuthenticatedAppBillingRoute
+  '/_authenticated/app/buscar': typeof AuthenticatedAppBuscarRoute
   '/_authenticated/app/crm': typeof AuthenticatedAppCrmRoute
   '/_authenticated/app/leads': typeof AuthenticatedAppLeadsRoute
   '/_authenticated/app/new': typeof AuthenticatedAppNewRoute
@@ -132,6 +141,7 @@ export interface FileRouteTypes {
     | '/s/$slug'
     | '/app/agenda'
     | '/app/billing'
+    | '/app/buscar'
     | '/app/crm'
     | '/app/leads'
     | '/app/new'
@@ -145,6 +155,7 @@ export interface FileRouteTypes {
     | '/s/$slug'
     | '/app/agenda'
     | '/app/billing'
+    | '/app/buscar'
     | '/app/crm'
     | '/app/leads'
     | '/app/new'
@@ -159,6 +170,7 @@ export interface FileRouteTypes {
     | '/s/$slug'
     | '/_authenticated/app/agenda'
     | '/_authenticated/app/billing'
+    | '/_authenticated/app/buscar'
     | '/_authenticated/app/crm'
     | '/_authenticated/app/leads'
     | '/_authenticated/app/new'
@@ -232,6 +244,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppCrmRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/buscar': {
+      id: '/_authenticated/app/buscar'
+      path: '/app/buscar'
+      fullPath: '/app/buscar'
+      preLoaderRoute: typeof AuthenticatedAppBuscarRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/app/billing': {
       id: '/_authenticated/app/billing'
       path: '/app/billing'
@@ -266,6 +285,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppAgendaRoute: typeof AuthenticatedAppAgendaRoute
   AuthenticatedAppBillingRoute: typeof AuthenticatedAppBillingRoute
+  AuthenticatedAppBuscarRoute: typeof AuthenticatedAppBuscarRoute
   AuthenticatedAppCrmRoute: typeof AuthenticatedAppCrmRoute
   AuthenticatedAppLeadsRoute: typeof AuthenticatedAppLeadsRoute
   AuthenticatedAppNewRoute: typeof AuthenticatedAppNewRoute
@@ -277,6 +297,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppAgendaRoute: AuthenticatedAppAgendaRoute,
   AuthenticatedAppBillingRoute: AuthenticatedAppBillingRoute,
+  AuthenticatedAppBuscarRoute: AuthenticatedAppBuscarRoute,
   AuthenticatedAppCrmRoute: AuthenticatedAppCrmRoute,
   AuthenticatedAppLeadsRoute: AuthenticatedAppLeadsRoute,
   AuthenticatedAppNewRoute: AuthenticatedAppNewRoute,
@@ -297,13 +318,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
