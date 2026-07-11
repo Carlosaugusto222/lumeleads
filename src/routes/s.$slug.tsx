@@ -70,12 +70,17 @@ function PublicSite() {
       </div>
     );
   }
-  const theme = (site.theme as { primary?: string; accent?: string }) ?? {};
+  const theme = (site.theme as { primary?: string; accent?: string; background?: string; text?: string }) ?? {};
   return (
     <SiteRenderer
       siteId={site.id}
       content={parsed.data}
-      theme={{ primary: theme.primary ?? "#7c3aed", accent: theme.accent ?? "#22d3ee" }}
+      theme={{
+        primary: theme.primary ?? "#7c3aed",
+        accent: theme.accent ?? "#22d3ee",
+        background: theme.background,
+        text: theme.text,
+      }}
     />
   );
 }

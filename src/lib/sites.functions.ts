@@ -7,6 +7,24 @@ import { chatJSON } from "./ai-gateway.server";
 
 // ---------- Shared schema for generated site content ----------
 
+export const socialsSchema = z.object({
+  instagram: z.string().optional().default(""),
+  facebook: z.string().optional().default(""),
+  whatsapp: z.string().optional().default(""),
+  tiktok: z.string().optional().default(""),
+  youtube: z.string().optional().default(""),
+  x: z.string().optional().default(""),
+  website: z.string().optional().default(""),
+});
+export type Socials = z.infer<typeof socialsSchema>;
+
+export const paletteSchema = z.object({
+  primary: z.string(),
+  accent: z.string(),
+  background: z.string().default("#ffffff"),
+  text: z.string().default("#0a0a0a"),
+});
+
 export const siteContentSchema = z.object({
   brandName: z.string(),
   tagline: z.string(),
@@ -27,6 +45,10 @@ export const siteContentSchema = z.object({
     .min(3)
     .max(4),
   footerNote: z.string(),
+  photos: z.array(z.string().url()).default([]),
+  socials: socialsSchema.default({
+    instagram: "", facebook: "", whatsapp: "", tiktok: "", youtube: "", x: "", website: "",
+  }),
 });
 
 export type SiteContent = z.infer<typeof siteContentSchema>;
@@ -49,6 +71,9 @@ const generateInput = z.object({
   audience: z.string().min(1).max(200),
   offer: z.string().min(1).max(400),
   tone: z.enum(["profissional", "descontraido", "premium", "amigavel"]).default("profissional"),
+  palette: paletteSchema.optional(),
+  photos: z.array(z.string().url()).max(12).optional(),
+  socials: socialsSchema.optional(),
 });
 
 export const generateSite = createServerFn({ method: "POST" })
@@ -79,17 +104,28 @@ Briefing:
 
 Retorne SOMENTE o JSON, sem markdown, sem comentários.`;
 
-    const raw = await chatJSON<unknown>({
+    const raw = await chatJSON<Record<string, unknown>>({
       messages: [
         { role: "system", content: "Você retorna somente JSON válido, sem texto extra." },
         { role: "user", content: prompt },
       ],
     });
 
-    const content = siteContentSchema.parse(raw);
+    const merged = {
+      ...raw,
+      photos: data.photos ?? [],
+      socials: data.socials ?? {
+        instagram: "", facebook: "", whatsapp: "", tiktok: "", youtube: "", x: "", website: "",
+      },
+    };
+    const content = siteContentSchema.parse(merged);
 
     const baseSlug = slugify(content.brandName || data.businessName);
     const slug = `${baseSlug}-${Math.random().toString(36).slice(2, 7)}`;
+
+    const theme = data.palette
+      ? { primary: data.palette.primary, accent: data.palette.accent, background: data.palette.background, text: data.palette.text }
+      : { primary: "#7c3aed", accent: "#22d3ee" };
 
     const { data: site, error } = await context.supabase
       .from("sites")
@@ -98,6 +134,7 @@ Retorne SOMENTE o JSON, sem markdown, sem comentários.`;
         slug,
         title: content.brandName,
         content: content as unknown as Database["public"]["Tables"]["sites"]["Row"]["content"],
+        theme: theme as unknown as Database["public"]["Tables"]["sites"]["Insert"]["theme"],
       })
       .select("id, slug")
       .single();
@@ -146,7 +183,12 @@ export const updateSite = createServerFn({ method: "POST" })
         title: z.string().min(1).max(120).optional(),
         content: siteContentSchema.optional(),
         theme: z
-          .object({ primary: z.string(), accent: z.string() })
+          .object({
+            primary: z.string(),
+            accent: z.string(),
+            background: z.string().optional(),
+            text: z.string().optional(),
+          })
           .optional(),
       })
       .parse(input),
