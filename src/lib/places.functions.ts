@@ -6,11 +6,25 @@ const GATEWAY_URL = "https://connector-gateway.lovable.dev/google_maps";
 
 const searchInput = z.object({
   category: z.string().min(1).max(120),
+  categorySlug: z.string().min(1).max(120).optional(),
   city: z.string().min(1).max(120),
   state: z.string().min(1).max(120),
   country: z.string().min(1).max(80).default("Brasil"),
   limit: z.number().int().min(1).max(60).default(20),
 });
+
+const PLAN_RANK: Record<string, number> = { gratuito: 1, starter: 2, pro: 3, business: 4 };
+
+async function loadPlanAndUsage(supabase: any, userId: string) {
+  const period = new Date().toISOString().slice(0, 7);
+  const [subRes, usageRes] = await Promise.all([
+    supabase.from("subscriptions").select("plan_id").eq("user_id", userId).maybeSingle(),
+    supabase.from("usage_counters").select("*").eq("user_id", userId).eq("period", period).maybeSingle(),
+  ]);
+  const planId = subRes.data?.plan_id ?? "gratuito";
+  const { data: plan } = await supabase.from("plans").select("*").eq("id", planId).maybeSingle();
+  return { plan, usage: usageRes.data ?? { searches: 0, saved_leads: 0 }, period };
+}
 
 export type PlaceResult = {
   place_id: string;
