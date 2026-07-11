@@ -7,6 +7,24 @@ import { chatJSON } from "./ai-gateway.server";
 
 // ---------- Shared schema for generated site content ----------
 
+export const socialsSchema = z.object({
+  instagram: z.string().optional().default(""),
+  facebook: z.string().optional().default(""),
+  whatsapp: z.string().optional().default(""),
+  tiktok: z.string().optional().default(""),
+  youtube: z.string().optional().default(""),
+  x: z.string().optional().default(""),
+  website: z.string().optional().default(""),
+});
+export type Socials = z.infer<typeof socialsSchema>;
+
+export const paletteSchema = z.object({
+  primary: z.string(),
+  accent: z.string(),
+  background: z.string().default("#ffffff"),
+  text: z.string().default("#0a0a0a"),
+});
+
 export const siteContentSchema = z.object({
   brandName: z.string(),
   tagline: z.string(),
@@ -27,6 +45,10 @@ export const siteContentSchema = z.object({
     .min(3)
     .max(4),
   footerNote: z.string(),
+  photos: z.array(z.string().url()).default([]),
+  socials: socialsSchema.default({
+    instagram: "", facebook: "", whatsapp: "", tiktok: "", youtube: "", x: "", website: "",
+  }),
 });
 
 export type SiteContent = z.infer<typeof siteContentSchema>;
