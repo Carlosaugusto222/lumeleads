@@ -1,8 +1,10 @@
 import { createFileRoute, Outlet, redirect, Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { LogOut, LayoutDashboard, Users, Kanban, CalendarDays, Sparkles, CreditCard, Globe, Search } from "lucide-react";
-import { useQueryClient } from "@tanstack/react-query";
+import { LogOut, LayoutDashboard, Users, Kanban, CalendarDays, Sparkles, CreditCard, Globe, Search, Shield } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { getMyPlan } from "@/lib/plans.functions";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
@@ -14,7 +16,7 @@ export const Route = createFileRoute("/_authenticated")({
   component: AppShell,
 });
 
-type NavItem = { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean };
+type NavItem = { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean; adminOnly?: boolean };
 const NAV: NavItem[] = [
   { to: "/app", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/app/buscar", label: "Buscar Leads", icon: Search },
@@ -24,12 +26,18 @@ const NAV: NavItem[] = [
   { to: "/app/sites", label: "Meus sites", icon: Globe },
   { to: "/app/new", label: "Criar site", icon: Sparkles },
   { to: "/app/billing", label: "Planos", icon: CreditCard },
+  { to: "/app/admin", label: "Super Admin", icon: Shield, adminOnly: true },
 ];
 
 function AppShell() {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const planFn = useServerFn(getMyPlan);
+  const planQ = useQuery({ queryKey: ["my-plan"], queryFn: () => planFn() });
+  const isAdmin = planQ.data?.isAdmin ?? false;
+  const items = NAV.filter((n) => !n.adminOnly || isAdmin);
+
 
   async function handleSignOut() {
     await qc.cancelQueries();
