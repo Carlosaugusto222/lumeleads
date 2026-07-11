@@ -25,10 +25,18 @@ const BR_STATES = [
 ] as const;
 
 const COMMON_CATEGORIES = [
-  "Barbearia", "Salão de beleza", "Restaurante", "Pizzaria", "Lanchonete", "Padaria",
-  "Academia", "Clínica odontológica", "Clínica médica", "Advogado", "Contador",
-  "Pet shop", "Autoescola", "Oficina mecânica", "Loja de roupas", "Ótica",
-  "Imobiliária", "Estúdio de tatuagem", "Manicure", "Escola de idiomas",
+  "Barbearia", "Mecânica", "Pet Shop", "Restaurante", "Salão de Beleza",
+  "Academia", "Clínica Médica", "Lanchonete", "Loja de Roupas", "Odontologia",
+  "Advocacia", "Agência de Viagens", "Auto Elétrica", "Auto Peças", "Bar / Botequim",
+  "Borracharia", "Cafeteria", "Chaveiro", "Clínica Estética", "Concessionária",
+  "Contabilidade", "Creche / Escola Infantil", "Cursos / Treinamentos", "Eletricista",
+  "Eletroeletrônicos", "Encanador", "Escola de Idiomas", "Escola Particular",
+  "Farmácia", "Fisioterapia", "Floricultura", "Funilaria e Pintura", "Hamburgueria",
+  "Imobiliária", "Joalheria", "Laboratório de Exames", "Lava-Rápido", "Lavanderia",
+  "Loja de Calçados", "Manicure / Nail Art", "Marcenaria / Móveis", "Marmitaria",
+  "Material de Construção", "Nutrição", "Óptica", "Padaria", "Papelaria / Livraria",
+  "Pilates / Yoga", "Pintor", "Pizzaria", "Pousada / Hotel", "Psicologia",
+  "Seguradora", "Sorveteria", "Supermercado", "Veterinária",
 ];
 
 function BuscarPage() {
