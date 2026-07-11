@@ -200,7 +200,7 @@ export const getPublicSite = createServerFn({ method: "POST" })
     );
     const { data: site, error } = await supabase
       .from("sites")
-      .select("title, slug, theme, content, published")
+      .select("id, title, slug, theme, content, published")
       .eq("slug", data.slug)
       .eq("published", true)
       .maybeSingle();
