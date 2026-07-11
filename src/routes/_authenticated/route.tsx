@@ -17,7 +17,8 @@ export const Route = createFileRoute("/_authenticated")({
 type NavItem = { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean };
 const NAV: NavItem[] = [
   { to: "/app", label: "Dashboard", icon: LayoutDashboard, exact: true },
-  { to: "/app/leads", label: "Leads", icon: Users },
+  { to: "/app/buscar", label: "Buscar Leads", icon: Search },
+  { to: "/app/leads", label: "Meus Leads", icon: Users },
   { to: "/app/crm", label: "CRM", icon: Kanban },
   { to: "/app/agenda", label: "Agendamentos", icon: CalendarDays },
   { to: "/app/sites", label: "Meus sites", icon: Globe },
