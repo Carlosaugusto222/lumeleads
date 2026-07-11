@@ -1,7 +1,7 @@
-import { createFileRoute, Outlet, redirect, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect, Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { LogOut, LayoutDashboard, Plus } from "lucide-react";
+import { LogOut, LayoutDashboard, Users, Kanban, CalendarDays, Sparkles, CreditCard, Globe } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/_authenticated")({
@@ -14,41 +14,86 @@ export const Route = createFileRoute("/_authenticated")({
   component: AppShell,
 });
 
+type NavItem = { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean };
+const NAV: NavItem[] = [
+  { to: "/app", label: "Dashboard", icon: LayoutDashboard, exact: true },
+  { to: "/app/leads", label: "Leads", icon: Users },
+  { to: "/app/crm", label: "CRM", icon: Kanban },
+  { to: "/app/agenda", label: "Agendamentos", icon: CalendarDays },
+  { to: "/app/sites", label: "Meus sites", icon: Globe },
+  { to: "/app/new", label: "Criar site", icon: Sparkles },
+  { to: "/app/billing", label: "Planos", icon: CreditCard },
+];
+
 function AppShell() {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const qc = useQueryClient();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   async function handleSignOut() {
-    await queryClient.cancelQueries();
-    queryClient.clear();
+    await qc.cancelQueries();
+    qc.clear();
     await supabase.auth.signOut();
     navigate({ to: "/auth", replace: true });
   }
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="sticky top-0 z-30 border-b border-border/50 bg-background/70 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
-          <Link to="/app" className="flex items-center gap-2 font-display text-lg font-bold">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col border-r border-border/50 bg-card/40 backdrop-blur-xl lg:flex">
+        <Link to="/app" className="flex items-center gap-2 px-5 py-5 font-display text-lg font-bold">
+          <span className="inline-block h-7 w-7 rounded-md bg-gradient-primary" />
+          Sitelume
+        </Link>
+        <nav className="flex-1 space-y-0.5 px-3">
+          {NAV.map((item) => {
+            const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.to}
+                to={item.to}
+                className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors ${
+                  active
+                    ? "bg-primary/15 text-primary"
+                    : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                }`}
+              >
+                <Icon className="h-4 w-4" />
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
+        <div className="border-t border-border/50 p-3">
+          <Button size="sm" variant="ghost" onClick={handleSignOut} className="w-full justify-start text-muted-foreground">
+            <LogOut className="h-4 w-4" /> Sair
+          </Button>
+        </div>
+      </aside>
+
+      {/* Mobile top nav */}
+      <header className="sticky top-0 z-30 border-b border-border/50 bg-background/70 backdrop-blur-xl lg:hidden">
+        <div className="flex items-center justify-between px-4 py-3">
+          <Link to="/app" className="flex items-center gap-2 font-display text-base font-bold">
             <span className="inline-block h-6 w-6 rounded-md bg-gradient-primary" />
             Sitelume
           </Link>
-          <nav className="flex items-center gap-1">
-            <Link to="/app" className="rounded-md px-3 py-2 text-sm text-muted-foreground hover:text-foreground">
-              <LayoutDashboard className="mr-1 inline h-4 w-4" /> Meus sites
-            </Link>
-            <Link to="/app/new">
-              <Button size="sm" className="bg-gradient-primary text-primary-foreground">
-                <Plus className="h-4 w-4" /> Novo site
-              </Button>
-            </Link>
-            <Button size="sm" variant="ghost" onClick={handleSignOut} title="Sair">
-              <LogOut className="h-4 w-4" />
-            </Button>
-          </nav>
+          <Button size="sm" variant="ghost" onClick={handleSignOut}><LogOut className="h-4 w-4" /></Button>
+        </div>
+        <div className="flex gap-1 overflow-x-auto px-3 pb-2">
+          {NAV.map((item) => {
+            const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
+            return (
+              <Link key={item.to} to={item.to}
+                className={`shrink-0 rounded-md px-3 py-1.5 text-xs ${active ? "bg-primary/15 text-primary" : "text-muted-foreground"}`}>
+                {item.label}
+              </Link>
+            );
+          })}
         </div>
       </header>
-      <main>
+
+      <main className="lg:pl-60">
         <Outlet />
       </main>
     </div>

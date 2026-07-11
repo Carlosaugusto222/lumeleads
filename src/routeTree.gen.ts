@@ -15,6 +15,11 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as SSlugRouteImport } from './routes/s.$slug'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app.index'
 import { Route as AuthenticatedAppNewRouteImport } from './routes/_authenticated/app.new'
+import { Route as AuthenticatedAppLeadsRouteImport } from './routes/_authenticated/app.leads'
+import { Route as AuthenticatedAppCrmRouteImport } from './routes/_authenticated/app.crm'
+import { Route as AuthenticatedAppBillingRouteImport } from './routes/_authenticated/app.billing'
+import { Route as AuthenticatedAppAgendaRouteImport } from './routes/_authenticated/app.agenda'
+import { Route as AuthenticatedAppSitesIndexRouteImport } from './routes/_authenticated/app.sites.index'
 import { Route as AuthenticatedAppSitesIdRouteImport } from './routes/_authenticated/app.sites.$id'
 
 const AuthRoute = AuthRouteImport.update({
@@ -46,6 +51,32 @@ const AuthenticatedAppNewRoute = AuthenticatedAppNewRouteImport.update({
   path: '/app/new',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAppLeadsRoute = AuthenticatedAppLeadsRouteImport.update({
+  id: '/app/leads',
+  path: '/app/leads',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAppCrmRoute = AuthenticatedAppCrmRouteImport.update({
+  id: '/app/crm',
+  path: '/app/crm',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAppBillingRoute = AuthenticatedAppBillingRouteImport.update({
+  id: '/app/billing',
+  path: '/app/billing',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAppAgendaRoute = AuthenticatedAppAgendaRouteImport.update({
+  id: '/app/agenda',
+  path: '/app/agenda',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAppSitesIndexRoute =
+  AuthenticatedAppSitesIndexRouteImport.update({
+    id: '/app/sites/',
+    path: '/app/sites/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppSitesIdRoute = AuthenticatedAppSitesIdRouteImport.update({
   id: '/app/sites/$id',
   path: '/app/sites/$id',
@@ -56,17 +87,27 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/s/$slug': typeof SSlugRoute
+  '/app/agenda': typeof AuthenticatedAppAgendaRoute
+  '/app/billing': typeof AuthenticatedAppBillingRoute
+  '/app/crm': typeof AuthenticatedAppCrmRoute
+  '/app/leads': typeof AuthenticatedAppLeadsRoute
   '/app/new': typeof AuthenticatedAppNewRoute
   '/app/': typeof AuthenticatedAppIndexRoute
   '/app/sites/$id': typeof AuthenticatedAppSitesIdRoute
+  '/app/sites/': typeof AuthenticatedAppSitesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/s/$slug': typeof SSlugRoute
+  '/app/agenda': typeof AuthenticatedAppAgendaRoute
+  '/app/billing': typeof AuthenticatedAppBillingRoute
+  '/app/crm': typeof AuthenticatedAppCrmRoute
+  '/app/leads': typeof AuthenticatedAppLeadsRoute
   '/app/new': typeof AuthenticatedAppNewRoute
   '/app': typeof AuthenticatedAppIndexRoute
   '/app/sites/$id': typeof AuthenticatedAppSitesIdRoute
+  '/app/sites': typeof AuthenticatedAppSitesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -74,9 +115,14 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/s/$slug': typeof SSlugRoute
+  '/_authenticated/app/agenda': typeof AuthenticatedAppAgendaRoute
+  '/_authenticated/app/billing': typeof AuthenticatedAppBillingRoute
+  '/_authenticated/app/crm': typeof AuthenticatedAppCrmRoute
+  '/_authenticated/app/leads': typeof AuthenticatedAppLeadsRoute
   '/_authenticated/app/new': typeof AuthenticatedAppNewRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
   '/_authenticated/app/sites/$id': typeof AuthenticatedAppSitesIdRoute
+  '/_authenticated/app/sites/': typeof AuthenticatedAppSitesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -84,20 +130,41 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/s/$slug'
+    | '/app/agenda'
+    | '/app/billing'
+    | '/app/crm'
+    | '/app/leads'
     | '/app/new'
     | '/app/'
     | '/app/sites/$id'
+    | '/app/sites/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/s/$slug' | '/app/new' | '/app' | '/app/sites/$id'
+  to:
+    | '/'
+    | '/auth'
+    | '/s/$slug'
+    | '/app/agenda'
+    | '/app/billing'
+    | '/app/crm'
+    | '/app/leads'
+    | '/app/new'
+    | '/app'
+    | '/app/sites/$id'
+    | '/app/sites'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
     | '/s/$slug'
+    | '/_authenticated/app/agenda'
+    | '/_authenticated/app/billing'
+    | '/_authenticated/app/crm'
+    | '/_authenticated/app/leads'
     | '/_authenticated/app/new'
     | '/_authenticated/app/'
     | '/_authenticated/app/sites/$id'
+    | '/_authenticated/app/sites/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -151,6 +218,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppNewRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/leads': {
+      id: '/_authenticated/app/leads'
+      path: '/app/leads'
+      fullPath: '/app/leads'
+      preLoaderRoute: typeof AuthenticatedAppLeadsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/crm': {
+      id: '/_authenticated/app/crm'
+      path: '/app/crm'
+      fullPath: '/app/crm'
+      preLoaderRoute: typeof AuthenticatedAppCrmRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/billing': {
+      id: '/_authenticated/app/billing'
+      path: '/app/billing'
+      fullPath: '/app/billing'
+      preLoaderRoute: typeof AuthenticatedAppBillingRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/agenda': {
+      id: '/_authenticated/app/agenda'
+      path: '/app/agenda'
+      fullPath: '/app/agenda'
+      preLoaderRoute: typeof AuthenticatedAppAgendaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/sites/': {
+      id: '/_authenticated/app/sites/'
+      path: '/app/sites'
+      fullPath: '/app/sites/'
+      preLoaderRoute: typeof AuthenticatedAppSitesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/app/sites/$id': {
       id: '/_authenticated/app/sites/$id'
       path: '/app/sites/$id'
@@ -162,15 +264,25 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAppAgendaRoute: typeof AuthenticatedAppAgendaRoute
+  AuthenticatedAppBillingRoute: typeof AuthenticatedAppBillingRoute
+  AuthenticatedAppCrmRoute: typeof AuthenticatedAppCrmRoute
+  AuthenticatedAppLeadsRoute: typeof AuthenticatedAppLeadsRoute
   AuthenticatedAppNewRoute: typeof AuthenticatedAppNewRoute
   AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
   AuthenticatedAppSitesIdRoute: typeof AuthenticatedAppSitesIdRoute
+  AuthenticatedAppSitesIndexRoute: typeof AuthenticatedAppSitesIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAppAgendaRoute: AuthenticatedAppAgendaRoute,
+  AuthenticatedAppBillingRoute: AuthenticatedAppBillingRoute,
+  AuthenticatedAppCrmRoute: AuthenticatedAppCrmRoute,
+  AuthenticatedAppLeadsRoute: AuthenticatedAppLeadsRoute,
   AuthenticatedAppNewRoute: AuthenticatedAppNewRoute,
   AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
   AuthenticatedAppSitesIdRoute: AuthenticatedAppSitesIdRoute,
+  AuthenticatedAppSitesIndexRoute: AuthenticatedAppSitesIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -185,13 +297,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

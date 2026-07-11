@@ -73,6 +73,7 @@ function PublicSite() {
   const theme = (site.theme as { primary?: string; accent?: string }) ?? {};
   return (
     <SiteRenderer
+      siteId={site.id}
       content={parsed.data}
       theme={{ primary: theme.primary ?? "#7c3aed", accent: theme.accent ?? "#22d3ee" }}
     />
