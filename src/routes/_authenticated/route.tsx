@@ -5,6 +5,7 @@ import { LogOut, LayoutDashboard, Users, Kanban, CalendarDays, Sparkles, CreditC
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getMyPlan } from "@/lib/plans.functions";
+import { OnboardingVideoDialog } from "@/components/OnboardingVideoDialog";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
