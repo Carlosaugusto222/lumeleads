@@ -114,6 +114,7 @@ function AppShell() {
       <main className="lg:pl-60">
         <Outlet />
       </main>
+      <OnboardingVideoDialog />
     </div>
   );
 }
