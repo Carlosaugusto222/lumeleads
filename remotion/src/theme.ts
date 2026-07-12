@@ -1,0 +1,16 @@
+export const theme = {
+  bg: "#0a0612",
+  bgSoft: "#140a24",
+  surface: "#1a1030",
+  surface2: "#241542",
+  border: "rgba(167,139,250,0.18)",
+  violet: "#8b5cf6",
+  violetGlow: "#a78bfa",
+  cyan: "#22d3ee",
+  cyanSoft: "#67e8f9",
+  text: "#f5f3ff",
+  textDim: "#c4b5fd",
+  textMuted: "#8b7fb8",
+  success: "#34d399",
+  warn: "#fbbf24",
+};
