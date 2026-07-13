@@ -21,6 +21,15 @@ type Tab = "docs" | "roadmap" | "changelog";
 const CHANGELOG: Array<{ date: string; title: string; items: string[] }> = [
   {
     date: "2026-07-13",
+    title: "Analytics do site publicado",
+    items: [
+      "Nova tabela site_events registrando views, cliques CTA/WhatsApp/sociais e envios de formulário",
+      "Painel de analytics em /app/sites/:id com KPIs e gráfico diário (7/30/90d)",
+      "Tracking automático no SiteRenderer, rate-limitado por site",
+    ],
+  },
+  {
+    date: "2026-07-13",
     title: "Rate limiting server-side",
     items: [
       "searchPlaces 60/h, savePlacesAsLeads 30/h, exportMyData 5/h por usuário",
