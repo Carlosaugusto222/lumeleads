@@ -39,6 +39,16 @@ const CHANGELOG: Array<{ date: string; title: string; items: string[] }> = [
   },
   {
     date: "2026-07-13",
+    title: "Geração de logotipo por IA",
+    items: [
+      "src/lib/logo.functions.ts: generateLogo via Lovable AI (google/gemini-3.1-flash-image)",
+      "Editor do site com botão Gerar/Regerar/Remover logo dentro do card Marca",
+      "Logo renderizado no header do site publicado quando definido",
+      "Rate limit 20/h por usuário",
+    ],
+  },
+  {
+    date: "2026-07-13",
     title: "Copywriting IA por segmento",
     items: [
       "src/lib/segment-copy.ts: hints (ângulo, benefícios, provas, CTA) por grupo de setor",
