@@ -21,6 +21,16 @@ type Tab = "docs" | "roadmap" | "changelog";
 const CHANGELOG: Array<{ date: string; title: string; items: string[] }> = [
   {
     date: "2026-07-13",
+    title: "Pexels + Unsplash como fontes de fotos",
+    items: [
+      "Novo server fn fetchStockPhotos (Pexels + Unsplash em paralelo, resultado intercalado)",
+      "Wizard passo Fotos ganhou campo de busca em bancos de imagens",
+      "Rate limit 60/h por usuário; requer PEXELS_API_KEY e/ou UNSPLASH_ACCESS_KEY",
+      "Fallback silencioso quando as chaves não estão configuradas",
+    ],
+  },
+  {
+    date: "2026-07-13",
     title: "Testes e2e (Playwright)",
     items: [
       "playwright.config.ts + pasta e2e/ com specs de landing e do wizard",
