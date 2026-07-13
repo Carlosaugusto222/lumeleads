@@ -40,6 +40,63 @@ export const adminStats = createServerFn({ method: "GET" })
     };
   });
 
+export const adminMetrics = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => z.object({ days: z.number().int().min(7).max(90).default(30) }).parse(i))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const now = new Date();
+    const since = new Date(now.getTime() - data.days * 86400_000);
+    const sinceIso = since.toISOString();
+
+    const [profiles, leads, sites, appts, subs, plans] = await Promise.all([
+      supabaseAdmin.from("profiles").select("created_at").gte("created_at", sinceIso),
+      supabaseAdmin.from("leads").select("created_at").gte("created_at", sinceIso),
+      supabaseAdmin.from("sites").select("created_at").gte("created_at", sinceIso),
+      supabaseAdmin.from("appointments").select("created_at").gte("created_at", sinceIso),
+      supabaseAdmin.from("subscriptions").select("plan_id"),
+      supabaseAdmin.from("plans").select("id, name, price_cents"),
+    ]);
+
+    const buckets = new Map<string, { date: string; users: number; leads: number; sites: number; appointments: number }>();
+    for (let i = 0; i < data.days; i++) {
+      const d = new Date(since.getTime() + i * 86400_000).toISOString().slice(0, 10);
+      buckets.set(d, { date: d, users: 0, leads: 0, sites: 0, appointments: 0 });
+    }
+    const bump = (rows: { created_at: string | null }[] | null, key: "users" | "leads" | "sites" | "appointments") => {
+      for (const r of rows ?? []) {
+        if (!r.created_at) continue;
+        const d = r.created_at.slice(0, 10);
+        const b = buckets.get(d);
+        if (b) b[key]++;
+      }
+    };
+    bump(profiles.data, "users");
+    bump(leads.data, "leads");
+    bump(sites.data, "sites");
+    bump(appts.data, "appointments");
+
+    const priceMap = new Map<string, { name: string; price_cents: number }>();
+    for (const p of plans.data ?? []) priceMap.set(p.id, { name: p.name, price_cents: p.price_cents ?? 0 });
+    let mrrCents = 0;
+    const revenueByPlan: { plan: string; mrr: number; count: number }[] = [];
+    const counts: Record<string, number> = {};
+    for (const s of subs.data ?? []) counts[s.plan_id] = (counts[s.plan_id] ?? 0) + 1;
+    for (const [planId, count] of Object.entries(counts)) {
+      const info = priceMap.get(planId);
+      const mrr = (info?.price_cents ?? 0) * count;
+      mrrCents += mrr;
+      revenueByPlan.push({ plan: info?.name ?? planId, count, mrr: mrr / 100 });
+    }
+
+    return {
+      series: Array.from(buckets.values()),
+      mrrBrl: mrrCents / 100,
+      revenueByPlan,
+    };
+  });
+
 export const adminListUsers = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) => z.object({ search: z.string().optional() }).parse(i))
