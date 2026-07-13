@@ -144,6 +144,15 @@ export const adminSetUserPlan = createServerFn({ method: "POST" })
     const { error } = await supabaseAdmin.from("subscriptions").upsert({ user_id: data.userId, plan_id: data.planId, updated_at: new Date().toISOString() });
     if (error) throw new Error(error.message);
     await auditLog(context.userId, "set_user_plan", data.userId, { planId: data.planId });
+    const { data: plan } = await supabaseAdmin.from("plans").select("name").eq("id", data.planId).maybeSingle();
+    const { notifyUser } = await import("./notify.server");
+    await notifyUser({
+      userId: data.userId,
+      title: "Seu plano foi atualizado",
+      message: `Agora você está no plano ${plan?.name ?? data.planId}.`,
+      type: "success",
+      link: "/app/billing",
+    });
     return { ok: true };
   });
 

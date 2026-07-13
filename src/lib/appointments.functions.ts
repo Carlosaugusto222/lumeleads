@@ -41,6 +41,15 @@ export const createAppointment = createServerFn({ method: "POST" })
       status: data.status ?? "pendente",
     });
     if (error) throw new Error(error.message);
+    const when = new Date(data.starts_at).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
+    const { notifyUser } = await import("./notify.server");
+    await notifyUser({
+      userId: context.userId,
+      title: "Agendamento criado",
+      message: `${data.title} — ${when}`,
+      type: "info",
+      link: "/app/agenda",
+    });
     return { ok: true };
   });
 
