@@ -49,6 +49,11 @@ export const searchPlaces = createServerFn({ method: "POST" })
     const mapsKey = process.env.GOOGLE_MAPS_API_KEY;
     if (!lovableKey || !mapsKey) throw new Error("Google Maps não configurado");
 
+    const { enforceRateLimit } = await import("./security.server");
+    await enforceRateLimit(context.userId, "search_places", 60);
+
+
+
     const { plan, usage } = await loadPlanAndUsage(context.supabase, context.userId);
     if (!plan) throw new Error("Plano não encontrado");
     if (plan.monthly_searches !== -1 && (usage.searches ?? 0) >= plan.monthly_searches) {
@@ -171,6 +176,8 @@ export const savePlacesAsLeads = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) => saveInput.parse(i))
   .handler(async ({ data, context }) => {
+    const { enforceRateLimit } = await import("./security.server");
+    await enforceRateLimit(context.userId, "save_leads", 30);
     const { plan, usage } = await loadPlanAndUsage(context.supabase, context.userId);
     if (!plan) throw new Error("Plano não encontrado");
     if (plan.monthly_saved_leads !== -1 && (usage.saved_leads ?? 0) + data.places.length > plan.monthly_saved_leads) {

@@ -21,6 +21,15 @@ type Tab = "docs" | "roadmap" | "changelog";
 const CHANGELOG: Array<{ date: string; title: string; items: string[] }> = [
   {
     date: "2026-07-13",
+    title: "Rate limiting server-side",
+    items: [
+      "searchPlaces 60/h, savePlacesAsLeads 30/h, exportMyData 5/h por usuário",
+      "submitToSite 20/h por site_id (anti-spam de formulário)",
+      "Usa RPC consume_rate_limit + tabela rate_limits",
+    ],
+  },
+  {
+    date: "2026-07-13",
     title: "Gatilhos de notificação automática",
     items: [
       "Notificação ao salvar lead, criar agendamento e receber submissão pelo site público",
@@ -87,7 +96,7 @@ const ROADMAP: Array<{
   { status: "done", phase: "Notificações", title: "Gatilhos automáticos", desc: "Lead, agendamento, submissão do site e upgrade de plano." },
   { status: "doing", phase: "Sites", title: "Pexels + Unsplash como fontes extras", desc: "Complementar fotos do Google Places e Instagram." },
   { status: "doing", phase: "Sites", title: "Templates de tema", desc: "3–5 layouts distintos (moderno, clássico, bold, minimal)." },
-  { status: "todo", phase: "Segurança", title: "Rate limiting server-side", desc: "Aplicar consume_rate_limit em buscas, submissões e exports." },
+  { status: "done", phase: "Segurança", title: "Rate limiting server-side", desc: "consume_rate_limit em buscas, saves, exports e submissões." },
   { status: "todo", phase: "Sites", title: "Analytics do site publicado", desc: "Views, cliques em WhatsApp, formulário, mapa." },
   { status: "todo", phase: "Sites", title: "Domínio próprio por site", desc: "CNAME + verificação + SSL automático." },
   { status: "todo", phase: "CRM", title: "Automação de follow-up", desc: "Sequências por status do lead (WhatsApp/email)." },
