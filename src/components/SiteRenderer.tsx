@@ -1,8 +1,9 @@
 import type { SiteContent } from "@/lib/sites.functions";
 import { Check, Loader2, Instagram, Facebook, Youtube, Music2, Twitter, MessageCircle, Globe } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { submitToSite } from "@/lib/submissions.functions";
+import { trackSiteEvent, type SiteEventType } from "@/lib/site-analytics.functions";
 import { toast } from "sonner";
 
 interface Props {
@@ -27,6 +28,17 @@ export function SiteRenderer({ content, theme, siteId }: Props) {
   const hero = photos[0];
   const gallery = photos.slice(1, 7);
   const socials = content.socials ?? {};
+
+  const trackFn = useServerFn(trackSiteEvent);
+  const track = useRef((_type: SiteEventType, _meta?: Record<string, unknown>) => {});
+  useEffect(() => {
+    if (!siteId) return;
+    track.current = (type, meta) => {
+      trackFn({ data: { site_id: siteId, event_type: type, meta } }).catch(() => {});
+    };
+    track.current("view");
+  }, [siteId, trackFn]);
+
 
   return (
     <div style={style} className="min-h-screen">
