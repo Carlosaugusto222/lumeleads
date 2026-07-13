@@ -19,6 +19,7 @@ import { Route as AuthenticatedAppSettingsRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAppReferralsRouteImport } from './routes/_authenticated/app.referrals'
 import { Route as AuthenticatedAppNewRouteImport } from './routes/_authenticated/app.new'
 import { Route as AuthenticatedAppLeadsRouteImport } from './routes/_authenticated/app.leads'
+import { Route as AuthenticatedAppFollowupsRouteImport } from './routes/_authenticated/app.followups'
 import { Route as AuthenticatedAppDocsRouteImport } from './routes/_authenticated/app.docs'
 import { Route as AuthenticatedAppCrmRouteImport } from './routes/_authenticated/app.crm'
 import { Route as AuthenticatedAppBuscarRouteImport } from './routes/_authenticated/app.buscar'
@@ -80,6 +81,12 @@ const AuthenticatedAppLeadsRoute = AuthenticatedAppLeadsRouteImport.update({
   path: '/app/leads',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAppFollowupsRoute =
+  AuthenticatedAppFollowupsRouteImport.update({
+    id: '/app/followups',
+    path: '/app/followups',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppDocsRoute = AuthenticatedAppDocsRouteImport.update({
   id: '/app/docs',
   path: '/app/docs',
@@ -138,6 +145,7 @@ export interface FileRoutesByFullPath {
   '/app/buscar': typeof AuthenticatedAppBuscarRoute
   '/app/crm': typeof AuthenticatedAppCrmRoute
   '/app/docs': typeof AuthenticatedAppDocsRoute
+  '/app/followups': typeof AuthenticatedAppFollowupsRoute
   '/app/leads': typeof AuthenticatedAppLeadsRoute
   '/app/new': typeof AuthenticatedAppNewRoute
   '/app/referrals': typeof AuthenticatedAppReferralsRoute
@@ -158,6 +166,7 @@ export interface FileRoutesByTo {
   '/app/buscar': typeof AuthenticatedAppBuscarRoute
   '/app/crm': typeof AuthenticatedAppCrmRoute
   '/app/docs': typeof AuthenticatedAppDocsRoute
+  '/app/followups': typeof AuthenticatedAppFollowupsRoute
   '/app/leads': typeof AuthenticatedAppLeadsRoute
   '/app/new': typeof AuthenticatedAppNewRoute
   '/app/referrals': typeof AuthenticatedAppReferralsRoute
@@ -180,6 +189,7 @@ export interface FileRoutesById {
   '/_authenticated/app/buscar': typeof AuthenticatedAppBuscarRoute
   '/_authenticated/app/crm': typeof AuthenticatedAppCrmRoute
   '/_authenticated/app/docs': typeof AuthenticatedAppDocsRoute
+  '/_authenticated/app/followups': typeof AuthenticatedAppFollowupsRoute
   '/_authenticated/app/leads': typeof AuthenticatedAppLeadsRoute
   '/_authenticated/app/new': typeof AuthenticatedAppNewRoute
   '/_authenticated/app/referrals': typeof AuthenticatedAppReferralsRoute
@@ -202,6 +212,7 @@ export interface FileRouteTypes {
     | '/app/buscar'
     | '/app/crm'
     | '/app/docs'
+    | '/app/followups'
     | '/app/leads'
     | '/app/new'
     | '/app/referrals'
@@ -222,6 +233,7 @@ export interface FileRouteTypes {
     | '/app/buscar'
     | '/app/crm'
     | '/app/docs'
+    | '/app/followups'
     | '/app/leads'
     | '/app/new'
     | '/app/referrals'
@@ -243,6 +255,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/buscar'
     | '/_authenticated/app/crm'
     | '/_authenticated/app/docs'
+    | '/_authenticated/app/followups'
     | '/_authenticated/app/leads'
     | '/_authenticated/app/new'
     | '/_authenticated/app/referrals'
@@ -334,6 +347,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppLeadsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/followups': {
+      id: '/_authenticated/app/followups'
+      path: '/app/followups'
+      fullPath: '/app/followups'
+      preLoaderRoute: typeof AuthenticatedAppFollowupsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/app/docs': {
       id: '/_authenticated/app/docs'
       path: '/app/docs'
@@ -421,6 +441,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppBuscarRoute: typeof AuthenticatedAppBuscarRoute
   AuthenticatedAppCrmRoute: typeof AuthenticatedAppCrmRoute
   AuthenticatedAppDocsRoute: typeof AuthenticatedAppDocsRoute
+  AuthenticatedAppFollowupsRoute: typeof AuthenticatedAppFollowupsRoute
   AuthenticatedAppLeadsRoute: typeof AuthenticatedAppLeadsRoute
   AuthenticatedAppNewRoute: typeof AuthenticatedAppNewRoute
   AuthenticatedAppReferralsRoute: typeof AuthenticatedAppReferralsRoute
@@ -437,6 +458,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppBuscarRoute: AuthenticatedAppBuscarRoute,
   AuthenticatedAppCrmRoute: AuthenticatedAppCrmRoute,
   AuthenticatedAppDocsRoute: AuthenticatedAppDocsRoute,
+  AuthenticatedAppFollowupsRoute: AuthenticatedAppFollowupsRoute,
   AuthenticatedAppLeadsRoute: AuthenticatedAppLeadsRoute,
   AuthenticatedAppNewRoute: AuthenticatedAppNewRoute,
   AuthenticatedAppReferralsRoute: AuthenticatedAppReferralsRoute,
