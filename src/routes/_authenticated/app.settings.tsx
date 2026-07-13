@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { getMyAccount, updateMyProfile, deleteMyAccount, listMySessions, revokeMySession } from "@/lib/account.functions";
+import { TwoFactorSetup } from "@/components/TwoFactorSetup";
 
 export const Route = createFileRoute("/_authenticated/app/settings")({
   component: SettingsPage,
@@ -177,6 +178,8 @@ function SecurityTab() {
         <h2 className="text-lg font-semibold">Segurança</h2>
         <p className="text-xs text-muted-foreground">Senha, dispositivos e exclusão de conta.</p>
       </div>
+
+      <TwoFactorSetup />
 
       <div className="space-y-3 border-b border-border/60 pb-6">
         <h3 className="text-sm font-medium">Senha</h3>
