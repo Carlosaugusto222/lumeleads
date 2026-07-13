@@ -370,18 +370,21 @@ export type Database = {
           created_at: string
           display_name: string | null
           id: string
+          referral_code: string | null
           updated_at: string
         }
         Insert: {
           created_at?: string
           display_name?: string | null
           id: string
+          referral_code?: string | null
           updated_at?: string
         }
         Update: {
           created_at?: string
           display_name?: string | null
           id?: string
+          referral_code?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -404,6 +407,36 @@ export type Database = {
           count?: number
           user_id?: string
           window_hour?: string
+        }
+        Relationships: []
+      }
+      referrals: {
+        Row: {
+          converted_at: string | null
+          created_at: string
+          id: string
+          referred_id: string
+          referrer_id: string
+          reward_credits: number
+          status: string
+        }
+        Insert: {
+          converted_at?: string | null
+          created_at?: string
+          id?: string
+          referred_id: string
+          referrer_id: string
+          reward_credits?: number
+          status?: string
+        }
+        Update: {
+          converted_at?: string | null
+          created_at?: string
+          id?: string
+          referred_id?: string
+          referrer_id?: string
+          reward_credits?: number
+          status?: string
         }
         Relationships: []
       }
