@@ -45,7 +45,7 @@ const PLANS: Plan[] = [
     ],
   },
   {
-    name: "Pro", tagline: "Para freelancers ativos", price: { monthly: 97, yearly: 68 }, highlight: true,
+    id: "pro", name: "Pro", tagline: "Para freelancers ativos", price: { monthly: 97, yearly: 68 }, highlight: true,
     features: [
       { label: "1500 leads/mês", on: true }, { label: "Todas as categorias de negócio", on: true },
       { label: "250 scripts/mês", on: true }, { label: "50 sites/mês", on: true },
