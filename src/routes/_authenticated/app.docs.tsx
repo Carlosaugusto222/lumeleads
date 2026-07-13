@@ -170,7 +170,7 @@ const ROADMAP: Array<{
   { status: "done", phase: "Conta", title: "2FA (TOTP) para admins", desc: "Enroll/verify via Supabase MFA nas Configurações." },
   { status: "done", phase: "Conta", title: "Export de dados (LGPD)", desc: "Download JSON com todos os dados do usuário." },
   { status: "done", phase: "Notificações", title: "Gatilhos automáticos", desc: "Lead, agendamento, submissão do site e upgrade de plano." },
-  { status: "doing", phase: "Sites", title: "Pexels + Unsplash como fontes extras", desc: "Complementar fotos do Google Places e Instagram." },
+  { status: "done", phase: "Sites", title: "Pexels + Unsplash como fontes extras", desc: "Busca em bancos de imagens integrada ao passo Fotos do wizard." },
   { status: "done", phase: "Sites", title: "Templates de tema", desc: "4 layouts distintos: moderno, clássico, bold, minimal." },
   { status: "done", phase: "Segurança", title: "Rate limiting server-side", desc: "consume_rate_limit em buscas, saves, exports e submissões." },
   { status: "done", phase: "Sites", title: "Analytics do site publicado", desc: "Views, cliques em CTA/WhatsApp/sociais e envios de formulário." },
