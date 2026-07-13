@@ -115,7 +115,7 @@ export const Scene5Close = () => {
         }}>
           <Logo size={48} />
           <div style={{ fontFamily: "Inter", fontSize: 22, color: theme.textDim }}>
-            sitelume.app · comece grátis
+            lumeleads.app · comece grátis
           </div>
         </div>
       </AbsoluteFill>

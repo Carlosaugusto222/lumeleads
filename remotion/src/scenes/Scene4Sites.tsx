@@ -130,7 +130,7 @@ export const Scene4Sites = () => {
               <div style={{ width: 10, height: 10, borderRadius: 999, background: "#f59e0b" }} />
               <div style={{ width: 10, height: 10, borderRadius: 999, background: "#10b981" }} />
               <div style={{ marginLeft: 16, background: "#fff", padding: "4px 14px", borderRadius: 8, fontFamily: "Inter", fontSize: 14, color: "#78716c" }}>
-                sitelume.app/s/trattoria-nonna
+                lumeleads.app/s/trattoria-nonna
               </div>
             </div>
             {/* hero */}
