@@ -26,6 +26,7 @@ const NAV: NavItem[] = [
   { to: "/app/crm", label: "CRM", icon: Kanban },
   { to: "/app/agenda", label: "Agendamentos", icon: CalendarDays },
   { to: "/app/followups", label: "Follow-ups", icon: Send },
+  { to: "/app/whatsapp", label: "WhatsApp API", icon: MessageCircle },
 
   { to: "/app/sites", label: "Meus sites", icon: Globe },
   { to: "/app/new", label: "Criar site", icon: Sparkles },
