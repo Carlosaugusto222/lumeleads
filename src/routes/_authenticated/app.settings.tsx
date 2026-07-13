@@ -13,7 +13,7 @@ import {
   DialogHeader, DialogTitle, DialogTrigger,
 } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
-import { getMyAccount, updateMyProfile, deleteMyAccount } from "@/lib/account.functions";
+import { getMyAccount, updateMyProfile, deleteMyAccount, listMySessions, revokeMySession } from "@/lib/account.functions";
 
 export const Route = createFileRoute("/_authenticated/app/settings")({
   component: SettingsPage,
@@ -106,6 +106,8 @@ function SecurityTab() {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const deleteFn = useServerFn(deleteMyAccount);
+  const listSessionsFn = useServerFn(listMySessions);
+  const revokeSessionFn = useServerFn(revokeMySession);
 
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
@@ -113,14 +115,26 @@ function SecurityTab() {
   const [signingOutAll, setSigningOutAll] = useState(false);
   const [confirm, setConfirm] = useState("");
   const [open, setOpen] = useState(false);
-  const [sessionInfo, setSessionInfo] = useState<{ email?: string; lastSignInAt?: string } | null>(null);
+
+  const sessionsQ = useQuery({ queryKey: ["my-sessions"], queryFn: () => listSessionsFn() });
+  const revokeMut = useMutation({
+    mutationFn: (sessionId: string) => revokeSessionFn({ data: { sessionId } }),
+    onSuccess: () => {
+      toast.success("Sessão revogada");
+      qc.invalidateQueries({ queryKey: ["my-sessions"] });
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro"),
+  });
+  const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      setSessionInfo({
-        email: data.user?.email ?? undefined,
-        lastSignInAt: data.user?.last_sign_in_at ?? undefined,
-      });
+    supabase.auth.getSession().then(({ data }) => {
+      const token = data.session?.access_token;
+      if (!token) return;
+      try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        if (payload?.session_id) setCurrentSessionId(payload.session_id as string);
+      } catch { /* ignore */ }
     });
   }, []);
 
@@ -184,19 +198,41 @@ function SecurityTab() {
 
       <div className="space-y-3 border-b border-border/60 pb-6">
         <h3 className="text-sm font-medium">Dispositivos ativos</h3>
-        <div className="flex items-start gap-3 rounded-lg border border-border/60 p-3">
-          <Monitor className="mt-0.5 h-5 w-5 text-muted-foreground" />
-          <div className="flex-1 text-sm">
-            <div className="font-medium">Este dispositivo</div>
-            <div className="text-xs text-muted-foreground">
-              {sessionInfo?.email ?? "—"}
-              {sessionInfo?.lastSignInAt && ` · último login em ${new Date(sessionInfo.lastSignInAt).toLocaleString("pt-BR")}`}
-            </div>
+        {sessionsQ.isLoading ? (
+          <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+        ) : (
+          <div className="space-y-2">
+            {sessionsQ.data?.sessions.map((s: { id: string; userAgent: string; ip: string; lastActiveAt: string }) => {
+              const isCurrent = s.id === currentSessionId;
+              return (
+                <div key={s.id} className="flex items-start gap-3 rounded-lg border border-border/60 p-3">
+                  <Monitor className="mt-0.5 h-5 w-5 text-muted-foreground" />
+                  <div className="flex-1 text-sm">
+                    <div className="flex items-center gap-2 font-medium">
+                      {parseUA(s.userAgent)}
+                      {isCurrent && (
+                        <span className="rounded bg-primary/15 px-1.5 py-0.5 text-[10px] font-semibold text-primary">ESTE</span>
+                      )}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {s.ip || "IP desconhecido"} · ativo em {new Date(s.lastActiveAt).toLocaleString("pt-BR")}
+                    </div>
+                  </div>
+                  {!isCurrent && (
+                    <Button size="sm" variant="ghost"
+                      onClick={() => revokeMut.mutate(s.id)}
+                      disabled={revokeMut.isPending}>
+                      Revogar
+                    </Button>
+                  )}
+                </div>
+              );
+            })}
+            {!sessionsQ.data?.sessions.length && (
+              <p className="text-xs text-muted-foreground">Nenhuma sessão ativa encontrada.</p>
+            )}
           </div>
-        </div>
-        <p className="text-xs text-muted-foreground">
-          Se você suspeitar de acesso indevido, desconecte todas as sessões abaixo.
-        </p>
+        )}
         <Button variant="outline" onClick={handleSignOutAll} disabled={signingOutAll}>
           {signingOutAll ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogOut className="h-4 w-4" />}
           Sair de todos os dispositivos
@@ -231,4 +267,18 @@ function SecurityTab() {
       </div>
     </div>
   );
+}
+
+function parseUA(ua: string): string {
+  if (!ua) return "Dispositivo desconhecido";
+  const os = /Windows/i.test(ua) ? "Windows"
+    : /Mac OS X|Macintosh/i.test(ua) ? "macOS"
+    : /Android/i.test(ua) ? "Android"
+    : /iPhone|iPad|iOS/i.test(ua) ? "iOS"
+    : /Linux/i.test(ua) ? "Linux" : "";
+  const browser = /Edg\//i.test(ua) ? "Edge"
+    : /Chrome\//i.test(ua) ? "Chrome"
+    : /Firefox\//i.test(ua) ? "Firefox"
+    : /Safari\//i.test(ua) ? "Safari" : "Navegador";
+  return [browser, os].filter(Boolean).join(" · ");
 }
