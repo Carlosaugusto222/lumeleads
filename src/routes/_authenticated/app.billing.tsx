@@ -11,6 +11,7 @@ export const Route = createFileRoute("/_authenticated/app/billing")({
 });
 
 type Plan = {
+  id: "gratuito" | "starter" | "pro" | "agencia";
   name: string;
   tagline: string;
   price: { monthly: number; yearly: number };
