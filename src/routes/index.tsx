@@ -13,8 +13,8 @@ function Landing() {
       <nav className="sticky top-0 z-40 border-b border-border/50 bg-background/70 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <Link to="/" className="flex items-center gap-2 font-display text-xl font-bold">
-            <img src="/logo.png" alt="Sitelume" className="h-7 w-7" width={28} height={28} />
-            Sitelume
+            <img src="/logo.png" alt="LumeLeads" className="h-7 w-7" width={28} height={28} />
+            LumeLeads
           </Link>
           <div className="flex items-center gap-2">
             <Link
@@ -46,7 +46,7 @@ function Landing() {
             <span className="text-gradient-primary">minutos</span>, não meses.
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-            Descreva o seu negócio. A Sitelume escreve os textos, monta a página e
+            Descreva o seu negócio. A LumeLeads escreve os textos, monta a página e
             publica em uma URL profissional. Sem código, sem designer, sem template
             genérico.
           </p>
@@ -192,7 +192,7 @@ function Landing() {
       </section>
 
       <footer className="border-t border-border/50 px-6 py-8 text-center text-sm text-muted-foreground">
-        © {new Date().getFullYear()} Sitelume · Feito no Brasil
+        © {new Date().getFullYear()} LumeLeads · Feito no Brasil
       </footer>
     </div>
   );

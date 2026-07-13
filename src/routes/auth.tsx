@@ -38,7 +38,7 @@ function AuthPage() {
   useEffect(() => setTab(mode ?? "signin"), [mode]);
   useEffect(() => {
     if (ref && typeof window !== "undefined") {
-      window.localStorage.setItem("sitelume:ref", ref.toUpperCase());
+      window.localStorage.setItem("lumeleads:ref", ref.toUpperCase());
       setTab("signup");
     }
   }, [ref]);
@@ -91,7 +91,7 @@ function AuthPage() {
       <div className="w-full max-w-md">
         <Link to="/" className="mb-8 flex items-center justify-center gap-2 font-display text-xl font-bold">
           <span className="inline-block h-6 w-6 rounded-md bg-gradient-primary" />
-          Sitelume
+          LumeLeads
         </Link>
 
         <div className="rounded-2xl border border-border/60 bg-card/70 p-8 shadow-2xl backdrop-blur">

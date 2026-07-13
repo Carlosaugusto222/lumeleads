@@ -41,7 +41,7 @@ export const createMpCheckout = createServerFn({ method: "POST" })
       items: [
         {
           id: data.planId,
-          title: `Sitelume ${priceCfg.name} (${data.cycle === "yearly" ? "anual" : "mensal"})`,
+          title: `LumeLeads ${priceCfg.name} (${data.cycle === "yearly" ? "anual" : "mensal"})`,
           quantity: 1,
           unit_price: unitPrice,
           currency_id: "BRL",

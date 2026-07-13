@@ -12,7 +12,7 @@ export const Logo: React.FC<{ size?: number }> = ({ size = 48 }) => (
       }}
     />
     <div style={{ fontFamily: "SpaceGrotesk", fontWeight: 700, fontSize: size * 0.9, color: theme.text, letterSpacing: -1 }}>
-      Sitelume
+      LumeLeads
     </div>
   </div>
 );

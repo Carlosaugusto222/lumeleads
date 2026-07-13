@@ -1,6 +1,6 @@
 // Segment-aware copywriting hints used to enrich the AI prompt when
 // generating landing page content. Matches the free-text sector against
-// keyword groups covering the 56 categorias do Sitelume.
+// keyword groups covering the 56 categorias do LumeLeads.
 
 export type SegmentHint = {
   segment: string;
