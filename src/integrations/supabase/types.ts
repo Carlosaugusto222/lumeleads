@@ -728,6 +728,90 @@ export type Database = {
         }
         Relationships: []
       }
+      whatsapp_credentials: {
+        Row: {
+          access_token: string
+          business_account_id: string | null
+          created_at: string
+          default_template_language: string | null
+          default_template_name: string | null
+          is_active: boolean
+          phone_number_id: string
+          updated_at: string
+          user_id: string
+          verify_token: string | null
+        }
+        Insert: {
+          access_token: string
+          business_account_id?: string | null
+          created_at?: string
+          default_template_language?: string | null
+          default_template_name?: string | null
+          is_active?: boolean
+          phone_number_id: string
+          updated_at?: string
+          user_id: string
+          verify_token?: string | null
+        }
+        Update: {
+          access_token?: string
+          business_account_id?: string | null
+          created_at?: string
+          default_template_language?: string | null
+          default_template_name?: string | null
+          is_active?: boolean
+          phone_number_id?: string
+          updated_at?: string
+          user_id?: string
+          verify_token?: string | null
+        }
+        Relationships: []
+      }
+      whatsapp_messages: {
+        Row: {
+          body_variables: Json | null
+          created_at: string
+          error: string | null
+          id: string
+          lead_id: string | null
+          raw_response: Json | null
+          status: string
+          template_language: string | null
+          template_name: string | null
+          to_phone: string
+          user_id: string
+          wa_message_id: string | null
+        }
+        Insert: {
+          body_variables?: Json | null
+          created_at?: string
+          error?: string | null
+          id?: string
+          lead_id?: string | null
+          raw_response?: Json | null
+          status?: string
+          template_language?: string | null
+          template_name?: string | null
+          to_phone: string
+          user_id: string
+          wa_message_id?: string | null
+        }
+        Update: {
+          body_variables?: Json | null
+          created_at?: string
+          error?: string | null
+          id?: string
+          lead_id?: string | null
+          raw_response?: Json | null
+          status?: string
+          template_language?: string | null
+          template_name?: string | null
+          to_phone?: string
+          user_id?: string
+          wa_message_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
