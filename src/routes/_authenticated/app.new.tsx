@@ -334,6 +334,17 @@ function NewSite() {
             </div>
 
             <div className="flex gap-2">
+              <Input value={stockQuery} onChange={(e) => setStockQuery(e.target.value)}
+                placeholder="Buscar em Pexels + Unsplash (ex: cafeteria, salão)" />
+              <Button type="button" variant="outline" onClick={() => stockMut.mutate()} disabled={stockMut.isPending}>
+                {stockMut.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wand2 className="h-4 w-4" />}
+                Bancos
+              </Button>
+            </div>
+
+
+
+            <div className="flex gap-2">
               <Input value={photoUrl} onChange={(e) => setPhotoUrl(e.target.value)} placeholder="Cole uma URL de imagem" />
               <Button type="button" onClick={() => {
                 if (!photoUrl) return;
