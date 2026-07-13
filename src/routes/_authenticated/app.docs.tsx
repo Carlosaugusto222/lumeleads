@@ -21,6 +21,16 @@ type Tab = "docs" | "roadmap" | "changelog";
 const CHANGELOG: Array<{ date: string; title: string; items: string[] }> = [
   {
     date: "2026-07-13",
+    title: "Pexels + Unsplash como fontes de fotos",
+    items: [
+      "Novo server fn fetchStockPhotos (Pexels + Unsplash em paralelo, resultado intercalado)",
+      "Wizard passo Fotos ganhou campo de busca em bancos de imagens",
+      "Rate limit 60/h por usuário; requer PEXELS_API_KEY e/ou UNSPLASH_ACCESS_KEY",
+      "Fallback silencioso quando as chaves não estão configuradas",
+    ],
+  },
+  {
+    date: "2026-07-13",
     title: "Testes e2e (Playwright)",
     items: [
       "playwright.config.ts + pasta e2e/ com specs de landing e do wizard",
@@ -160,7 +170,7 @@ const ROADMAP: Array<{
   { status: "done", phase: "Conta", title: "2FA (TOTP) para admins", desc: "Enroll/verify via Supabase MFA nas Configurações." },
   { status: "done", phase: "Conta", title: "Export de dados (LGPD)", desc: "Download JSON com todos os dados do usuário." },
   { status: "done", phase: "Notificações", title: "Gatilhos automáticos", desc: "Lead, agendamento, submissão do site e upgrade de plano." },
-  { status: "doing", phase: "Sites", title: "Pexels + Unsplash como fontes extras", desc: "Complementar fotos do Google Places e Instagram." },
+  { status: "done", phase: "Sites", title: "Pexels + Unsplash como fontes extras", desc: "Busca em bancos de imagens integrada ao passo Fotos do wizard." },
   { status: "done", phase: "Sites", title: "Templates de tema", desc: "4 layouts distintos: moderno, clássico, bold, minimal." },
   { status: "done", phase: "Segurança", title: "Rate limiting server-side", desc: "consume_rate_limit em buscas, saves, exports e submissões." },
   { status: "done", phase: "Sites", title: "Analytics do site publicado", desc: "Views, cliques em CTA/WhatsApp/sociais e envios de formulário." },

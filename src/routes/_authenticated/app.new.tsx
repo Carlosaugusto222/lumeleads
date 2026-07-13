@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/select";
 import { generateSite } from "@/lib/sites.functions";
 import { listLeads } from "@/lib/leads.functions";
-import { suggestPalettes, fetchPlacePhotos, fetchInstagramPhotos, type Palette as PaletteType } from "@/lib/site-wizard.functions";
+import { suggestPalettes, fetchPlacePhotos, fetchInstagramPhotos, fetchStockPhotos, type Palette as PaletteType } from "@/lib/site-wizard.functions";
 
 const newSiteSearchSchema = z.object({
   leadId: z.string().optional(),
@@ -51,7 +51,9 @@ function NewSite() {
   const suggestFn = useServerFn(suggestPalettes);
   const photosFn = useServerFn(fetchPlacePhotos);
   const igFn = useServerFn(fetchInstagramPhotos);
+  const stockFn = useServerFn(fetchStockPhotos);
   const [igHandle, setIgHandle] = useState("");
+  const [stockQuery, setStockQuery] = useState("");
 
   const [step, setStep] = useState(0);
   const [mode, setMode] = useState<"lead" | "manual">(search.leadId ? "lead" : "lead");
@@ -120,6 +122,26 @@ function NewSite() {
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao buscar Instagram"),
   });
+
+  const stockMut = useMutation({
+    mutationFn: () => {
+      const q = (stockQuery || `${sector} ${businessName}`).trim();
+      if (!q) throw new Error("Informe um termo de busca (ex: 'cafeteria', 'salão de beleza')");
+      return stockFn({ data: { query: q, max: 8, source: "both" } });
+    },
+    onSuccess: ({ photos: p, sources }) => {
+      if (!sources.pexels && !sources.unsplash) {
+        toast.error("Bancos de imagens não configurados. Peça ao admin para adicionar PEXELS_API_KEY e/ou UNSPLASH_ACCESS_KEY.");
+        return;
+      }
+      if (!p.length) toast.info("Nenhuma foto encontrada para esse termo.");
+      else toast.success(`${p.length} foto(s) adicionadas`);
+      setPhotos((prev) => Array.from(new Set([...prev, ...p.map((x) => x.url)])).slice(0, 12));
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao buscar fotos"),
+  });
+
+
 
 
   const genMut = useMutation({
@@ -310,6 +332,17 @@ function NewSite() {
                 Instagram
               </Button>
             </div>
+
+            <div className="flex gap-2">
+              <Input value={stockQuery} onChange={(e) => setStockQuery(e.target.value)}
+                placeholder="Buscar em Pexels + Unsplash (ex: cafeteria, salão)" />
+              <Button type="button" variant="outline" onClick={() => stockMut.mutate()} disabled={stockMut.isPending}>
+                {stockMut.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wand2 className="h-4 w-4" />}
+                Bancos
+              </Button>
+            </div>
+
+
 
             <div className="flex gap-2">
               <Input value={photoUrl} onChange={(e) => setPhotoUrl(e.target.value)} placeholder="Cole uma URL de imagem" />
