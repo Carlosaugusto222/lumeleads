@@ -123,6 +123,26 @@ function NewSite() {
     onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao buscar Instagram"),
   });
 
+  const stockMut = useMutation({
+    mutationFn: () => {
+      const q = (stockQuery || `${sector} ${businessName}`).trim();
+      if (!q) throw new Error("Informe um termo de busca (ex: 'cafeteria', 'salão de beleza')");
+      return stockFn({ data: { query: q, max: 8, source: "both" } });
+    },
+    onSuccess: ({ photos: p, sources }) => {
+      if (!sources.pexels && !sources.unsplash) {
+        toast.error("Bancos de imagens não configurados. Peça ao admin para adicionar PEXELS_API_KEY e/ou UNSPLASH_ACCESS_KEY.");
+        return;
+      }
+      if (!p.length) toast.info("Nenhuma foto encontrada para esse termo.");
+      else toast.success(`${p.length} foto(s) adicionadas`);
+      setPhotos((prev) => Array.from(new Set([...prev, ...p.map((x) => x.url)])).slice(0, 12));
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao buscar fotos"),
+  });
+
+
+
 
   const genMut = useMutation({
     mutationFn: () =>
