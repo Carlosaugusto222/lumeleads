@@ -21,6 +21,16 @@ type Tab = "docs" | "roadmap" | "changelog";
 const CHANGELOG: Array<{ date: string; title: string; items: string[] }> = [
   {
     date: "2026-07-13",
+    title: "Programa de indicação",
+    items: [
+      "Cada perfil recebe um código único (auto-gerado no signup)",
+      "Página /app/referrals: link compartilhável, aplicar código recebido e listar indicações",
+      "Captura de ?ref= na tela de auth → localStorage → aplicado após o primeiro login",
+      "Nova tabela referrals com RLS (usuário vê as próprias, admin vê todas)",
+    ],
+  },
+  {
+    date: "2026-07-13",
     title: "Templates de tema (4 layouts)",
     items: [
       "Novos templates: Moderno, Clássico, Bold e Minimal — variam tipografia, cantos, sombras e layout do hero",
