@@ -129,6 +129,111 @@ export type Database = {
           },
         ]
       }
+      follow_up_tasks: {
+        Row: {
+          body: string
+          channel: Database["public"]["Enums"]["followup_channel"]
+          created_at: string
+          error: string | null
+          id: string
+          lead_id: string
+          scheduled_for: string
+          sent_at: string | null
+          status: Database["public"]["Enums"]["followup_task_status"]
+          subject: string | null
+          template_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          channel: Database["public"]["Enums"]["followup_channel"]
+          created_at?: string
+          error?: string | null
+          id?: string
+          lead_id: string
+          scheduled_for: string
+          sent_at?: string | null
+          status?: Database["public"]["Enums"]["followup_task_status"]
+          subject?: string | null
+          template_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          channel?: Database["public"]["Enums"]["followup_channel"]
+          created_at?: string
+          error?: string | null
+          id?: string
+          lead_id?: string
+          scheduled_for?: string
+          sent_at?: string | null
+          status?: Database["public"]["Enums"]["followup_task_status"]
+          subject?: string | null
+          template_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "follow_up_tasks_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "follow_up_tasks_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "follow_up_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      follow_up_templates: {
+        Row: {
+          body: string
+          channel: Database["public"]["Enums"]["followup_channel"]
+          created_at: string
+          delay_hours: number
+          enabled: boolean
+          id: string
+          name: string
+          subject: string | null
+          trigger_status: Database["public"]["Enums"]["lead_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          channel: Database["public"]["Enums"]["followup_channel"]
+          created_at?: string
+          delay_hours?: number
+          enabled?: boolean
+          id?: string
+          name: string
+          subject?: string | null
+          trigger_status: Database["public"]["Enums"]["lead_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          channel?: Database["public"]["Enums"]["followup_channel"]
+          created_at?: string
+          delay_hours?: number
+          enabled?: boolean
+          id?: string
+          name?: string
+          subject?: string | null
+          trigger_status?: Database["public"]["Enums"]["lead_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           address: string | null
@@ -648,6 +753,8 @@ export type Database = {
     Enums: {
       app_role: "admin" | "user"
       appointment_status: "pendente" | "concluido" | "cancelado"
+      followup_channel: "whatsapp" | "email"
+      followup_task_status: "pending" | "sent" | "cancelled" | "failed"
       lead_status:
         | "base"
         | "abordado"
@@ -785,6 +892,8 @@ export const Constants = {
     Enums: {
       app_role: ["admin", "user"],
       appointment_status: ["pendente", "concluido", "cancelado"],
+      followup_channel: ["whatsapp", "email"],
+      followup_task_status: ["pending", "sent", "cancelled", "failed"],
       lead_status: [
         "base",
         "abordado",

@@ -107,8 +107,48 @@ export const setLeadStatus = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase.from("leads").update({ status: data.status }).eq("id", data.id);
     if (error) throw new Error(error.message);
+
+    // Auto-schedule matching follow-up templates for this new status.
+    try {
+      const { data: templates } = await context.supabase
+        .from("follow_up_templates")
+        .select("*")
+        .eq("trigger_status", data.status)
+        .eq("enabled", true);
+      if (templates && templates.length > 0) {
+        const { data: lead } = await context.supabase
+          .from("leads")
+          .select("id,name,phone,email,city,category")
+          .eq("id", data.id)
+          .maybeSingle();
+        if (lead) {
+          const vars: Record<string, string> = {
+            nome: lead.name ?? "",
+            cidade: lead.city ?? "",
+            categoria: lead.category ?? "",
+          };
+          const render = (t: string) =>
+            t.replace(/\{\{\s*(\w+)\s*\}\}/g, (_, k) => vars[k] ?? "");
+          const now = Date.now();
+          const rows = templates.map((t) => ({
+            user_id: context.userId,
+            lead_id: lead.id,
+            template_id: t.id,
+            channel: t.channel,
+            subject: t.subject ? render(t.subject) : null,
+            body: render(t.body),
+            scheduled_for: new Date(now + t.delay_hours * 3600 * 1000).toISOString(),
+            status: "pending" as const,
+          }));
+          await context.supabase.from("follow_up_tasks").insert(rows);
+        }
+      }
+    } catch (e) {
+      console.error("[followups] schedule failed:", e);
+    }
     return { ok: true };
   });
+
 
 export const deleteLead = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
