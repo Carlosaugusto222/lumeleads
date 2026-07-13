@@ -28,6 +28,7 @@ const NAV: NavItem[] = [
   { to: "/app/new", label: "Criar site", icon: Sparkles },
   { to: "/app/billing", label: "Planos", icon: CreditCard },
   { to: "/app/admin", label: "Super Admin", icon: Shield, adminOnly: true },
+  { to: "/app/docs", label: "Documentação", icon: BookOpen, adminOnly: true },
 ];
 
 function AppShell() {
