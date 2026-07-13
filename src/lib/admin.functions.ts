@@ -78,8 +78,10 @@ export const adminSetUserPlan = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { auditLog } = await import("./security.server");
     const { error } = await supabaseAdmin.from("subscriptions").upsert({ user_id: data.userId, plan_id: data.planId, updated_at: new Date().toISOString() });
     if (error) throw new Error(error.message);
+    await auditLog(context.userId, "set_user_plan", data.userId, { planId: data.planId });
     return { ok: true };
   });
 
@@ -89,6 +91,7 @@ export const adminSetUserRole = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { auditLog } = await import("./security.server");
     if (data.grant) {
       const { error } = await supabaseAdmin.from("user_roles").insert({ user_id: data.userId, role: data.role });
       if (error && !String(error.message).includes("duplicate")) throw new Error(error.message);
@@ -96,6 +99,7 @@ export const adminSetUserRole = createServerFn({ method: "POST" })
       const { error } = await supabaseAdmin.from("user_roles").delete().eq("user_id", data.userId).eq("role", data.role);
       if (error) throw new Error(error.message);
     }
+    await auditLog(context.userId, data.grant ? "grant_role" : "revoke_role", data.userId, { role: data.role });
     return { ok: true };
   });
 
