@@ -149,7 +149,7 @@ const ROADMAP: Array<{
   { status: "todo", phase: "CRM", title: "Integração WhatsApp Business API", desc: "Envio direto do CRM, templates aprovados." },
   { status: "done", phase: "IA", title: "Copywriting por segmento", desc: "Hints por segmento injetados no prompt do gerador de sites (11 grupos cobrindo as 56 categorias)." },
   { status: "done", phase: "IA", title: "Geração de logotipo", desc: "Logo simples via IA (Gemini flash image) direto no editor do site." },
-  { status: "todo", phase: "Conta", title: "Dispositivos ativos reais", desc: "Listagem de sessões Supabase + revogar." },
+  { status: "done", phase: "Conta", title: "Dispositivos ativos reais", desc: "Listagem de sessões Supabase (auth.sessions) + revogar individual ou todas." },
   { status: "todo", phase: "Billing", title: "Stripe checkout + webhooks", desc: "Assinatura recorrente com upgrade/downgrade." },
   { status: "todo", phase: "Growth", title: "Programa de indicação", desc: "Créditos por indicação convertida." },
   { status: "todo", phase: "Qualidade", title: "Testes e2e do wizard", desc: "Playwright cobrindo o fluxo completo." },
