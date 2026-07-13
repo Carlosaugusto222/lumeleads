@@ -45,7 +45,8 @@ export function SiteRenderer({ content, theme, siteId }: Props) {
       <header className="border-b" style={{ borderColor: `${text}18` }}>
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <div className="text-lg font-bold">{content.brandName}</div>
-          <a href="#cta" className="rounded-md px-4 py-2 text-sm font-medium text-white" style={{ backgroundColor: theme.primary }}>
+          <a href="#cta" onClick={() => track.current("cta_click", { where: "header" })}
+             className="rounded-md px-4 py-2 text-sm font-medium text-white" style={{ backgroundColor: theme.primary }}>
             {content.ctaLabel}
           </a>
         </div>
@@ -61,7 +62,8 @@ export function SiteRenderer({ content, theme, siteId }: Props) {
             <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl">{content.headline}</h1>
             <p className="mt-6 text-lg opacity-80">{content.subheadline}</p>
             <div className="mt-8">
-              <a href="#cta" className="inline-flex items-center justify-center rounded-md px-6 py-3 text-base font-semibold text-white shadow-lg transition-transform hover:scale-105"
+              <a href="#cta" onClick={() => track.current("cta_click", { where: "hero" })}
+                 className="inline-flex items-center justify-center rounded-md px-6 py-3 text-base font-semibold text-white shadow-lg transition-transform hover:scale-105"
                  style={{ backgroundColor: theme.primary }}>
                 {content.ctaLabel}
               </a>
