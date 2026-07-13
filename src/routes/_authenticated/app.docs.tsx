@@ -39,6 +39,15 @@ const CHANGELOG: Array<{ date: string; title: string; items: string[] }> = [
   },
   {
     date: "2026-07-13",
+    title: "PWA instalável + Dispositivos ativos reais",
+    items: [
+      "Manifest, ícones 192/512/maskable e meta tags iOS — instalável na tela inicial",
+      "Configurações → Segurança lista sessões reais de auth.sessions com IP, user-agent e último acesso",
+      "Revogar sessão individual ou sair de todos os dispositivos",
+    ],
+  },
+  {
+    date: "2026-07-13",
     title: "Geração de logotipo por IA",
     items: [
       "src/lib/logo.functions.ts: generateLogo via Lovable AI (google/gemini-3.1-flash-image)",
