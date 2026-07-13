@@ -25,7 +25,7 @@ export const Route = createFileRoute("/_authenticated/app/admin")({
   component: AdminPage,
 });
 
-type Tab = "overview" | "users" | "plans" | "categories" | "audit";
+type Tab = "overview" | "metrics" | "users" | "plans" | "categories" | "audit";
 
 function AdminPage() {
   const [tab, setTab] = useState<Tab>("overview");
