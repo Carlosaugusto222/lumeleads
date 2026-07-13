@@ -169,3 +169,71 @@ export const fetchInstagramPhotos = createServerFn({ method: "POST" })
     }
     return { photos: Array.from(found).slice(0, 12) };
   });
+
+// ---------- Stock photos (Pexels + Unsplash) ----------
+
+const stockInput = z.object({
+  query: z.string().min(1).max(120),
+  max: z.number().int().min(1).max(12).default(8),
+  source: z.enum(["both", "pexels", "unsplash"]).default("both"),
+});
+
+type StockPhoto = { url: string; source: "pexels" | "unsplash"; credit?: string; link?: string };
+
+async function fetchPexels(query: string, max: number): Promise<StockPhoto[]> {
+  const key = process.env.PEXELS_API_KEY;
+  if (!key) return [];
+  const url = `https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=${max}&orientation=landscape`;
+  const res = await fetch(url, { headers: { Authorization: key } });
+  if (!res.ok) return [];
+  const j = (await res.json()) as { photos?: Array<{ src?: { large2x?: string; large?: string }; photographer?: string; url?: string }> };
+  return (j.photos ?? []).map((p) => ({
+    url: p.src?.large2x || p.src?.large || "",
+    source: "pexels" as const,
+    credit: p.photographer,
+    link: p.url,
+  })).filter((p) => p.url);
+}
+
+async function fetchUnsplash(query: string, max: number): Promise<StockPhoto[]> {
+  const key = process.env.UNSPLASH_ACCESS_KEY;
+  if (!key) return [];
+  const url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=${max}&orientation=landscape&content_filter=high`;
+  const res = await fetch(url, { headers: { Authorization: `Client-ID ${key}`, "Accept-Version": "v1" } });
+  if (!res.ok) return [];
+  const j = (await res.json()) as { results?: Array<{ urls?: { regular?: string }; user?: { name?: string }; links?: { html?: string } }> };
+  return (j.results ?? []).map((p) => ({
+    url: p.urls?.regular || "",
+    source: "unsplash" as const,
+    credit: p.user?.name,
+    link: p.links?.html,
+  })).filter((p) => p.url);
+}
+
+export const fetchStockPhotos = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => stockInput.parse(i))
+  .handler(async ({ data, context }): Promise<{ photos: StockPhoto[]; sources: { pexels: boolean; unsplash: boolean } }> => {
+    const { enforceRateLimit } = await import("./security.server");
+    await enforceRateLimit(context.userId, "fetch_stock_photos", 60);
+    const per = Math.ceil(data.max / (data.source === "both" ? 2 : 1));
+    const jobs: Array<Promise<StockPhoto[]>> = [];
+    if (data.source !== "unsplash") jobs.push(fetchPexels(data.query, per));
+    if (data.source !== "pexels") jobs.push(fetchUnsplash(data.query, per));
+    const results = (await Promise.all(jobs)).flat();
+    // interleave pexels/unsplash for variety
+    const px = results.filter((r) => r.source === "pexels");
+    const un = results.filter((r) => r.source === "unsplash");
+    const merged: StockPhoto[] = [];
+    for (let i = 0; i < Math.max(px.length, un.length); i++) {
+      if (px[i]) merged.push(px[i]);
+      if (un[i]) merged.push(un[i]);
+    }
+    return {
+      photos: merged.slice(0, data.max),
+      sources: {
+        pexels: !!process.env.PEXELS_API_KEY,
+        unsplash: !!process.env.UNSPLASH_ACCESS_KEY,
+      },
+    };
+  });
