@@ -21,6 +21,16 @@ type Tab = "docs" | "roadmap" | "changelog";
 const CHANGELOG: Array<{ date: string; title: string; items: string[] }> = [
   {
     date: "2026-07-13",
+    title: "Testes e2e (Playwright)",
+    items: [
+      "playwright.config.ts + pasta e2e/ com specs de landing e do wizard",
+      "Wizard cobre os 5 passos em modo manual; passo Gerar não é acionado (economia de créditos)",
+      "Scripts npm: test:e2e e test:e2e:install",
+      "Credenciais via E2E_EMAIL / E2E_PASSWORD; sem elas o wizard é skip",
+    ],
+  },
+  {
+    date: "2026-07-13",
     title: "Programa de indicação",
     items: [
       "Cada perfil recebe um código único (auto-gerado no signup)",
@@ -162,7 +172,7 @@ const ROADMAP: Array<{
   { status: "done", phase: "Conta", title: "Dispositivos ativos reais", desc: "Listagem de sessões Supabase (auth.sessions) + revogar individual ou todas." },
   { status: "todo", phase: "Billing", title: "Stripe checkout + webhooks", desc: "Assinatura recorrente com upgrade/downgrade." },
   { status: "done", phase: "Growth", title: "Programa de indicação", desc: "Código único por perfil, link compartilhável, aplicar código e listar indicações." },
-  { status: "todo", phase: "Qualidade", title: "Testes e2e do wizard", desc: "Playwright cobrindo o fluxo completo." },
+  { status: "done", phase: "Qualidade", title: "Testes e2e do wizard", desc: "Playwright: landing pública + fluxo dos 5 passos do wizard (skip sem E2E_EMAIL)." },
 ];
 
 function DocsPage() {
