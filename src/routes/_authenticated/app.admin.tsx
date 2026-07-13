@@ -3,14 +3,15 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Users, LayoutDashboard, Package, Tags, Shield, Loader2, Trash2, ScrollText } from "lucide-react";
+import { Users, LayoutDashboard, Package, Tags, Shield, Loader2, Trash2, ScrollText, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } from "recharts";
 import { getMyPlan } from "@/lib/plans.functions";
 import {
   adminStats, adminListUsers, adminSetUserPlan, adminSetUserRole,
-  adminUpdatePlan, adminUpsertCategory, adminDeleteCategory, adminAuditLog,
+  adminUpdatePlan, adminUpsertCategory, adminDeleteCategory, adminAuditLog, adminMetrics,
 } from "@/lib/admin.functions";
 import { supabase } from "@/integrations/supabase/client";
 
