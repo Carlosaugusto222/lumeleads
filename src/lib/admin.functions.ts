@@ -155,3 +155,29 @@ export const adminDeleteCategory = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+export const adminAuditLog = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data, error } = await supabaseAdmin
+      .from("admin_audit_log")
+      .select("id, actor_id, action, target_id, metadata, created_at")
+      .order("created_at", { ascending: false })
+      .limit(200);
+    if (error) throw new Error(error.message);
+    const actorIds = Array.from(new Set((data ?? []).flatMap((r) => [r.actor_id, r.target_id]).filter(Boolean))) as string[];
+    const emailMap = new Map<string, string>();
+    if (actorIds.length) {
+      const list = await supabaseAdmin.auth.admin.listUsers({ perPage: 200 });
+      for (const u of list.data.users ?? []) emailMap.set(u.id, u.email ?? "");
+    }
+    return {
+      entries: (data ?? []).map((r) => ({
+        ...r,
+        actor_email: emailMap.get(r.actor_id) ?? r.actor_id,
+        target_email: r.target_id ? emailMap.get(r.target_id) ?? r.target_id : null,
+      })),
+    };
+  });
