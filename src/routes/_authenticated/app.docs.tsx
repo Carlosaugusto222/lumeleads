@@ -161,7 +161,7 @@ const ROADMAP: Array<{
   { status: "done", phase: "IA", title: "Geração de logotipo", desc: "Logo simples via IA (Gemini flash image) direto no editor do site." },
   { status: "done", phase: "Conta", title: "Dispositivos ativos reais", desc: "Listagem de sessões Supabase (auth.sessions) + revogar individual ou todas." },
   { status: "todo", phase: "Billing", title: "Stripe checkout + webhooks", desc: "Assinatura recorrente com upgrade/downgrade." },
-  { status: "todo", phase: "Growth", title: "Programa de indicação", desc: "Créditos por indicação convertida." },
+  { status: "done", phase: "Growth", title: "Programa de indicação", desc: "Código único por perfil, link compartilhável, aplicar código e listar indicações." },
   { status: "todo", phase: "Qualidade", title: "Testes e2e do wizard", desc: "Playwright cobrindo o fluxo completo." },
 ];
 
