@@ -1,8 +1,9 @@
 import type { SiteContent } from "@/lib/sites.functions";
 import { Check, Loader2, Instagram, Facebook, Youtube, Music2, Twitter, MessageCircle, Globe } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { submitToSite } from "@/lib/submissions.functions";
+import { trackSiteEvent, type SiteEventType } from "@/lib/site-analytics.functions";
 import { toast } from "sonner";
 
 interface Props {
@@ -28,12 +29,24 @@ export function SiteRenderer({ content, theme, siteId }: Props) {
   const gallery = photos.slice(1, 7);
   const socials = content.socials ?? {};
 
+  const trackFn = useServerFn(trackSiteEvent);
+  const track = useRef((_type: SiteEventType, _meta?: Record<string, unknown>) => {});
+  useEffect(() => {
+    if (!siteId) return;
+    track.current = (type, meta) => {
+      trackFn({ data: { site_id: siteId, event_type: type, meta } }).catch(() => {});
+    };
+    track.current("view");
+  }, [siteId, trackFn]);
+
+
   return (
     <div style={style} className="min-h-screen">
       <header className="border-b" style={{ borderColor: `${text}18` }}>
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <div className="text-lg font-bold">{content.brandName}</div>
-          <a href="#cta" className="rounded-md px-4 py-2 text-sm font-medium text-white" style={{ backgroundColor: theme.primary }}>
+          <a href="#cta" onClick={() => track.current("cta_click", { where: "header" })}
+             className="rounded-md px-4 py-2 text-sm font-medium text-white" style={{ backgroundColor: theme.primary }}>
             {content.ctaLabel}
           </a>
         </div>
@@ -49,7 +62,8 @@ export function SiteRenderer({ content, theme, siteId }: Props) {
             <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl">{content.headline}</h1>
             <p className="mt-6 text-lg opacity-80">{content.subheadline}</p>
             <div className="mt-8">
-              <a href="#cta" className="inline-flex items-center justify-center rounded-md px-6 py-3 text-base font-semibold text-white shadow-lg transition-transform hover:scale-105"
+              <a href="#cta" onClick={() => track.current("cta_click", { where: "hero" })}
+                 className="inline-flex items-center justify-center rounded-md px-6 py-3 text-base font-semibold text-white shadow-lg transition-transform hover:scale-105"
                  style={{ backgroundColor: theme.primary }}>
                 {content.ctaLabel}
               </a>
@@ -139,7 +153,8 @@ export function SiteRenderer({ content, theme, siteId }: Props) {
           <h2 className="text-3xl font-bold sm:text-4xl">{content.headline}</h2>
           <p className="mx-auto mt-4 max-w-xl opacity-90">{content.subheadline}</p>
           {siteId ? (
-            <CaptureForm siteId={siteId} ctaLabel={content.ctaLabel} primary={theme.primary} />
+            <CaptureForm siteId={siteId} ctaLabel={content.ctaLabel} primary={theme.primary}
+              onSubmitted={() => track.current("form_submit")} />
           ) : (
             <a href="#" className="mt-8 inline-flex items-center justify-center rounded-md bg-white px-6 py-3 text-base font-semibold shadow-lg" style={{ color: theme.primary }}>
               {content.ctaLabel}
@@ -148,7 +163,8 @@ export function SiteRenderer({ content, theme, siteId }: Props) {
         </div>
       </section>
 
-      <SocialsBar socials={socials} primary={theme.primary} />
+      <SocialsBar socials={socials} primary={theme.primary}
+        onClick={(label) => track.current(label === "WhatsApp" ? "whatsapp_click" : "social_click", { network: label })} />
 
       <footer className="border-t px-6 py-8 text-center text-sm opacity-70" style={{ borderColor: `${text}18` }}>
         {content.footerNote} · Feito com <a href="/" className="underline">Sitelume</a>
@@ -157,7 +173,7 @@ export function SiteRenderer({ content, theme, siteId }: Props) {
   );
 }
 
-function SocialsBar({ socials, primary }: { socials: SiteContent["socials"]; primary: string }) {
+function SocialsBar({ socials, primary, onClick }: { socials: SiteContent["socials"]; primary: string; onClick?: (label: string) => void }) {
   const items: Array<{ url: string; icon: React.ReactNode; label: string }> = [];
   const push = (url: string | undefined, icon: React.ReactNode, label: string, prefix = "") => {
     if (!url) return;
@@ -182,6 +198,7 @@ function SocialsBar({ socials, primary }: { socials: SiteContent["socials"]; pri
     <div className="flex flex-wrap items-center justify-center gap-3 px-6 py-8">
       {items.map((i, idx) => (
         <a key={idx} href={i.url} target="_blank" rel="noreferrer" aria-label={i.label}
+          onClick={() => onClick?.(i.label)}
           className="flex h-11 w-11 items-center justify-center rounded-full text-white shadow-md transition-transform hover:scale-110"
           style={{ backgroundColor: primary }}>
           {i.icon}
@@ -191,7 +208,7 @@ function SocialsBar({ socials, primary }: { socials: SiteContent["socials"]; pri
   );
 }
 
-function CaptureForm({ siteId, ctaLabel, primary }: { siteId: string; ctaLabel: string; primary: string }) {
+function CaptureForm({ siteId, ctaLabel, primary, onSubmitted }: { siteId: string; ctaLabel: string; primary: string; onSubmitted?: () => void }) {
   const submit = useServerFn(submitToSite);
   const [f, setF] = useState({ name: "", email: "", phone: "", message: "" });
   const [loading, setLoading] = useState(false);
@@ -204,6 +221,7 @@ function CaptureForm({ siteId, ctaLabel, primary }: { siteId: string; ctaLabel: 
     try {
       await submit({ data: { site_id: siteId, ...f } });
       setDone(true);
+      onSubmitted?.();
       setF({ name: "", email: "", phone: "", message: "" });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Erro ao enviar");
