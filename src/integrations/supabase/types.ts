@@ -201,6 +201,36 @@ export type Database = {
         }
         Relationships: []
       }
+      mp_webhook_logs: {
+        Row: {
+          created_at: string
+          error: string | null
+          id: string
+          payload: Json | null
+          resource_id: string | null
+          status: string
+          topic: string | null
+        }
+        Insert: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          payload?: Json | null
+          resource_id?: string | null
+          status?: string
+          topic?: string | null
+        }
+        Update: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          payload?: Json | null
+          resource_id?: string | null
+          status?: string
+          topic?: string | null
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           created_at: string
@@ -233,6 +263,68 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      payments: {
+        Row: {
+          amount_cents: number
+          created_at: string
+          currency: string
+          cycle: string
+          id: string
+          init_point: string | null
+          mp_payment_id: string | null
+          mp_preapproval_id: string | null
+          mp_preference_id: string | null
+          plan_id: string
+          provider: string
+          raw: Json | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount_cents: number
+          created_at?: string
+          currency?: string
+          cycle?: string
+          id?: string
+          init_point?: string | null
+          mp_payment_id?: string | null
+          mp_preapproval_id?: string | null
+          mp_preference_id?: string | null
+          plan_id: string
+          provider?: string
+          raw?: Json | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount_cents?: number
+          created_at?: string
+          currency?: string
+          cycle?: string
+          id?: string
+          init_point?: string | null
+          mp_payment_id?: string | null
+          mp_preapproval_id?: string | null
+          mp_preference_id?: string | null
+          plan_id?: string
+          provider?: string
+          raw?: Json | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       plans: {
         Row: {
