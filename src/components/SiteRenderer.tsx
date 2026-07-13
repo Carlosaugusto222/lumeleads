@@ -208,7 +208,7 @@ function SocialsBar({ socials, primary, onClick }: { socials: SiteContent["socia
   );
 }
 
-function CaptureForm({ siteId, ctaLabel, primary }: { siteId: string; ctaLabel: string; primary: string }) {
+function CaptureForm({ siteId, ctaLabel, primary, onSubmitted }: { siteId: string; ctaLabel: string; primary: string; onSubmitted?: () => void }) {
   const submit = useServerFn(submitToSite);
   const [f, setF] = useState({ name: "", email: "", phone: "", message: "" });
   const [loading, setLoading] = useState(false);
@@ -221,6 +221,7 @@ function CaptureForm({ siteId, ctaLabel, primary }: { siteId: string; ctaLabel: 
     try {
       await submit({ data: { site_id: siteId, ...f } });
       setDone(true);
+      onSubmitted?.();
       setF({ name: "", email: "", phone: "", message: "" });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Erro ao enviar");
