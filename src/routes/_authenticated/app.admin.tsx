@@ -34,6 +34,7 @@ function AdminPage() {
 
   const tabs: Array<{ id: Tab; label: string; icon: typeof Users }> = [
     { id: "overview", label: "Visão geral", icon: LayoutDashboard },
+    { id: "metrics", label: "Métricas", icon: TrendingUp },
     { id: "users", label: "Usuários", icon: Users },
     { id: "plans", label: "Planos", icon: Package },
     { id: "categories", label: "Categorias", icon: Tags },
