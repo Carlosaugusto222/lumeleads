@@ -18,7 +18,7 @@ import {
   type SiteContent,
 } from "@/lib/sites.functions";
 import { getSiteAnalytics } from "@/lib/site-analytics.functions";
-import { SiteRenderer } from "@/components/SiteRenderer";
+import { SiteRenderer, SITE_TEMPLATES, type SiteTemplate } from "@/components/SiteRenderer";
 
 export const Route = createFileRoute("/_authenticated/app/sites/$id")({
   component: EditSite,
@@ -37,7 +37,7 @@ function EditSite() {
   });
 
   const [content, setContent] = useState<SiteContent | null>(null);
-  const [theme, setTheme] = useState({ primary: "#7c3aed", accent: "#22d3ee" });
+  const [theme, setTheme] = useState<{ primary: string; accent: string; template: SiteTemplate }>({ primary: "#7c3aed", accent: "#22d3ee", template: "modern" });
   const [title, setTitle] = useState("");
 
   useEffect(() => {
@@ -45,8 +45,12 @@ function EditSite() {
     const parsed = siteContentSchema.safeParse(site.content);
     if (parsed.success) setContent(parsed.data);
     setTitle(site.title);
-    const t = site.theme as { primary?: string; accent?: string } | null;
-    setTheme({ primary: t?.primary ?? "#7c3aed", accent: t?.accent ?? "#22d3ee" });
+    const t = site.theme as { primary?: string; accent?: string; template?: SiteTemplate } | null;
+    setTheme({
+      primary: t?.primary ?? "#7c3aed",
+      accent: t?.accent ?? "#22d3ee",
+      template: t?.template ?? "modern",
+    });
   }, [site]);
 
   const saveMut = useMutation({
@@ -135,6 +139,29 @@ function EditSite() {
               value={content.tagline}
               onChange={(v) => setContent({ ...content, tagline: v })}
             />
+          </Card>
+
+          <Card title="Template">
+            <div className="grid grid-cols-2 gap-2">
+              {SITE_TEMPLATES.map((t) => {
+                const active = theme.template === t.id;
+                return (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => setTheme({ ...theme, template: t.id })}
+                    className={`rounded-lg border p-3 text-left text-xs transition-colors ${
+                      active
+                        ? "border-primary bg-primary/10 text-foreground"
+                        : "border-border/60 bg-background hover:border-primary/50"
+                    }`}
+                  >
+                    <div className="font-semibold">{t.label}</div>
+                    <div className="mt-1 text-[10px] text-muted-foreground">{t.description}</div>
+                  </button>
+                );
+              })}
+            </div>
           </Card>
 
           <Card title="Cores">

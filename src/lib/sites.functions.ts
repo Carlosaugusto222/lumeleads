@@ -188,6 +188,7 @@ export const updateSite = createServerFn({ method: "POST" })
             accent: z.string(),
             background: z.string().optional(),
             text: z.string().optional(),
+            template: z.enum(["modern", "classic", "bold", "minimal"]).optional(),
           })
           .optional(),
       })
