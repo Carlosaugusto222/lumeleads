@@ -137,13 +137,19 @@ function BillingPage() {
                 </li>
               ))}
             </ul>
-            <Button className={p.highlight ? "bg-gradient-primary text-primary-foreground" : ""} variant={p.highlight ? "default" : "outline"} disabled={p.price.monthly === 0}>
+            <Button
+              className={p.highlight ? "bg-gradient-primary text-primary-foreground" : ""}
+              variant={p.highlight ? "default" : "outline"}
+              disabled={p.price.monthly === 0 || loadingId === p.id}
+              onClick={() => p.id !== "gratuito" && upgrade(p.id)}
+            >
+              {loadingId === p.id && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {p.price.monthly === 0 ? "Plano atual" : "Fazer upgrade"}
             </Button>
           </div>
         ))}
       </div>
-      <p className="mt-6 text-center text-xs text-muted-foreground">Pagamento seguro via Stripe · Cancele a qualquer momento · Suporte via WhatsApp</p>
+      <p className="mt-6 text-center text-xs text-muted-foreground">Pagamento seguro via Mercado Pago (PIX, cartão, boleto) · Cancele a qualquer momento</p>
     </div>
   );
 }
