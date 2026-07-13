@@ -32,7 +32,7 @@ export async function auditLog(
     actor_id: actorId,
     action,
     target_id: targetId,
-    metadata,
+    metadata: metadata as never,
   });
   if (error) console.error("[audit_log]", error);
 }
