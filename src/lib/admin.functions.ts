@@ -2,10 +2,15 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-async function assertAdmin(ctx: { supabase: any; userId: string }) {
+async function assertAdmin(ctx: { supabase: any; userId: string; claims?: any }) {
   const { data, error } = await ctx.supabase.rpc("has_role", { _user_id: ctx.userId, _role: "admin" });
   if (error) throw new Error(error.message);
   if (!data) throw new Error("Acesso restrito");
+  // Enforce 2FA (aal2) when the admin has enrolled any verified factor
+  const { data: factors } = await ctx.supabase.auth.mfa.listFactors();
+  const hasVerified = (factors?.totp ?? []).some((f: any) => f.status === "verified");
+  const aal = ctx.claims?.aal ?? "aal1";
+  if (hasVerified && aal !== "aal2") throw new Error("2FA obrigatório para admins");
 }
 
 export const adminStats = createServerFn({ method: "GET" })
