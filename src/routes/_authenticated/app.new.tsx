@@ -51,7 +51,9 @@ function NewSite() {
   const suggestFn = useServerFn(suggestPalettes);
   const photosFn = useServerFn(fetchPlacePhotos);
   const igFn = useServerFn(fetchInstagramPhotos);
+  const stockFn = useServerFn(fetchStockPhotos);
   const [igHandle, setIgHandle] = useState("");
+  const [stockQuery, setStockQuery] = useState("");
 
   const [step, setStep] = useState(0);
   const [mode, setMode] = useState<"lead" | "manual">(search.leadId ? "lead" : "lead");
