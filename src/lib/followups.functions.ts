@@ -151,7 +151,11 @@ export const setFollowupTaskStatus = createServerFn({ method: "POST" })
       .parse(i),
   )
   .handler(async ({ data, context }) => {
-    const patch: Record<string, unknown> = { status: data.status };
+    const patch: {
+      status: FollowupTaskStatus;
+      sent_at?: string;
+      error?: string | null;
+    } = { status: data.status };
     if (data.status === "sent") patch.sent_at = new Date().toISOString();
     if (data.error !== undefined) patch.error = data.error;
     const { error } = await context.supabase
@@ -161,6 +165,7 @@ export const setFollowupTaskStatus = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
 
 export const deleteFollowupTask = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
