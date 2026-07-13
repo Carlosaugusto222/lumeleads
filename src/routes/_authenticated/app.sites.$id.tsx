@@ -139,6 +139,14 @@ function EditSite() {
               value={content.tagline}
               onChange={(v) => setContent({ ...content, tagline: v })}
             />
+            <LogoField
+              logoUrl={content.logoUrl}
+              brandName={content.brandName}
+              tagline={content.tagline}
+              primary={theme.primary}
+              accent={theme.accent}
+              onChange={(v) => setContent({ ...content, logoUrl: v })}
+            />
           </Card>
 
           <Card title="Template">
