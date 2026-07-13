@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { User, Shield, Loader2, LogOut, Trash2, Monitor } from "lucide-react";
+import { User, Shield, Loader2, LogOut, Trash2, Monitor, Download } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,6 +15,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { getMyAccount, updateMyProfile, deleteMyAccount, listMySessions, revokeMySession } from "@/lib/account.functions";
 import { TwoFactorSetup } from "@/components/TwoFactorSetup";
+import { exportMyData } from "@/lib/data-export.functions";
 
 export const Route = createFileRoute("/_authenticated/app/settings")({
   component: SettingsPage,
@@ -241,6 +242,8 @@ function SecurityTab() {
           Sair de todos os dispositivos
         </Button>
       </div>
+
+      <DataExportSection />
 
       <div className="space-y-3">
         <h3 className="text-sm font-medium text-destructive">Excluir conta</h3>
