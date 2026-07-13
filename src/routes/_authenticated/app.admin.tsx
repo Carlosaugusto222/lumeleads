@@ -3,14 +3,14 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Users, LayoutDashboard, Package, Tags, Shield, Loader2, Trash2 } from "lucide-react";
+import { Users, LayoutDashboard, Package, Tags, Shield, Loader2, Trash2, ScrollText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { getMyPlan } from "@/lib/plans.functions";
 import {
   adminStats, adminListUsers, adminSetUserPlan, adminSetUserRole,
-  adminUpdatePlan, adminUpsertCategory, adminDeleteCategory,
+  adminUpdatePlan, adminUpsertCategory, adminDeleteCategory, adminAuditLog,
 } from "@/lib/admin.functions";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -24,7 +24,7 @@ export const Route = createFileRoute("/_authenticated/app/admin")({
   component: AdminPage,
 });
 
-type Tab = "overview" | "users" | "plans" | "categories";
+type Tab = "overview" | "users" | "plans" | "categories" | "audit";
 
 function AdminPage() {
   const [tab, setTab] = useState<Tab>("overview");
@@ -36,6 +36,7 @@ function AdminPage() {
     { id: "users", label: "Usuários", icon: Users },
     { id: "plans", label: "Planos", icon: Package },
     { id: "categories", label: "Categorias", icon: Tags },
+    { id: "audit", label: "Auditoria", icon: ScrollText },
   ];
 
   return (
@@ -67,6 +68,36 @@ function AdminPage() {
       {tab === "users" && <UsersTab plans={planQ.data?.plans ?? []} />}
       {tab === "plans" && <PlansTab plans={planQ.data?.plans ?? []} />}
       {tab === "categories" && <CategoriesTab plans={planQ.data?.plans ?? []} categories={planQ.data?.categories ?? []} />}
+      {tab === "audit" && <AuditTab />}
+    </div>
+  );
+}
+
+function AuditTab() {
+  const fn = useServerFn(adminAuditLog);
+  const q = useQuery({ queryKey: ["admin-audit"], queryFn: () => fn() });
+  if (q.isLoading) return <Loader2 className="h-5 w-5 animate-spin" />;
+  return (
+    <div className="overflow-x-auto rounded-xl border border-border/60">
+      <table className="w-full text-sm">
+        <thead className="bg-muted/30 text-left text-xs uppercase tracking-wider text-muted-foreground">
+          <tr><th className="p-3">Quando</th><th className="p-3">Ator</th><th className="p-3">Ação</th><th className="p-3">Alvo</th><th className="p-3">Detalhes</th></tr>
+        </thead>
+        <tbody>
+          {q.data?.entries.map((e) => (
+            <tr key={e.id} className="border-t border-border/40">
+              <td className="p-3 whitespace-nowrap text-xs text-muted-foreground">{new Date(e.created_at).toLocaleString("pt-BR")}</td>
+              <td className="p-3 text-xs">{e.actor_email}</td>
+              <td className="p-3"><span className="rounded-md bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">{e.action}</span></td>
+              <td className="p-3 text-xs">{e.target_email ?? "—"}</td>
+              <td className="p-3 text-xs text-muted-foreground font-mono">{JSON.stringify(e.metadata)}</td>
+            </tr>
+          ))}
+          {!q.data?.entries.length && (
+            <tr><td colSpan={5} className="p-6 text-center text-sm text-muted-foreground">Nenhum registro ainda.</td></tr>
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }
