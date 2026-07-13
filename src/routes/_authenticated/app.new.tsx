@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/select";
 import { generateSite } from "@/lib/sites.functions";
 import { listLeads } from "@/lib/leads.functions";
-import { suggestPalettes, fetchPlacePhotos, fetchInstagramPhotos, type Palette as PaletteType } from "@/lib/site-wizard.functions";
+import { suggestPalettes, fetchPlacePhotos, fetchInstagramPhotos, fetchStockPhotos, type Palette as PaletteType } from "@/lib/site-wizard.functions";
 
 const newSiteSearchSchema = z.object({
   leadId: z.string().optional(),
