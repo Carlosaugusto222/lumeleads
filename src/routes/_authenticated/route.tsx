@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, redirect, Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { LogOut, LayoutDashboard, Users, Kanban, CalendarDays, Sparkles, CreditCard, Globe, Search, Shield, Settings, BookOpen } from "lucide-react";
+import { LogOut, LayoutDashboard, Users, Kanban, CalendarDays, Sparkles, CreditCard, Globe, Search, Shield, Settings, BookOpen, Gift } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getMyPlan } from "@/lib/plans.functions";
@@ -28,6 +28,7 @@ const NAV: NavItem[] = [
   { to: "/app/sites", label: "Meus sites", icon: Globe },
   { to: "/app/new", label: "Criar site", icon: Sparkles },
   { to: "/app/billing", label: "Planos", icon: CreditCard },
+  { to: "/app/referrals", label: "Indicações", icon: Gift },
   { to: "/app/admin", label: "Super Admin", icon: Shield, adminOnly: true },
   { to: "/app/docs", label: "Documentação", icon: BookOpen, adminOnly: true },
 ];

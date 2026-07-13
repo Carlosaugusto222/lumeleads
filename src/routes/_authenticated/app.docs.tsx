@@ -21,6 +21,16 @@ type Tab = "docs" | "roadmap" | "changelog";
 const CHANGELOG: Array<{ date: string; title: string; items: string[] }> = [
   {
     date: "2026-07-13",
+    title: "Programa de indicação",
+    items: [
+      "Cada perfil recebe um código único (auto-gerado no signup)",
+      "Página /app/referrals: link compartilhável, aplicar código recebido e listar indicações",
+      "Captura de ?ref= na tela de auth → localStorage → aplicado após o primeiro login",
+      "Nova tabela referrals com RLS (usuário vê as próprias, admin vê todas)",
+    ],
+  },
+  {
+    date: "2026-07-13",
     title: "Templates de tema (4 layouts)",
     items: [
       "Novos templates: Moderno, Clássico, Bold e Minimal — variam tipografia, cantos, sombras e layout do hero",
@@ -151,7 +161,7 @@ const ROADMAP: Array<{
   { status: "done", phase: "IA", title: "Geração de logotipo", desc: "Logo simples via IA (Gemini flash image) direto no editor do site." },
   { status: "done", phase: "Conta", title: "Dispositivos ativos reais", desc: "Listagem de sessões Supabase (auth.sessions) + revogar individual ou todas." },
   { status: "todo", phase: "Billing", title: "Stripe checkout + webhooks", desc: "Assinatura recorrente com upgrade/downgrade." },
-  { status: "todo", phase: "Growth", title: "Programa de indicação", desc: "Créditos por indicação convertida." },
+  { status: "done", phase: "Growth", title: "Programa de indicação", desc: "Código único por perfil, link compartilhável, aplicar código e listar indicações." },
   { status: "todo", phase: "Qualidade", title: "Testes e2e do wizard", desc: "Playwright cobrindo o fluxo completo." },
 ];
 

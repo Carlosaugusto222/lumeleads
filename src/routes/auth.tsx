@@ -12,6 +12,7 @@ import { Loader2 } from "lucide-react";
 
 const search = z.object({
   mode: z.enum(["signin", "signup"]).default("signin").optional(),
+  ref: z.string().trim().min(1).max(16).optional(),
 });
 
 export const Route = createFileRoute("/auth")({
@@ -26,7 +27,7 @@ export const Route = createFileRoute("/auth")({
 });
 
 function AuthPage() {
-  const { mode } = Route.useSearch();
+  const { mode, ref } = Route.useSearch();
   const navigate = useNavigate();
   const [tab, setTab] = useState<"signin" | "signup">(mode ?? "signin");
   const [email, setEmail] = useState("");
@@ -35,6 +36,12 @@ function AuthPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => setTab(mode ?? "signin"), [mode]);
+  useEffect(() => {
+    if (ref && typeof window !== "undefined") {
+      window.localStorage.setItem("sitelume:ref", ref.toUpperCase());
+      setTab("signup");
+    }
+  }, [ref]);
 
   async function handleEmailAuth(e: React.FormEvent) {
     e.preventDefault();
