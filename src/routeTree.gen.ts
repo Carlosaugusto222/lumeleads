@@ -16,6 +16,7 @@ import { Route as SSlugRouteImport } from './routes/s.$slug'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app.index'
 import { Route as ApiPublicMpWebhookRouteImport } from './routes/api/public/mp-webhook'
 import { Route as AuthenticatedAppSettingsRouteImport } from './routes/_authenticated/app.settings'
+import { Route as AuthenticatedAppReferralsRouteImport } from './routes/_authenticated/app.referrals'
 import { Route as AuthenticatedAppNewRouteImport } from './routes/_authenticated/app.new'
 import { Route as AuthenticatedAppLeadsRouteImport } from './routes/_authenticated/app.leads'
 import { Route as AuthenticatedAppDocsRouteImport } from './routes/_authenticated/app.docs'
@@ -61,6 +62,12 @@ const AuthenticatedAppSettingsRoute =
   AuthenticatedAppSettingsRouteImport.update({
     id: '/app/settings',
     path: '/app/settings',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAppReferralsRoute =
+  AuthenticatedAppReferralsRouteImport.update({
+    id: '/app/referrals',
+    path: '/app/referrals',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedAppNewRoute = AuthenticatedAppNewRouteImport.update({
@@ -133,6 +140,7 @@ export interface FileRoutesByFullPath {
   '/app/docs': typeof AuthenticatedAppDocsRoute
   '/app/leads': typeof AuthenticatedAppLeadsRoute
   '/app/new': typeof AuthenticatedAppNewRoute
+  '/app/referrals': typeof AuthenticatedAppReferralsRoute
   '/app/settings': typeof AuthenticatedAppSettingsRoute
   '/api/public/mp-webhook': typeof ApiPublicMpWebhookRoute
   '/app/': typeof AuthenticatedAppIndexRoute
@@ -152,6 +160,7 @@ export interface FileRoutesByTo {
   '/app/docs': typeof AuthenticatedAppDocsRoute
   '/app/leads': typeof AuthenticatedAppLeadsRoute
   '/app/new': typeof AuthenticatedAppNewRoute
+  '/app/referrals': typeof AuthenticatedAppReferralsRoute
   '/app/settings': typeof AuthenticatedAppSettingsRoute
   '/api/public/mp-webhook': typeof ApiPublicMpWebhookRoute
   '/app': typeof AuthenticatedAppIndexRoute
@@ -173,6 +182,7 @@ export interface FileRoutesById {
   '/_authenticated/app/docs': typeof AuthenticatedAppDocsRoute
   '/_authenticated/app/leads': typeof AuthenticatedAppLeadsRoute
   '/_authenticated/app/new': typeof AuthenticatedAppNewRoute
+  '/_authenticated/app/referrals': typeof AuthenticatedAppReferralsRoute
   '/_authenticated/app/settings': typeof AuthenticatedAppSettingsRoute
   '/api/public/mp-webhook': typeof ApiPublicMpWebhookRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
@@ -194,6 +204,7 @@ export interface FileRouteTypes {
     | '/app/docs'
     | '/app/leads'
     | '/app/new'
+    | '/app/referrals'
     | '/app/settings'
     | '/api/public/mp-webhook'
     | '/app/'
@@ -213,6 +224,7 @@ export interface FileRouteTypes {
     | '/app/docs'
     | '/app/leads'
     | '/app/new'
+    | '/app/referrals'
     | '/app/settings'
     | '/api/public/mp-webhook'
     | '/app'
@@ -233,6 +245,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/docs'
     | '/_authenticated/app/leads'
     | '/_authenticated/app/new'
+    | '/_authenticated/app/referrals'
     | '/_authenticated/app/settings'
     | '/api/public/mp-webhook'
     | '/_authenticated/app/'
@@ -298,6 +311,13 @@ declare module '@tanstack/react-router' {
       path: '/app/settings'
       fullPath: '/app/settings'
       preLoaderRoute: typeof AuthenticatedAppSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/referrals': {
+      id: '/_authenticated/app/referrals'
+      path: '/app/referrals'
+      fullPath: '/app/referrals'
+      preLoaderRoute: typeof AuthenticatedAppReferralsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/app/new': {
@@ -403,6 +423,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppDocsRoute: typeof AuthenticatedAppDocsRoute
   AuthenticatedAppLeadsRoute: typeof AuthenticatedAppLeadsRoute
   AuthenticatedAppNewRoute: typeof AuthenticatedAppNewRoute
+  AuthenticatedAppReferralsRoute: typeof AuthenticatedAppReferralsRoute
   AuthenticatedAppSettingsRoute: typeof AuthenticatedAppSettingsRoute
   AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
   AuthenticatedAppSitesIdRoute: typeof AuthenticatedAppSitesIdRoute
@@ -418,6 +439,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppDocsRoute: AuthenticatedAppDocsRoute,
   AuthenticatedAppLeadsRoute: AuthenticatedAppLeadsRoute,
   AuthenticatedAppNewRoute: AuthenticatedAppNewRoute,
+  AuthenticatedAppReferralsRoute: AuthenticatedAppReferralsRoute,
   AuthenticatedAppSettingsRoute: AuthenticatedAppSettingsRoute,
   AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
   AuthenticatedAppSitesIdRoute: AuthenticatedAppSitesIdRoute,
