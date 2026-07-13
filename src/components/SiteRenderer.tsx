@@ -153,7 +153,8 @@ export function SiteRenderer({ content, theme, siteId }: Props) {
           <h2 className="text-3xl font-bold sm:text-4xl">{content.headline}</h2>
           <p className="mx-auto mt-4 max-w-xl opacity-90">{content.subheadline}</p>
           {siteId ? (
-            <CaptureForm siteId={siteId} ctaLabel={content.ctaLabel} primary={theme.primary} />
+            <CaptureForm siteId={siteId} ctaLabel={content.ctaLabel} primary={theme.primary}
+              onSubmitted={() => track.current("form_submit")} />
           ) : (
             <a href="#" className="mt-8 inline-flex items-center justify-center rounded-md bg-white px-6 py-3 text-base font-semibold shadow-lg" style={{ color: theme.primary }}>
               {content.ctaLabel}
@@ -162,7 +163,8 @@ export function SiteRenderer({ content, theme, siteId }: Props) {
         </div>
       </section>
 
-      <SocialsBar socials={socials} primary={theme.primary} />
+      <SocialsBar socials={socials} primary={theme.primary}
+        onClick={(label) => track.current(label === "WhatsApp" ? "whatsapp_click" : "social_click", { network: label })} />
 
       <footer className="border-t px-6 py-8 text-center text-sm opacity-70" style={{ borderColor: `${text}18` }}>
         {content.footerNote} · Feito com <a href="/" className="underline">Sitelume</a>
@@ -171,7 +173,7 @@ export function SiteRenderer({ content, theme, siteId }: Props) {
   );
 }
 
-function SocialsBar({ socials, primary }: { socials: SiteContent["socials"]; primary: string }) {
+function SocialsBar({ socials, primary, onClick }: { socials: SiteContent["socials"]; primary: string; onClick?: (label: string) => void }) {
   const items: Array<{ url: string; icon: React.ReactNode; label: string }> = [];
   const push = (url: string | undefined, icon: React.ReactNode, label: string, prefix = "") => {
     if (!url) return;
@@ -196,6 +198,7 @@ function SocialsBar({ socials, primary }: { socials: SiteContent["socials"]; pri
     <div className="flex flex-wrap items-center justify-center gap-3 px-6 py-8">
       {items.map((i, idx) => (
         <a key={idx} href={i.url} target="_blank" rel="noreferrer" aria-label={i.label}
+          onClick={() => onClick?.(i.label)}
           className="flex h-11 w-11 items-center justify-center rounded-full text-white shadow-md transition-transform hover:scale-110"
           style={{ backgroundColor: primary }}>
           {i.icon}
