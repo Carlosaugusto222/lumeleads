@@ -57,7 +57,7 @@ const PLANS: Plan[] = [
     ],
   },
   {
-    name: "Agência", tagline: "Para agências e equipes", price: { monthly: 197, yearly: 138 },
+    id: "agencia", name: "Agência", tagline: "Para agências e equipes", price: { monthly: 197, yearly: 138 },
     features: [
       { label: "3000 leads/mês", on: true }, { label: "Todas as categorias de negócio", on: true },
       { label: "500 scripts/mês", on: true }, { label: "100 sites/mês", on: true },
