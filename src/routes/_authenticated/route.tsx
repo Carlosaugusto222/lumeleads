@@ -98,7 +98,7 @@ function AppShell() {
       <header className="sticky top-0 z-30 border-b border-border/50 bg-background/70 backdrop-blur-xl lg:hidden">
         <div className="flex items-center justify-between px-4 py-3">
           <Link to="/app" className="flex items-center gap-2 font-display text-base font-bold">
-            <span className="inline-block h-6 w-6 rounded-md bg-gradient-primary" />
+            <img src="/logo.png" alt="Sitelume" className="h-6 w-6" width={24} height={24} />
             Sitelume
           </Link>
           <div className="flex items-center gap-1">
