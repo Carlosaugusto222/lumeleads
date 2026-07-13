@@ -87,7 +87,7 @@ export const createMpCheckout = createServerFn({ method: "POST" })
       provider: "mercadopago",
       mp_preference_id: json.id,
       init_point: initPoint,
-      raw: json as unknown as Record<string, unknown>,
+      raw: json as never,
     });
 
     return { initPoint, preferenceId: json.id };
