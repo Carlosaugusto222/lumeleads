@@ -1,13 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Check, Minus, Sparkles } from "lucide-react";
+import { Check, Minus, Sparkles, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { toast } from "sonner";
+import { createMpCheckout } from "@/lib/billing.functions";
 
 export const Route = createFileRoute("/_authenticated/app/billing")({
   component: BillingPage,
 });
 
 type Plan = {
+  id: "gratuito" | "starter" | "pro" | "agencia";
   name: string;
   tagline: string;
   price: { monthly: number; yearly: number };
@@ -17,7 +21,7 @@ type Plan = {
 
 const PLANS: Plan[] = [
   {
-    name: "Gratuito", tagline: "Para explorar a plataforma", price: { monthly: 0, yearly: 0 },
+    id: "gratuito", name: "Gratuito", tagline: "Para explorar a plataforma", price: { monthly: 0, yearly: 0 },
     features: [
       { label: "60 leads/mês", on: true }, { label: "5 categorias de negócio", on: true },
       { label: "10 scripts/mês", on: true }, { label: "2 sites/mês", on: true },
@@ -29,7 +33,7 @@ const PLANS: Plan[] = [
     ],
   },
   {
-    name: "Starter", tagline: "Para freelancers que estão começando", price: { monthly: 47, yearly: 33 },
+    id: "starter", name: "Starter", tagline: "Para freelancers que estão começando", price: { monthly: 47, yearly: 33 },
     features: [
       { label: "500 leads/mês", on: true }, { label: "10 categorias de negócio", on: true },
       { label: "80 scripts/mês", on: true }, { label: "15 sites/mês", on: true },
@@ -41,7 +45,7 @@ const PLANS: Plan[] = [
     ],
   },
   {
-    name: "Pro", tagline: "Para freelancers ativos", price: { monthly: 97, yearly: 68 }, highlight: true,
+    id: "pro", name: "Pro", tagline: "Para freelancers ativos", price: { monthly: 97, yearly: 68 }, highlight: true,
     features: [
       { label: "1500 leads/mês", on: true }, { label: "Todas as categorias de negócio", on: true },
       { label: "250 scripts/mês", on: true }, { label: "50 sites/mês", on: true },
@@ -53,7 +57,7 @@ const PLANS: Plan[] = [
     ],
   },
   {
-    name: "Agência", tagline: "Para agências e equipes", price: { monthly: 197, yearly: 138 },
+    id: "agencia", name: "Agência", tagline: "Para agências e equipes", price: { monthly: 197, yearly: 138 },
     features: [
       { label: "3000 leads/mês", on: true }, { label: "Todas as categorias de negócio", on: true },
       { label: "500 scripts/mês", on: true }, { label: "100 sites/mês", on: true },
@@ -68,6 +72,19 @@ const PLANS: Plan[] = [
 
 function BillingPage() {
   const [cycle, setCycle] = useState<"monthly" | "yearly">("monthly");
+  const [loadingId, setLoadingId] = useState<string | null>(null);
+  const checkout = useServerFn(createMpCheckout);
+
+  async function upgrade(planId: "starter" | "pro" | "agencia") {
+    try {
+      setLoadingId(planId);
+      const { initPoint } = await checkout({ data: { planId, cycle } });
+      window.location.href = initPoint;
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Falha ao iniciar pagamento");
+      setLoadingId(null);
+    }
+  }
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-8">
@@ -120,13 +137,19 @@ function BillingPage() {
                 </li>
               ))}
             </ul>
-            <Button className={p.highlight ? "bg-gradient-primary text-primary-foreground" : ""} variant={p.highlight ? "default" : "outline"} disabled={p.price.monthly === 0}>
+            <Button
+              className={p.highlight ? "bg-gradient-primary text-primary-foreground" : ""}
+              variant={p.highlight ? "default" : "outline"}
+              disabled={p.price.monthly === 0 || loadingId === p.id}
+              onClick={() => p.id !== "gratuito" && upgrade(p.id)}
+            >
+              {loadingId === p.id && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {p.price.monthly === 0 ? "Plano atual" : "Fazer upgrade"}
             </Button>
           </div>
         ))}
       </div>
-      <p className="mt-6 text-center text-xs text-muted-foreground">Pagamento seguro via Stripe · Cancele a qualquer momento · Suporte via WhatsApp</p>
+      <p className="mt-6 text-center text-xs text-muted-foreground">Pagamento seguro via Mercado Pago (PIX, cartão, boleto) · Cancele a qualquer momento</p>
     </div>
   );
 }

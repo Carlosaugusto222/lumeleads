@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SSlugRouteImport } from './routes/s.$slug'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app.index'
+import { Route as ApiPublicMpWebhookRouteImport } from './routes/api/public/mp-webhook'
 import { Route as AuthenticatedAppSettingsRouteImport } from './routes/_authenticated/app.settings'
 import { Route as AuthenticatedAppNewRouteImport } from './routes/_authenticated/app.new'
 import { Route as AuthenticatedAppLeadsRouteImport } from './routes/_authenticated/app.leads'
@@ -25,6 +26,7 @@ import { Route as AuthenticatedAppAgendaRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAppAdminRouteImport } from './routes/_authenticated/app.admin'
 import { Route as AuthenticatedAppSitesIndexRouteImport } from './routes/_authenticated/app.sites.index'
 import { Route as AuthenticatedAppSitesIdRouteImport } from './routes/_authenticated/app.sites.$id'
+import { Route as AuthenticatedAppBillingSuccessRouteImport } from './routes/_authenticated/app.billing.success'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -49,6 +51,11 @@ const AuthenticatedAppIndexRoute = AuthenticatedAppIndexRouteImport.update({
   id: '/app/',
   path: '/app/',
   getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const ApiPublicMpWebhookRoute = ApiPublicMpWebhookRouteImport.update({
+  id: '/api/public/mp-webhook',
+  path: '/api/public/mp-webhook',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAppSettingsRoute =
   AuthenticatedAppSettingsRouteImport.update({
@@ -107,6 +114,12 @@ const AuthenticatedAppSitesIdRoute = AuthenticatedAppSitesIdRouteImport.update({
   path: '/app/sites/$id',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAppBillingSuccessRoute =
+  AuthenticatedAppBillingSuccessRouteImport.update({
+    id: '/success',
+    path: '/success',
+    getParentRoute: () => AuthenticatedAppBillingRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -114,14 +127,16 @@ export interface FileRoutesByFullPath {
   '/s/$slug': typeof SSlugRoute
   '/app/admin': typeof AuthenticatedAppAdminRoute
   '/app/agenda': typeof AuthenticatedAppAgendaRoute
-  '/app/billing': typeof AuthenticatedAppBillingRoute
+  '/app/billing': typeof AuthenticatedAppBillingRouteWithChildren
   '/app/buscar': typeof AuthenticatedAppBuscarRoute
   '/app/crm': typeof AuthenticatedAppCrmRoute
   '/app/docs': typeof AuthenticatedAppDocsRoute
   '/app/leads': typeof AuthenticatedAppLeadsRoute
   '/app/new': typeof AuthenticatedAppNewRoute
   '/app/settings': typeof AuthenticatedAppSettingsRoute
+  '/api/public/mp-webhook': typeof ApiPublicMpWebhookRoute
   '/app/': typeof AuthenticatedAppIndexRoute
+  '/app/billing/success': typeof AuthenticatedAppBillingSuccessRoute
   '/app/sites/$id': typeof AuthenticatedAppSitesIdRoute
   '/app/sites/': typeof AuthenticatedAppSitesIndexRoute
 }
@@ -131,14 +146,16 @@ export interface FileRoutesByTo {
   '/s/$slug': typeof SSlugRoute
   '/app/admin': typeof AuthenticatedAppAdminRoute
   '/app/agenda': typeof AuthenticatedAppAgendaRoute
-  '/app/billing': typeof AuthenticatedAppBillingRoute
+  '/app/billing': typeof AuthenticatedAppBillingRouteWithChildren
   '/app/buscar': typeof AuthenticatedAppBuscarRoute
   '/app/crm': typeof AuthenticatedAppCrmRoute
   '/app/docs': typeof AuthenticatedAppDocsRoute
   '/app/leads': typeof AuthenticatedAppLeadsRoute
   '/app/new': typeof AuthenticatedAppNewRoute
   '/app/settings': typeof AuthenticatedAppSettingsRoute
+  '/api/public/mp-webhook': typeof ApiPublicMpWebhookRoute
   '/app': typeof AuthenticatedAppIndexRoute
+  '/app/billing/success': typeof AuthenticatedAppBillingSuccessRoute
   '/app/sites/$id': typeof AuthenticatedAppSitesIdRoute
   '/app/sites': typeof AuthenticatedAppSitesIndexRoute
 }
@@ -150,14 +167,16 @@ export interface FileRoutesById {
   '/s/$slug': typeof SSlugRoute
   '/_authenticated/app/admin': typeof AuthenticatedAppAdminRoute
   '/_authenticated/app/agenda': typeof AuthenticatedAppAgendaRoute
-  '/_authenticated/app/billing': typeof AuthenticatedAppBillingRoute
+  '/_authenticated/app/billing': typeof AuthenticatedAppBillingRouteWithChildren
   '/_authenticated/app/buscar': typeof AuthenticatedAppBuscarRoute
   '/_authenticated/app/crm': typeof AuthenticatedAppCrmRoute
   '/_authenticated/app/docs': typeof AuthenticatedAppDocsRoute
   '/_authenticated/app/leads': typeof AuthenticatedAppLeadsRoute
   '/_authenticated/app/new': typeof AuthenticatedAppNewRoute
   '/_authenticated/app/settings': typeof AuthenticatedAppSettingsRoute
+  '/api/public/mp-webhook': typeof ApiPublicMpWebhookRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
+  '/_authenticated/app/billing/success': typeof AuthenticatedAppBillingSuccessRoute
   '/_authenticated/app/sites/$id': typeof AuthenticatedAppSitesIdRoute
   '/_authenticated/app/sites/': typeof AuthenticatedAppSitesIndexRoute
 }
@@ -176,7 +195,9 @@ export interface FileRouteTypes {
     | '/app/leads'
     | '/app/new'
     | '/app/settings'
+    | '/api/public/mp-webhook'
     | '/app/'
+    | '/app/billing/success'
     | '/app/sites/$id'
     | '/app/sites/'
   fileRoutesByTo: FileRoutesByTo
@@ -193,7 +214,9 @@ export interface FileRouteTypes {
     | '/app/leads'
     | '/app/new'
     | '/app/settings'
+    | '/api/public/mp-webhook'
     | '/app'
+    | '/app/billing/success'
     | '/app/sites/$id'
     | '/app/sites'
   id:
@@ -211,7 +234,9 @@ export interface FileRouteTypes {
     | '/_authenticated/app/leads'
     | '/_authenticated/app/new'
     | '/_authenticated/app/settings'
+    | '/api/public/mp-webhook'
     | '/_authenticated/app/'
+    | '/_authenticated/app/billing/success'
     | '/_authenticated/app/sites/$id'
     | '/_authenticated/app/sites/'
   fileRoutesById: FileRoutesById
@@ -221,6 +246,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   SSlugRoute: typeof SSlugRoute
+  ApiPublicMpWebhookRoute: typeof ApiPublicMpWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -259,6 +285,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/'
       preLoaderRoute: typeof AuthenticatedAppIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/api/public/mp-webhook': {
+      id: '/api/public/mp-webhook'
+      path: '/api/public/mp-webhook'
+      fullPath: '/api/public/mp-webhook'
+      preLoaderRoute: typeof ApiPublicMpWebhookRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/app/settings': {
       id: '/_authenticated/app/settings'
@@ -337,13 +370,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppSitesIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/billing/success': {
+      id: '/_authenticated/app/billing/success'
+      path: '/success'
+      fullPath: '/app/billing/success'
+      preLoaderRoute: typeof AuthenticatedAppBillingSuccessRouteImport
+      parentRoute: typeof AuthenticatedAppBillingRoute
+    }
   }
 }
+
+interface AuthenticatedAppBillingRouteChildren {
+  AuthenticatedAppBillingSuccessRoute: typeof AuthenticatedAppBillingSuccessRoute
+}
+
+const AuthenticatedAppBillingRouteChildren: AuthenticatedAppBillingRouteChildren =
+  {
+    AuthenticatedAppBillingSuccessRoute: AuthenticatedAppBillingSuccessRoute,
+  }
+
+const AuthenticatedAppBillingRouteWithChildren =
+  AuthenticatedAppBillingRoute._addFileChildren(
+    AuthenticatedAppBillingRouteChildren,
+  )
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppAdminRoute: typeof AuthenticatedAppAdminRoute
   AuthenticatedAppAgendaRoute: typeof AuthenticatedAppAgendaRoute
-  AuthenticatedAppBillingRoute: typeof AuthenticatedAppBillingRoute
+  AuthenticatedAppBillingRoute: typeof AuthenticatedAppBillingRouteWithChildren
   AuthenticatedAppBuscarRoute: typeof AuthenticatedAppBuscarRoute
   AuthenticatedAppCrmRoute: typeof AuthenticatedAppCrmRoute
   AuthenticatedAppDocsRoute: typeof AuthenticatedAppDocsRoute
@@ -358,7 +412,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppAdminRoute: AuthenticatedAppAdminRoute,
   AuthenticatedAppAgendaRoute: AuthenticatedAppAgendaRoute,
-  AuthenticatedAppBillingRoute: AuthenticatedAppBillingRoute,
+  AuthenticatedAppBillingRoute: AuthenticatedAppBillingRouteWithChildren,
   AuthenticatedAppBuscarRoute: AuthenticatedAppBuscarRoute,
   AuthenticatedAppCrmRoute: AuthenticatedAppCrmRoute,
   AuthenticatedAppDocsRoute: AuthenticatedAppDocsRoute,
@@ -378,6 +432,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   SSlugRoute: SSlugRoute,
+  ApiPublicMpWebhookRoute: ApiPublicMpWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
