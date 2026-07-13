@@ -202,7 +202,7 @@ function SecurityTab() {
           <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
         ) : (
           <div className="space-y-2">
-            {sessionsQ.data?.sessions.map((s) => {
+            {sessionsQ.data?.sessions.map((s: { id: string; userAgent: string; ip: string; lastActiveAt: string }) => {
               const isCurrent = s.id === currentSessionId;
               return (
                 <div key={s.id} className="flex items-start gap-3 rounded-lg border border-border/60 p-3">
@@ -267,4 +267,18 @@ function SecurityTab() {
       </div>
     </div>
   );
+}
+
+function parseUA(ua: string): string {
+  if (!ua) return "Dispositivo desconhecido";
+  const os = /Windows/i.test(ua) ? "Windows"
+    : /Mac OS X|Macintosh/i.test(ua) ? "macOS"
+    : /Android/i.test(ua) ? "Android"
+    : /iPhone|iPad|iOS/i.test(ua) ? "iOS"
+    : /Linux/i.test(ua) ? "Linux" : "";
+  const browser = /Edg\//i.test(ua) ? "Edge"
+    : /Chrome\//i.test(ua) ? "Chrome"
+    : /Firefox\//i.test(ua) ? "Firefox"
+    : /Safari\//i.test(ua) ? "Safari" : "Navegador";
+  return [browser, os].filter(Boolean).join(" · ");
 }
