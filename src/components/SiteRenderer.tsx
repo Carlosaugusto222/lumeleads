@@ -178,7 +178,12 @@ export function SiteRenderer({ content, theme, siteId }: Props) {
     <div style={style} className="min-h-screen">
       <header style={{ borderBottom: `${tpl.border} ${text}18` }}>
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <div className="text-lg" style={{ ...headingStyle, fontWeight: tpl.headingWeight }}>{content.brandName}</div>
+          <div className="flex items-center gap-2">
+            {content.logoUrl ? (
+              <img src={content.logoUrl} alt={`${content.brandName} logo`} className="h-8 w-8 rounded object-contain" />
+            ) : null}
+            <div className="text-lg" style={{ ...headingStyle, fontWeight: tpl.headingWeight }}>{content.brandName}</div>
+          </div>
           <a href="#cta" onClick={() => track.current("cta_click", { where: "header" })}
              className="px-4 py-2 text-sm font-medium" style={btnBase}>
             {content.ctaLabel}

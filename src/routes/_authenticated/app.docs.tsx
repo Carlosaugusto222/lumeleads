@@ -39,6 +39,16 @@ const CHANGELOG: Array<{ date: string; title: string; items: string[] }> = [
   },
   {
     date: "2026-07-13",
+    title: "Geração de logotipo por IA",
+    items: [
+      "src/lib/logo.functions.ts: generateLogo via Lovable AI (google/gemini-3.1-flash-image)",
+      "Editor do site com botão Gerar/Regerar/Remover logo dentro do card Marca",
+      "Logo renderizado no header do site publicado quando definido",
+      "Rate limit 20/h por usuário",
+    ],
+  },
+  {
+    date: "2026-07-13",
     title: "Copywriting IA por segmento",
     items: [
       "src/lib/segment-copy.ts: hints (ângulo, benefícios, provas, CTA) por grupo de setor",
@@ -129,7 +139,7 @@ const ROADMAP: Array<{
   { status: "todo", phase: "CRM", title: "Automação de follow-up", desc: "Sequências por status do lead (WhatsApp/email)." },
   { status: "todo", phase: "CRM", title: "Integração WhatsApp Business API", desc: "Envio direto do CRM, templates aprovados." },
   { status: "done", phase: "IA", title: "Copywriting por segmento", desc: "Hints por segmento injetados no prompt do gerador de sites (11 grupos cobrindo as 56 categorias)." },
-  { status: "todo", phase: "IA", title: "Geração de logotipo", desc: "Logo simples via IA quando o lead não tem." },
+  { status: "done", phase: "IA", title: "Geração de logotipo", desc: "Logo simples via IA (Gemini flash image) direto no editor do site." },
   { status: "todo", phase: "Conta", title: "Dispositivos ativos reais", desc: "Listagem de sessões Supabase + revogar." },
   { status: "todo", phase: "Billing", title: "Stripe checkout + webhooks", desc: "Assinatura recorrente com upgrade/downgrade." },
   { status: "todo", phase: "Growth", title: "Programa de indicação", desc: "Créditos por indicação convertida." },
