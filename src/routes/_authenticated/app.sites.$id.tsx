@@ -349,3 +349,64 @@ function AnalyticsPanel({ siteId, published }: { siteId: string; published: bool
     </div>
   );
 }
+
+function LogoField({
+  logoUrl,
+  brandName,
+  tagline,
+  primary,
+  accent,
+  onChange,
+}: {
+  logoUrl?: string;
+  brandName: string;
+  tagline: string;
+  primary: string;
+  accent: string;
+  onChange: (v: string | undefined) => void;
+}) {
+  const gen = useServerFn(generateLogo);
+  const mut = useMutation({
+    mutationFn: () =>
+      gen({
+        data: {
+          businessName: brandName,
+          sector: tagline || brandName,
+          primaryColor: primary,
+          accentColor: accent,
+          style: "minimal",
+        },
+      }),
+    onSuccess: (r) => {
+      onChange(r.dataUrl);
+      toast.success("Logo gerado! Clique em Salvar para aplicar.");
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao gerar logo"),
+  });
+
+  return (
+    <div className="space-y-2 pt-2">
+      <Label className="text-xs text-muted-foreground">Logotipo (IA)</Label>
+      <div className="flex items-center gap-3">
+        <div className="flex h-14 w-14 items-center justify-center rounded-md border border-border/60 bg-background">
+          {logoUrl ? (
+            <img src={logoUrl} alt="Logo" className="h-full w-full rounded-md object-contain" />
+          ) : (
+            <span className="text-[10px] text-muted-foreground">sem logo</span>
+          )}
+        </div>
+        <div className="flex flex-col gap-1">
+          <Button type="button" size="sm" variant="outline" onClick={() => mut.mutate()} disabled={mut.isPending}>
+            {mut.isPending ? <Loader2 className="mr-2 h-3 w-3 animate-spin" /> : null}
+            {logoUrl ? "Regerar" : "Gerar com IA"}
+          </Button>
+          {logoUrl ? (
+            <Button type="button" size="sm" variant="ghost" onClick={() => onChange(undefined)}>
+              Remover
+            </Button>
+          ) : null}
+        </div>
+      </div>
+    </div>
+  );
+}
