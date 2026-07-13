@@ -256,3 +256,60 @@ function ColorField({ label, value, onChange }: { label: string; value: string; 
     </div>
   );
 }
+
+function AnalyticsPanel({ siteId, published }: { siteId: string; published: boolean }) {
+  const fn = useServerFn(getSiteAnalytics);
+  const [days, setDays] = useState(30);
+  const { data, isLoading } = useQuery({
+    queryKey: ["site-analytics", siteId, days],
+    queryFn: () => fn({ data: { site_id: siteId, days } }),
+    enabled: published,
+  });
+
+  if (!published) {
+    return <p className="text-xs text-muted-foreground">Publique o site para começar a coletar visitas e cliques.</p>;
+  }
+  if (isLoading || !data) {
+    return <div className="flex items-center justify-center py-6 text-muted-foreground"><Loader2 className="h-4 w-4 animate-spin" /></div>;
+  }
+
+  const kpis = [
+    { label: "Visitas", value: data.totals.view, Icon: Eye },
+    { label: "Cliques CTA", value: data.totals.cta_click, Icon: MousePointerClick },
+    { label: "WhatsApp", value: data.totals.whatsapp_click, Icon: MessageCircle },
+    { label: "Formulários", value: data.totals.form_submit, Icon: Send },
+  ];
+
+  return (
+    <div className="space-y-3">
+      <div className="flex gap-1">
+        {[7, 30, 90].map((d) => (
+          <button key={d} onClick={() => setDays(d)}
+            className={`rounded-md px-2 py-1 text-xs ${days === d ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
+            {d}d
+          </button>
+        ))}
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        {kpis.map(({ label, value, Icon }) => (
+          <div key={label} className="rounded-lg border border-border/60 bg-background p-3">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground"><Icon className="h-3 w-3" />{label}</div>
+            <div className="mt-1 text-xl font-bold">{value}</div>
+          </div>
+        ))}
+      </div>
+      <div className="h-40">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={data.series} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+            <XAxis dataKey="date" tick={{ fontSize: 10 }} tickFormatter={(v) => v.slice(5)} />
+            <YAxis tick={{ fontSize: 10 }} allowDecimals={false} />
+            <Tooltip contentStyle={{ fontSize: 12 }} />
+            <Line type="monotone" dataKey="view" stroke="hsl(var(--primary))" strokeWidth={2} dot={false} name="Visitas" />
+            <Line type="monotone" dataKey="cta_click" stroke="#f59e0b" strokeWidth={2} dot={false} name="CTA" />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
+}
