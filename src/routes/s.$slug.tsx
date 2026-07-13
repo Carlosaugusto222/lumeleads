@@ -70,7 +70,7 @@ function PublicSite() {
       </div>
     );
   }
-  const theme = (site.theme as { primary?: string; accent?: string; background?: string; text?: string }) ?? {};
+  const theme = (site.theme as { primary?: string; accent?: string; background?: string; text?: string; template?: "modern" | "classic" | "bold" | "minimal" }) ?? {};
   return (
     <SiteRenderer
       siteId={site.id}
@@ -80,6 +80,7 @@ function PublicSite() {
         accent: theme.accent ?? "#22d3ee",
         background: theme.background,
         text: theme.text,
+        template: theme.template ?? "modern",
       }}
     />
   );
