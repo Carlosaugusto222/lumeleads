@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { User, Shield, Loader2, LogOut, Trash2, Monitor } from "lucide-react";
+import { User, Shield, Loader2, LogOut, Trash2, Monitor, Download } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,6 +15,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { getMyAccount, updateMyProfile, deleteMyAccount, listMySessions, revokeMySession } from "@/lib/account.functions";
 import { TwoFactorSetup } from "@/components/TwoFactorSetup";
+import { exportMyData } from "@/lib/data-export.functions";
 
 export const Route = createFileRoute("/_authenticated/app/settings")({
   component: SettingsPage,
@@ -242,6 +243,8 @@ function SecurityTab() {
         </Button>
       </div>
 
+      <DataExportSection />
+
       <div className="space-y-3">
         <h3 className="text-sm font-medium text-destructive">Excluir conta</h3>
         <p className="text-xs text-muted-foreground">
@@ -268,6 +271,41 @@ function SecurityTab() {
           </DialogContent>
         </Dialog>
       </div>
+    </div>
+  );
+}
+
+function DataExportSection() {
+  const fn = useServerFn(exportMyData);
+  const [busy, setBusy] = useState(false);
+  async function handleExport() {
+    setBusy(true);
+    try {
+      const data = await fn();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `meus-dados-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success("Download iniciado");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erro ao exportar");
+    } finally {
+      setBusy(false);
+    }
+  }
+  return (
+    <div className="space-y-3 border-b border-border/60 pb-6">
+      <h3 className="text-sm font-medium">Exportar meus dados (LGPD)</h3>
+      <p className="text-xs text-muted-foreground">
+        Baixe um arquivo JSON com perfil, leads, sites, agendamentos, uso e notificações.
+      </p>
+      <Button variant="outline" onClick={handleExport} disabled={busy}>
+        {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+        Baixar meus dados
+      </Button>
     </div>
   );
 }
