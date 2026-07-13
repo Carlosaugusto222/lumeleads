@@ -21,7 +21,7 @@ type Plan = {
 
 const PLANS: Plan[] = [
   {
-    name: "Gratuito", tagline: "Para explorar a plataforma", price: { monthly: 0, yearly: 0 },
+    id: "gratuito", name: "Gratuito", tagline: "Para explorar a plataforma", price: { monthly: 0, yearly: 0 },
     features: [
       { label: "60 leads/mês", on: true }, { label: "5 categorias de negócio", on: true },
       { label: "10 scripts/mês", on: true }, { label: "2 sites/mês", on: true },
