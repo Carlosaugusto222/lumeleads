@@ -3,14 +3,15 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Users, LayoutDashboard, Package, Tags, Shield, Loader2, Trash2, ScrollText } from "lucide-react";
+import { Users, LayoutDashboard, Package, Tags, Shield, Loader2, Trash2, ScrollText, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } from "recharts";
 import { getMyPlan } from "@/lib/plans.functions";
 import {
   adminStats, adminListUsers, adminSetUserPlan, adminSetUserRole,
-  adminUpdatePlan, adminUpsertCategory, adminDeleteCategory, adminAuditLog,
+  adminUpdatePlan, adminUpsertCategory, adminDeleteCategory, adminAuditLog, adminMetrics,
 } from "@/lib/admin.functions";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -24,7 +25,7 @@ export const Route = createFileRoute("/_authenticated/app/admin")({
   component: AdminPage,
 });
 
-type Tab = "overview" | "users" | "plans" | "categories" | "audit";
+type Tab = "overview" | "metrics" | "users" | "plans" | "categories" | "audit";
 
 function AdminPage() {
   const [tab, setTab] = useState<Tab>("overview");
@@ -33,6 +34,7 @@ function AdminPage() {
 
   const tabs: Array<{ id: Tab; label: string; icon: typeof Users }> = [
     { id: "overview", label: "Visão geral", icon: LayoutDashboard },
+    { id: "metrics", label: "Métricas", icon: TrendingUp },
     { id: "users", label: "Usuários", icon: Users },
     { id: "plans", label: "Planos", icon: Package },
     { id: "categories", label: "Categorias", icon: Tags },
@@ -65,10 +67,93 @@ function AdminPage() {
       </div>
 
       {tab === "overview" && <Overview />}
+      {tab === "metrics" && <MetricsTab />}
       {tab === "users" && <UsersTab plans={planQ.data?.plans ?? []} />}
       {tab === "plans" && <PlansTab plans={planQ.data?.plans ?? []} />}
       {tab === "categories" && <CategoriesTab plans={planQ.data?.plans ?? []} categories={planQ.data?.categories ?? []} />}
       {tab === "audit" && <AuditTab />}
+    </div>
+  );
+}
+
+function MetricsTab() {
+  const [days, setDays] = useState<7 | 30 | 90>(30);
+  const fn = useServerFn(adminMetrics);
+  const q = useQuery({ queryKey: ["admin-metrics", days], queryFn: () => fn({ data: { days } }) });
+  if (q.isLoading) return <Loader2 className="h-5 w-5 animate-spin" />;
+  const d = q.data;
+  if (!d) return null;
+  const fmt = (v: number) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  const shortDate = (s: string) => s.slice(5);
+  const totals = d.series.reduce(
+    (a, b) => ({ users: a.users + b.users, leads: a.leads + b.leads, sites: a.sites + b.sites, appointments: a.appointments + b.appointments }),
+    { users: 0, leads: 0, sites: 0, appointments: 0 },
+  );
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div className="flex gap-1 rounded-lg border border-border/60 bg-card/50 p-1">
+          {([7, 30, 90] as const).map((n) => (
+            <button key={n} onClick={() => setDays(n)}
+              className={`rounded-md px-3 py-1 text-xs ${days === n ? "bg-primary/15 text-primary" : "text-muted-foreground"}`}>
+              {n}d
+            </button>
+          ))}
+        </div>
+        <div className="text-right">
+          <div className="text-xs uppercase tracking-wider text-muted-foreground">MRR</div>
+          <div className="font-display text-2xl font-bold">{fmt(d.mrrBrl)}</div>
+        </div>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-4">
+        <Kpi label={`Novos usuários (${days}d)`} value={totals.users} />
+        <Kpi label={`Novos leads (${days}d)`} value={totals.leads} />
+        <Kpi label={`Novos sites (${days}d)`} value={totals.sites} />
+        <Kpi label={`Agendamentos (${days}d)`} value={totals.appointments} />
+      </div>
+
+      <div className="rounded-xl border border-border/60 bg-card/60 p-4">
+        <div className="mb-3 text-sm font-semibold">Crescimento diário</div>
+        <div className="h-72">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={d.series}>
+              <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
+              <XAxis dataKey="date" tickFormatter={shortDate} fontSize={11} />
+              <YAxis fontSize={11} allowDecimals={false} />
+              <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))" }} />
+              <Legend />
+              <Line type="monotone" dataKey="users" stroke="hsl(var(--primary))" strokeWidth={2} dot={false} name="Usuários" />
+              <Line type="monotone" dataKey="leads" stroke="#22c55e" strokeWidth={2} dot={false} name="Leads" />
+              <Line type="monotone" dataKey="sites" stroke="#f59e0b" strokeWidth={2} dot={false} name="Sites" />
+              <Line type="monotone" dataKey="appointments" stroke="#8b5cf6" strokeWidth={2} dot={false} name="Agendamentos" />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div className="rounded-xl border border-border/60 bg-card/60 p-4">
+        <div className="mb-3 text-sm font-semibold">Receita mensal por plano</div>
+        <div className="h-64">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={d.revenueByPlan}>
+              <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
+              <XAxis dataKey="plan" fontSize={11} />
+              <YAxis fontSize={11} tickFormatter={(v) => `R$${v}`} />
+              <Tooltip formatter={(v: number) => fmt(v)} contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))" }} />
+              <Bar dataKey="mrr" fill="hsl(var(--primary))" name="MRR" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+        <div className="mt-3 grid gap-1 text-xs text-muted-foreground">
+          {d.revenueByPlan.map((r) => (
+            <div key={r.plan} className="flex justify-between">
+              <span>{r.plan} · {r.count} assinantes</span>
+              <span className="font-mono">{fmt(r.mrr)}</span>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
