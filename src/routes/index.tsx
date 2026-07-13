@@ -13,7 +13,7 @@ function Landing() {
       <nav className="sticky top-0 z-40 border-b border-border/50 bg-background/70 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <Link to="/" className="flex items-center gap-2 font-display text-xl font-bold">
-            <span className="inline-block h-6 w-6 rounded-md bg-gradient-primary" />
+            <img src="/logo.png" alt="Sitelume" className="h-7 w-7" width={28} height={28} />
             Sitelume
           </Link>
           <div className="flex items-center gap-2">
