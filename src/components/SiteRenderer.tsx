@@ -330,7 +330,7 @@ export function SiteRenderer({ content, theme, siteId }: Props) {
         onClick={(label) => track.current(label === "WhatsApp" ? "whatsapp_click" : "social_click", { network: label })} />
 
       <footer className="px-6 py-8 text-center text-sm opacity-70" style={{ borderTop: `${tpl.border} ${text}18` }}>
-        {content.footerNote} · Feito com <a href="/" className="underline">Sitelume</a>
+        {content.footerNote} · Feito com <a href="/" className="underline">LumeLeads</a>
       </footer>
     </div>
   );

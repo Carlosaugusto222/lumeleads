@@ -31,14 +31,14 @@ function ReferralsPage() {
     if (typeof window === "undefined") return;
     if (!q.data) return;
     if (q.data.appliedReferrerId) return;
-    const saved = window.localStorage.getItem("sitelume:ref");
+    const saved = window.localStorage.getItem("lumeleads:ref");
     if (!saved) return;
     applyFn({ data: { code: saved } })
       .then(() => {
-        window.localStorage.removeItem("sitelume:ref");
+        window.localStorage.removeItem("lumeleads:ref");
         qc.invalidateQueries({ queryKey: ["my-referrals"] });
       })
-      .catch(() => window.localStorage.removeItem("sitelume:ref"));
+      .catch(() => window.localStorage.removeItem("lumeleads:ref"));
   }, [q.data, applyFn, qc]);
 
   const apply = useMutation({

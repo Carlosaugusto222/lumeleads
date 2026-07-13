@@ -46,7 +46,7 @@ export const Route = createFileRoute("/s/$slug")({
           Este endereço não existe ou o site foi despublicado.
         </p>
         <Link to="/" className="mt-6 inline-block text-sm underline text-primary">
-          Voltar para Sitelume
+          Voltar para LumeLeads
         </Link>
       </div>
     </div>

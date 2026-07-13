@@ -123,7 +123,7 @@ const CHANGELOG: Array<{ date: string; title: string; items: string[] }> = [
     title: "Onboarding em vídeo",
     items: [
       "Dialog de boas-vindas com tutorial de 20s (Remotion)",
-      "Flag em localStorage: sitelume:onboarding-seen",
+      "Flag em localStorage: lumeleads:onboarding-seen",
     ],
   },
   {
@@ -221,7 +221,7 @@ function DocsContent() {
     <div>
       <Section title="Visão geral">
         <p>
-          <strong className="text-foreground">Sitelume</strong> é um SaaS para pequenos negócios que integra
+          <strong className="text-foreground">LumeLeads</strong> é um SaaS para pequenos negócios que integra
           prospecção de leads via Google Places, CRM Kanban, agenda e geração de mini-sites com IA.
           Modelo freemium com 4 planos e painel Super Admin.
         </p>

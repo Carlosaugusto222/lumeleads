@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from "@/components/ui/button";
 import videoAsset from "@/assets/sitelume-tutorial.mp4.asset.json";
 
-const STORAGE_KEY = "sitelume:onboarding-seen";
+const STORAGE_KEY = "lumeleads:onboarding-seen";
 
 export function OnboardingVideoDialog() {
   const [open, setOpen] = useState(false);
@@ -23,7 +23,7 @@ export function OnboardingVideoDialog() {
     <Dialog open={open} onOpenChange={(v) => { if (!v) close(); }}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Bem-vindo ao Sitelume</DialogTitle>
+          <DialogTitle>Bem-vindo ao LumeLeads</DialogTitle>
           <DialogDescription>
             Assista este vídeo rápido para conhecer o básico: buscar leads, gerenciar no CRM e criar sites com IA.
           </DialogDescription>
