@@ -24,7 +24,9 @@ const suggestPaletteInput = z.object({
 export const suggestPalettes = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) => suggestPaletteInput.parse(i))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    const { enforceRateLimit } = await import("./security.server");
+    await enforceRateLimit(context.userId, "suggest_palettes", 30);
     const prompt = `Sugira 4 paletas de cores harmônicas para uma landing page.
 Negócio: ${data.businessName}
 Setor: ${data.sector}
@@ -67,7 +69,9 @@ const MAPS_GATEWAY = "https://connector-gateway.lovable.dev/google_maps";
 export const fetchPlacePhotos = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) => fetchPhotosInput.parse(i))
-  .handler(async ({ data }): Promise<{ photos: string[] }> => {
+  .handler(async ({ data, context }): Promise<{ photos: string[] }> => {
+    const { enforceRateLimit } = await import("./security.server");
+    await enforceRateLimit(context.userId, "fetch_place_photos", 60);
     const lovableKey = process.env.LOVABLE_API_KEY;
     const mapsKey = process.env.GOOGLE_MAPS_API_KEY;
     if (!lovableKey || !mapsKey) return { photos: [] };
@@ -118,7 +122,9 @@ const igInput = z.object({
 export const fetchInstagramPhotos = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) => igInput.parse(i))
-  .handler(async ({ data }): Promise<{ photos: string[] }> => {
+  .handler(async ({ data, context }): Promise<{ photos: string[] }> => {
+    const { enforceRateLimit } = await import("./security.server");
+    await enforceRateLimit(context.userId, "fetch_instagram_photos", 30);
     const key = process.env.FIRECRAWL_API_KEY;
     if (!key) throw new Error("Firecrawl não configurado. Conecte em Conectores.");
     const handle = data.handle.replace(/^@/, "").replace(/[^a-zA-Z0-9._]/g, "");

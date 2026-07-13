@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_audit_log: {
+        Row: {
+          action: string
+          actor_id: string
+          created_at: string
+          id: string
+          metadata: Json | null
+          target_id: string | null
+        }
+        Insert: {
+          action: string
+          actor_id: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          target_id?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          target_id?: string | null
+        }
+        Relationships: []
+      }
       appointments: {
         Row: {
           created_at: string
@@ -234,6 +261,27 @@ export type Database = {
         }
         Relationships: []
       }
+      rate_limits: {
+        Row: {
+          action: string
+          count: number
+          user_id: string
+          window_hour: string
+        }
+        Insert: {
+          action: string
+          count?: number
+          user_id: string
+          window_hour: string
+        }
+        Update: {
+          action?: string
+          count?: number
+          user_id?: string
+          window_hour?: string
+        }
+        Relationships: []
+      }
       site_submissions: {
         Row: {
           created_at: string
@@ -390,6 +438,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      consume_rate_limit: {
+        Args: { _action: string; _max: number; _user_id: string }
+        Returns: boolean
+      }
       current_period: { Args: never; Returns: string }
       has_role: {
         Args: {
