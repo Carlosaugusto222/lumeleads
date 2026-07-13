@@ -13,7 +13,7 @@ import {
   DialogHeader, DialogTitle, DialogTrigger,
 } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
-import { getMyAccount, updateMyProfile, deleteMyAccount } from "@/lib/account.functions";
+import { getMyAccount, updateMyProfile, deleteMyAccount, listMySessions, revokeMySession } from "@/lib/account.functions";
 
 export const Route = createFileRoute("/_authenticated/app/settings")({
   component: SettingsPage,
@@ -106,6 +106,8 @@ function SecurityTab() {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const deleteFn = useServerFn(deleteMyAccount);
+  const listSessionsFn = useServerFn(listMySessions);
+  const revokeSessionFn = useServerFn(revokeMySession);
 
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
@@ -113,6 +115,16 @@ function SecurityTab() {
   const [signingOutAll, setSigningOutAll] = useState(false);
   const [confirm, setConfirm] = useState("");
   const [open, setOpen] = useState(false);
+
+  const sessionsQ = useQuery({ queryKey: ["my-sessions"], queryFn: () => listSessionsFn() });
+  const revokeMut = useMutation({
+    mutationFn: (sessionId: string) => revokeSessionFn({ data: { sessionId } }),
+    onSuccess: () => {
+      toast.success("Sessão revogada");
+      qc.invalidateQueries({ queryKey: ["my-sessions"] });
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro"),
+  });
   const [sessionInfo, setSessionInfo] = useState<{ email?: string; lastSignInAt?: string } | null>(null);
 
   useEffect(() => {
