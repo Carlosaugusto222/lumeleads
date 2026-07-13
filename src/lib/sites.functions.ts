@@ -80,6 +80,8 @@ export const generateSite = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => generateInput.parse(input))
   .handler(async ({ data, context }) => {
+    const { segmentPromptBlock } = await import("./segment-copy");
+    const segmentBlock = segmentPromptBlock(data.sector);
     const prompt = `Você é copywriter especialista em landing pages de alta conversão em português brasileiro.
 Gere o conteúdo de uma landing page em JSON, seguindo EXATAMENTE este schema (todos os campos obrigatórios):
 {
@@ -101,6 +103,10 @@ Briefing:
 - Público-alvo: ${data.audience}
 - Oferta: ${data.offer}
 - Tom: ${data.tone}
+
+${segmentBlock}
+
+Aplique a orientação de segmento acima ao vocabulário, benefícios, depoimentos e CTA. Nunca copie os textos da orientação; use-os apenas como guia.
 
 Retorne SOMENTE o JSON, sem markdown, sem comentários.`;
 
