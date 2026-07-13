@@ -15,6 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as SSlugRouteImport } from './routes/s.$slug'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app.index'
 import { Route as ApiPublicMpWebhookRouteImport } from './routes/api/public/mp-webhook'
+import { Route as AuthenticatedAppWhatsappRouteImport } from './routes/_authenticated/app.whatsapp'
 import { Route as AuthenticatedAppSettingsRouteImport } from './routes/_authenticated/app.settings'
 import { Route as AuthenticatedAppReferralsRouteImport } from './routes/_authenticated/app.referrals'
 import { Route as AuthenticatedAppNewRouteImport } from './routes/_authenticated/app.new'
@@ -59,6 +60,12 @@ const ApiPublicMpWebhookRoute = ApiPublicMpWebhookRouteImport.update({
   path: '/api/public/mp-webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAppWhatsappRoute =
+  AuthenticatedAppWhatsappRouteImport.update({
+    id: '/app/whatsapp',
+    path: '/app/whatsapp',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppSettingsRoute =
   AuthenticatedAppSettingsRouteImport.update({
     id: '/app/settings',
@@ -150,6 +157,7 @@ export interface FileRoutesByFullPath {
   '/app/new': typeof AuthenticatedAppNewRoute
   '/app/referrals': typeof AuthenticatedAppReferralsRoute
   '/app/settings': typeof AuthenticatedAppSettingsRoute
+  '/app/whatsapp': typeof AuthenticatedAppWhatsappRoute
   '/api/public/mp-webhook': typeof ApiPublicMpWebhookRoute
   '/app/': typeof AuthenticatedAppIndexRoute
   '/app/billing/success': typeof AuthenticatedAppBillingSuccessRoute
@@ -171,6 +179,7 @@ export interface FileRoutesByTo {
   '/app/new': typeof AuthenticatedAppNewRoute
   '/app/referrals': typeof AuthenticatedAppReferralsRoute
   '/app/settings': typeof AuthenticatedAppSettingsRoute
+  '/app/whatsapp': typeof AuthenticatedAppWhatsappRoute
   '/api/public/mp-webhook': typeof ApiPublicMpWebhookRoute
   '/app': typeof AuthenticatedAppIndexRoute
   '/app/billing/success': typeof AuthenticatedAppBillingSuccessRoute
@@ -194,6 +203,7 @@ export interface FileRoutesById {
   '/_authenticated/app/new': typeof AuthenticatedAppNewRoute
   '/_authenticated/app/referrals': typeof AuthenticatedAppReferralsRoute
   '/_authenticated/app/settings': typeof AuthenticatedAppSettingsRoute
+  '/_authenticated/app/whatsapp': typeof AuthenticatedAppWhatsappRoute
   '/api/public/mp-webhook': typeof ApiPublicMpWebhookRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
   '/_authenticated/app/billing/success': typeof AuthenticatedAppBillingSuccessRoute
@@ -217,6 +227,7 @@ export interface FileRouteTypes {
     | '/app/new'
     | '/app/referrals'
     | '/app/settings'
+    | '/app/whatsapp'
     | '/api/public/mp-webhook'
     | '/app/'
     | '/app/billing/success'
@@ -238,6 +249,7 @@ export interface FileRouteTypes {
     | '/app/new'
     | '/app/referrals'
     | '/app/settings'
+    | '/app/whatsapp'
     | '/api/public/mp-webhook'
     | '/app'
     | '/app/billing/success'
@@ -260,6 +272,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/new'
     | '/_authenticated/app/referrals'
     | '/_authenticated/app/settings'
+    | '/_authenticated/app/whatsapp'
     | '/api/public/mp-webhook'
     | '/_authenticated/app/'
     | '/_authenticated/app/billing/success'
@@ -318,6 +331,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/public/mp-webhook'
       preLoaderRoute: typeof ApiPublicMpWebhookRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/app/whatsapp': {
+      id: '/_authenticated/app/whatsapp'
+      path: '/app/whatsapp'
+      fullPath: '/app/whatsapp'
+      preLoaderRoute: typeof AuthenticatedAppWhatsappRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/app/settings': {
       id: '/_authenticated/app/settings'
@@ -446,6 +466,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppNewRoute: typeof AuthenticatedAppNewRoute
   AuthenticatedAppReferralsRoute: typeof AuthenticatedAppReferralsRoute
   AuthenticatedAppSettingsRoute: typeof AuthenticatedAppSettingsRoute
+  AuthenticatedAppWhatsappRoute: typeof AuthenticatedAppWhatsappRoute
   AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
   AuthenticatedAppSitesIdRoute: typeof AuthenticatedAppSitesIdRoute
   AuthenticatedAppSitesIndexRoute: typeof AuthenticatedAppSitesIndexRoute
@@ -463,6 +484,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppNewRoute: AuthenticatedAppNewRoute,
   AuthenticatedAppReferralsRoute: AuthenticatedAppReferralsRoute,
   AuthenticatedAppSettingsRoute: AuthenticatedAppSettingsRoute,
+  AuthenticatedAppWhatsappRoute: AuthenticatedAppWhatsappRoute,
   AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
   AuthenticatedAppSitesIdRoute: AuthenticatedAppSitesIdRoute,
   AuthenticatedAppSitesIndexRoute: AuthenticatedAppSitesIndexRoute,

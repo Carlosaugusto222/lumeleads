@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, redirect, Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { LogOut, LayoutDashboard, Users, Kanban, CalendarDays, Sparkles, CreditCard, Globe, Search, Shield, Settings, BookOpen, Gift, Send } from "lucide-react";
+import { LogOut, LayoutDashboard, Users, Kanban, CalendarDays, Sparkles, CreditCard, Globe, Search, Shield, Settings, BookOpen, Gift, Send, MessageCircle } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getMyPlan } from "@/lib/plans.functions";
@@ -26,6 +26,7 @@ const NAV: NavItem[] = [
   { to: "/app/crm", label: "CRM", icon: Kanban },
   { to: "/app/agenda", label: "Agendamentos", icon: CalendarDays },
   { to: "/app/followups", label: "Follow-ups", icon: Send },
+  { to: "/app/whatsapp", label: "WhatsApp API", icon: MessageCircle },
 
   { to: "/app/sites", label: "Meus sites", icon: Globe },
   { to: "/app/new", label: "Criar site", icon: Sparkles },
