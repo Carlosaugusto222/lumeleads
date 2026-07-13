@@ -28,7 +28,11 @@ export const createMpCheckout = createServerFn({ method: "POST" })
 
     // Build return URLs from request origin
     const req = getRequest();
-    const origin = req?.headers.get("origin") ?? new URL(req?.url ?? "http://localhost").origin;
+    const reqOrigin = req?.headers.get("origin") ?? new URL(req?.url ?? "http://localhost").origin;
+    // Mercado Pago rejects http back_urls (and requires https for auto_return).
+    // Fall back to the published URL when running on localhost/preview.
+    const publicOrigin = process.env.PUBLIC_APP_URL ?? "https://lumeleads.lovable.app";
+    const origin = reqOrigin.startsWith("https://") ? reqOrigin : publicOrigin;
 
     const email = (claims as { email?: string })?.email ?? undefined;
     const externalRef = `${userId}:${data.planId}:${data.cycle}:${Date.now()}`;
