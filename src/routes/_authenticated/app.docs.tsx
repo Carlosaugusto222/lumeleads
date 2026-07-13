@@ -21,6 +21,17 @@ type Tab = "docs" | "roadmap" | "changelog";
 const CHANGELOG: Array<{ date: string; title: string; items: string[] }> = [
   {
     date: "2026-07-13",
+    title: "Automação de follow-up no CRM",
+    items: [
+      "Nova página /app/followups: modelos por canal (WhatsApp/e-mail) e etapa gatilho, com atraso em horas",
+      "Ao mover um lead no CRM, tarefas são agendadas automaticamente para os modelos ativos daquela etapa",
+      "Placeholders {{nome}}, {{cidade}}, {{categoria}} renderizados na hora do agendamento",
+      "Aba Agendadas mostra pendentes com botão 'Abrir WhatsApp' (wa.me pré-preenchido) ou 'Abrir e-mail' (mailto)",
+      "Duas novas tabelas: follow_up_templates e follow_up_tasks com RLS por dono",
+    ],
+  },
+  {
+    date: "2026-07-13",
     title: "Pexels + Unsplash como fontes de fotos",
     items: [
       "Novo server fn fetchStockPhotos (Pexels + Unsplash em paralelo, resultado intercalado)",
@@ -29,6 +40,7 @@ const CHANGELOG: Array<{ date: string; title: string; items: string[] }> = [
       "Fallback silencioso quando as chaves não estão configuradas",
     ],
   },
+
   {
     date: "2026-07-13",
     title: "Testes e2e (Playwright)",
@@ -183,7 +195,10 @@ const ROADMAP: Array<{
   { status: "todo", phase: "Billing", title: "Stripe checkout + webhooks", desc: "Assinatura recorrente com upgrade/downgrade." },
   { status: "done", phase: "Growth", title: "Programa de indicação", desc: "Código único por perfil, link compartilhável, aplicar código e listar indicações." },
   { status: "done", phase: "Qualidade", title: "Testes e2e do wizard", desc: "Playwright: landing pública + fluxo dos 5 passos do wizard (skip sem E2E_EMAIL)." },
+  { status: "done", phase: "CRM", title: "Automação de follow-up", desc: "Modelos por etapa + tarefas agendadas geradas automaticamente ao mover leads no CRM." },
+  { status: "todo", phase: "CRM", title: "WhatsApp Business API", desc: "Envio direto pela API oficial da Meta com templates aprovados." },
 ];
+
 
 function DocsPage() {
   const [tab, setTab] = useState<Tab>("docs");
