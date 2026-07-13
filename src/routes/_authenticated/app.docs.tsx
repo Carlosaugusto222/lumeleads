@@ -21,6 +21,31 @@ type Tab = "docs" | "roadmap" | "changelog";
 const CHANGELOG: Array<{ date: string; title: string; items: string[] }> = [
   {
     date: "2026-07-13",
+    title: "Gatilhos de notificação automática",
+    items: [
+      "Notificação ao salvar lead, criar agendamento e receber submissão pelo site público",
+      "Notificação ao usuário quando admin altera o plano",
+      "Helper server-side notify.server.ts usando supabaseAdmin",
+    ],
+  },
+  {
+    date: "2026-07-13",
+    title: "Dashboard de métricas admin",
+    items: [
+      "Nova aba Métricas no /app/admin com séries diárias (7/30/90d)",
+      "MRR total e receita por plano (recharts)",
+    ],
+  },
+  {
+    date: "2026-07-13",
+    title: "Export de dados (LGPD) + 2FA TOTP",
+    items: [
+      "Botão para baixar todos os dados do usuário em JSON",
+      "Setup de 2FA (TOTP) disponível nas Configurações → Segurança",
+    ],
+  },
+  {
+    date: "2026-07-13",
     title: "Documentação interna + Roadmap",
     items: [
       "Nova página /app/docs restrita a super admins",
@@ -55,9 +80,14 @@ const ROADMAP: Array<{
   { status: "done", phase: "Core", title: "Busca Google Places + CRM Kanban", desc: "56 categorias, planos, limites por período." },
   { status: "done", phase: "Core", title: "Wizard de sites em 5 passos", desc: "Lead → Cores → Fotos → Redes → Gerar (IA)." },
   { status: "done", phase: "Admin", title: "Painel Super Admin", desc: "Usuários, planos, categorias, estatísticas." },
+  { status: "done", phase: "Admin", title: "Dashboard de métricas", desc: "Séries diárias, MRR e receita por plano." },
   { status: "done", phase: "Conta", title: "Configurações e onboarding", desc: "Perfil, segurança, delete account, vídeo tutorial." },
+  { status: "done", phase: "Conta", title: "2FA (TOTP) para admins", desc: "Enroll/verify via Supabase MFA nas Configurações." },
+  { status: "done", phase: "Conta", title: "Export de dados (LGPD)", desc: "Download JSON com todos os dados do usuário." },
+  { status: "done", phase: "Notificações", title: "Gatilhos automáticos", desc: "Lead, agendamento, submissão do site e upgrade de plano." },
   { status: "doing", phase: "Sites", title: "Pexels + Unsplash como fontes extras", desc: "Complementar fotos do Google Places e Instagram." },
   { status: "doing", phase: "Sites", title: "Templates de tema", desc: "3–5 layouts distintos (moderno, clássico, bold, minimal)." },
+  { status: "todo", phase: "Segurança", title: "Rate limiting server-side", desc: "Aplicar consume_rate_limit em buscas, submissões e exports." },
   { status: "todo", phase: "Sites", title: "Analytics do site publicado", desc: "Views, cliques em WhatsApp, formulário, mapa." },
   { status: "todo", phase: "Sites", title: "Domínio próprio por site", desc: "CNAME + verificação + SSL automático." },
   { status: "todo", phase: "CRM", title: "Automação de follow-up", desc: "Sequências por status do lead (WhatsApp/email)." },
