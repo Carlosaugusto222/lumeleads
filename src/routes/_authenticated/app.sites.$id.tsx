@@ -141,6 +141,29 @@ function EditSite() {
             />
           </Card>
 
+          <Card title="Template">
+            <div className="grid grid-cols-2 gap-2">
+              {SITE_TEMPLATES.map((t) => {
+                const active = theme.template === t.id;
+                return (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => setTheme({ ...theme, template: t.id })}
+                    className={`rounded-lg border p-3 text-left text-xs transition-colors ${
+                      active
+                        ? "border-primary bg-primary/10 text-foreground"
+                        : "border-border/60 bg-background hover:border-primary/50"
+                    }`}
+                  >
+                    <div className="font-semibold">{t.label}</div>
+                    <div className="mt-1 text-[10px] text-muted-foreground">{t.description}</div>
+                  </button>
+                );
+              })}
+            </div>
+          </Card>
+
           <Card title="Cores">
             <div className="grid grid-cols-2 gap-3">
               <ColorField
