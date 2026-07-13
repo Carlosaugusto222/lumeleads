@@ -64,7 +64,7 @@ export function NotificationBell() {
       await markFn({ data: { id: n.id } });
       qc.invalidateQueries({ queryKey: ["notifications"] });
     }
-    if (n.link) navigate({ to: n.link });
+    if (n.link) navigate({ to: n.link as string });
   }
 
   async function onMarkAll() {
