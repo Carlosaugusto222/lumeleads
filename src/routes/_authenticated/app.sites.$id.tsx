@@ -3,7 +3,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { ArrowLeft, Rocket, Save, ExternalLink, Loader2 } from "lucide-react";
+import { ArrowLeft, Rocket, Save, ExternalLink, Loader2, Eye, MousePointerClick, MessageCircle, Send } from "lucide-react";
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +17,7 @@ import {
   siteContentSchema,
   type SiteContent,
 } from "@/lib/sites.functions";
+import { getSiteAnalytics } from "@/lib/site-analytics.functions";
 import { SiteRenderer } from "@/components/SiteRenderer";
 
 export const Route = createFileRoute("/_authenticated/app/sites/$id")({
@@ -184,6 +186,9 @@ function EditSite() {
               onChange={(v) => setContent({ ...content, about: v })}
               rows={4}
             />
+          </Card>
+          <Card title="Analytics">
+            <AnalyticsPanel siteId={id} published={site.published} />
           </Card>
         </div>
 
