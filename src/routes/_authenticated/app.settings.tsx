@@ -275,6 +275,41 @@ function SecurityTab() {
   );
 }
 
+function DataExportSection() {
+  const fn = useServerFn(exportMyData);
+  const [busy, setBusy] = useState(false);
+  async function handleExport() {
+    setBusy(true);
+    try {
+      const data = await fn();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `meus-dados-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success("Download iniciado");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erro ao exportar");
+    } finally {
+      setBusy(false);
+    }
+  }
+  return (
+    <div className="space-y-3 border-b border-border/60 pb-6">
+      <h3 className="text-sm font-medium">Exportar meus dados (LGPD)</h3>
+      <p className="text-xs text-muted-foreground">
+        Baixe um arquivo JSON com perfil, leads, sites, agendamentos, uso e notificações.
+      </p>
+      <Button variant="outline" onClick={handleExport} disabled={busy}>
+        {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+        Baixar meus dados
+      </Button>
+    </div>
+  );
+}
+
 function parseUA(ua: string): string {
   if (!ua) return "Dispositivo desconhecido";
   const os = /Windows/i.test(ua) ? "Windows"
