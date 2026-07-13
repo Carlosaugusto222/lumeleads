@@ -119,7 +119,7 @@ const ROADMAP: Array<{
   { status: "todo", phase: "Sites", title: "Domínio próprio por site", desc: "CNAME + verificação + SSL automático." },
   { status: "todo", phase: "CRM", title: "Automação de follow-up", desc: "Sequências por status do lead (WhatsApp/email)." },
   { status: "todo", phase: "CRM", title: "Integração WhatsApp Business API", desc: "Envio direto do CRM, templates aprovados." },
-  { status: "todo", phase: "IA", title: "Copywriting por segmento", desc: "Prompts específicos para 56 categorias." },
+  { status: "done", phase: "IA", title: "Copywriting por segmento", desc: "Hints por segmento injetados no prompt do gerador de sites (11 grupos cobrindo as 56 categorias)." },
   { status: "todo", phase: "IA", title: "Geração de logotipo", desc: "Logo simples via IA quando o lead não tem." },
   { status: "todo", phase: "Conta", title: "Dispositivos ativos reais", desc: "Listagem de sessões Supabase + revogar." },
   { status: "todo", phase: "Billing", title: "Stripe checkout + webhooks", desc: "Assinatura recorrente com upgrade/downgrade." },
