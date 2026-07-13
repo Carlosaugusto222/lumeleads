@@ -39,6 +39,15 @@ const CHANGELOG: Array<{ date: string; title: string; items: string[] }> = [
   },
   {
     date: "2026-07-13",
+    title: "Copywriting IA por segmento",
+    items: [
+      "src/lib/segment-copy.ts: hints (ângulo, benefícios, provas, CTA) por grupo de setor",
+      "generateSite injeta o bloco de segmento no prompt do LLM",
+      "Cobertura: gastronomia, beleza, fitness, saúde, serviços, imobiliário, varejo, educação, turismo, automotivo, eventos + fallback",
+    ],
+  },
+  {
+    date: "2026-07-13",
     title: "Rate limiting server-side",
     items: [
       "searchPlaces 60/h, savePlacesAsLeads 30/h, exportMyData 5/h por usuário",
