@@ -4,6 +4,8 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 export const exportMyData = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
+    const { enforceRateLimit } = await import("./security.server");
+    await enforceRateLimit(context.userId, "data_export", 5);
     const s = context.supabase;
     const uid = context.userId;
     const [profile, leads, sites, submissions, appointments, subscription, usage, roles, notifications] =

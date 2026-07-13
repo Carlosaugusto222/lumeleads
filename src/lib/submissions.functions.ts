@@ -21,6 +21,9 @@ export const submitToSite = createServerFn({ method: "POST" })
       process.env.SUPABASE_PUBLISHABLE_KEY!,
       { auth: { storage: undefined, persistSession: false, autoRefreshToken: false } },
     );
+    // Rate limit por site (site_id é uuid) — evita spam de formulário.
+    const { enforceRateLimit } = await import("./security.server");
+    await enforceRateLimit(data.site_id, "site_submission", 20);
     const { error } = await sb.from("site_submissions").insert({
       site_id: data.site_id,
       name: data.name,
