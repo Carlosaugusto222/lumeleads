@@ -18,6 +18,7 @@ import {
   type SiteContent,
 } from "@/lib/sites.functions";
 import { getSiteAnalytics } from "@/lib/site-analytics.functions";
+import { generateLogo } from "@/lib/logo.functions";
 import { SiteRenderer, SITE_TEMPLATES, type SiteTemplate } from "@/components/SiteRenderer";
 
 export const Route = createFileRoute("/_authenticated/app/sites/$id")({
