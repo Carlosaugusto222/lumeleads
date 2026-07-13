@@ -29,6 +29,27 @@ export const submitToSite = createServerFn({ method: "POST" })
       message: data.message || null,
     });
     if (error) throw new Error(error.message);
+    // Notify site owner (need admin client to look up owner + insert notification).
+    try {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { notifyUser } = await import("./notify.server");
+      const { data: site } = await supabaseAdmin
+        .from("sites")
+        .select("user_id, title, slug")
+        .eq("id", data.site_id)
+        .maybeSingle();
+      if (site?.user_id) {
+        await notifyUser({
+          userId: site.user_id,
+          title: "Novo contato pelo site",
+          message: `${data.name} enviou uma mensagem em "${site.title}".`,
+          type: "success",
+          link: "/app/leads",
+        });
+      }
+    } catch (e) {
+      console.error("[submitToSite] notify failed:", e);
+    }
     return { ok: true };
   });
 

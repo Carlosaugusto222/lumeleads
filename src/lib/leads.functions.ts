@@ -79,6 +79,14 @@ export const createLead = createServerFn({ method: "POST" })
     };
     const { data: row, error } = await context.supabase.from("leads").insert(insert).select("id").single();
     if (error) throw new Error(error.message);
+    const { notifyUser } = await import("./notify.server");
+    await notifyUser({
+      userId: context.userId,
+      title: "Novo lead salvo",
+      message: `${insert.name} foi adicionado ao seu CRM.`,
+      type: "success",
+      link: "/app/leads",
+    });
     return { id: row.id };
   });
 
