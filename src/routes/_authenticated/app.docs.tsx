@@ -39,6 +39,15 @@ const CHANGELOG: Array<{ date: string; title: string; items: string[] }> = [
   },
   {
     date: "2026-07-13",
+    title: "Copywriting IA por segmento",
+    items: [
+      "src/lib/segment-copy.ts: hints (ângulo, benefícios, provas, CTA) por grupo de setor",
+      "generateSite injeta o bloco de segmento no prompt do LLM",
+      "Cobertura: gastronomia, beleza, fitness, saúde, serviços, imobiliário, varejo, educação, turismo, automotivo, eventos + fallback",
+    ],
+  },
+  {
+    date: "2026-07-13",
     title: "Rate limiting server-side",
     items: [
       "searchPlaces 60/h, savePlacesAsLeads 30/h, exportMyData 5/h por usuário",
@@ -119,7 +128,7 @@ const ROADMAP: Array<{
   { status: "todo", phase: "Sites", title: "Domínio próprio por site", desc: "CNAME + verificação + SSL automático." },
   { status: "todo", phase: "CRM", title: "Automação de follow-up", desc: "Sequências por status do lead (WhatsApp/email)." },
   { status: "todo", phase: "CRM", title: "Integração WhatsApp Business API", desc: "Envio direto do CRM, templates aprovados." },
-  { status: "todo", phase: "IA", title: "Copywriting por segmento", desc: "Prompts específicos para 56 categorias." },
+  { status: "done", phase: "IA", title: "Copywriting por segmento", desc: "Hints por segmento injetados no prompt do gerador de sites (11 grupos cobrindo as 56 categorias)." },
   { status: "todo", phase: "IA", title: "Geração de logotipo", desc: "Logo simples via IA quando o lead não tem." },
   { status: "todo", phase: "Conta", title: "Dispositivos ativos reais", desc: "Listagem de sessões Supabase + revogar." },
   { status: "todo", phase: "Billing", title: "Stripe checkout + webhooks", desc: "Assinatura recorrente com upgrade/downgrade." },
