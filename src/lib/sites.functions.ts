@@ -45,6 +45,7 @@ export const siteContentSchema = z.object({
     .min(3)
     .max(4),
   footerNote: z.string(),
+  logoUrl: z.string().optional(),
   photos: z.array(z.string().url()).default([]),
   socials: socialsSchema.default({
     instagram: "", facebook: "", whatsapp: "", tiktok: "", youtube: "", x: "", website: "",
