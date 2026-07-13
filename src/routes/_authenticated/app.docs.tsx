@@ -106,7 +106,7 @@ const ROADMAP: Array<{
   { status: "doing", phase: "Sites", title: "Pexels + Unsplash como fontes extras", desc: "Complementar fotos do Google Places e Instagram." },
   { status: "doing", phase: "Sites", title: "Templates de tema", desc: "3–5 layouts distintos (moderno, clássico, bold, minimal)." },
   { status: "done", phase: "Segurança", title: "Rate limiting server-side", desc: "consume_rate_limit em buscas, saves, exports e submissões." },
-  { status: "todo", phase: "Sites", title: "Analytics do site publicado", desc: "Views, cliques em WhatsApp, formulário, mapa." },
+  { status: "done", phase: "Sites", title: "Analytics do site publicado", desc: "Views, cliques em CTA/WhatsApp/sociais e envios de formulário." },
   { status: "todo", phase: "Sites", title: "Domínio próprio por site", desc: "CNAME + verificação + SSL automático." },
   { status: "todo", phase: "CRM", title: "Automação de follow-up", desc: "Sequências por status do lead (WhatsApp/email)." },
   { status: "todo", phase: "CRM", title: "Integração WhatsApp Business API", desc: "Envio direto do CRM, templates aprovados." },
