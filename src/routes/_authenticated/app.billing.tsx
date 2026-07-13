@@ -72,6 +72,19 @@ const PLANS: Plan[] = [
 
 function BillingPage() {
   const [cycle, setCycle] = useState<"monthly" | "yearly">("monthly");
+  const [loadingId, setLoadingId] = useState<string | null>(null);
+  const checkout = useServerFn(createMpCheckout);
+
+  async function upgrade(planId: "starter" | "pro" | "agencia") {
+    try {
+      setLoadingId(planId);
+      const { initPoint } = await checkout({ data: { planId, cycle } });
+      window.location.href = initPoint;
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Falha ao iniciar pagamento");
+      setLoadingId(null);
+    }
+  }
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-8">
