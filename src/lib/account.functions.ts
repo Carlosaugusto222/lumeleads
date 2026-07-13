@@ -83,10 +83,3 @@ export const revokeMySession = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
-  )
-  .handler(async ({ context }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin.auth.admin.deleteUser(context.userId);
-    if (error) throw new Error(error.message);
-    return { ok: true };
-  });
