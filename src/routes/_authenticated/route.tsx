@@ -6,6 +6,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getMyPlan } from "@/lib/plans.functions";
 import { OnboardingVideoDialog } from "@/components/OnboardingVideoDialog";
+import { NotificationBell } from "@/components/NotificationBell";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
@@ -51,10 +52,13 @@ function AppShell() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col border-r border-border/50 bg-card/40 backdrop-blur-xl lg:flex">
-        <Link to="/app" className="flex items-center gap-2 px-5 py-5 font-display text-lg font-bold">
-          <span className="inline-block h-7 w-7 rounded-md bg-gradient-primary" />
-          Sitelume
-        </Link>
+        <div className="flex items-center justify-between px-5 py-5">
+          <Link to="/app" className="flex items-center gap-2 font-display text-lg font-bold">
+            <span className="inline-block h-7 w-7 rounded-md bg-gradient-primary" />
+            Sitelume
+          </Link>
+          <NotificationBell />
+        </div>
         <nav className="flex-1 space-y-0.5 px-3">
           {items.map((item) => {
             const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
@@ -97,7 +101,10 @@ function AppShell() {
             <span className="inline-block h-6 w-6 rounded-md bg-gradient-primary" />
             Sitelume
           </Link>
-          <Button size="sm" variant="ghost" onClick={handleSignOut}><LogOut className="h-4 w-4" /></Button>
+          <div className="flex items-center gap-1">
+            <NotificationBell />
+            <Button size="sm" variant="ghost" onClick={handleSignOut}><LogOut className="h-4 w-4" /></Button>
+          </div>
         </div>
         <div className="flex gap-1 overflow-x-auto px-3 pb-2">
           {items.map((item) => {
