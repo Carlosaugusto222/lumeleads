@@ -452,15 +452,23 @@ function DomainsPanel({ siteId }: { siteId: string }) {
 
   return (
     <div className="space-y-3">
-      <p className="text-xs text-muted-foreground">
-        Conecte um domínio próprio (ex.: <span className="font-mono">seusite.com.br</span>). Para SSL automático, aponte via Cloudflare no modo proxied.
-      </p>
+      <div className="rounded-lg border border-border/60 bg-muted/40 p-3 text-xs leading-relaxed">
+        <p className="mb-2 font-semibold text-foreground">Como conectar seu domínio (passo a passo):</p>
+        <ol className="ml-4 list-decimal space-y-1 text-muted-foreground">
+          <li>Crie uma conta grátis no <a href="https://dash.cloudflare.com/sign-up" target="_blank" rel="noreferrer" className="text-primary underline">Cloudflare</a> e adicione seu domínio.</li>
+          <li>No seu registrador (Registro.br, GoDaddy etc.), troque os <b>nameservers</b> pelos da Cloudflare.</li>
+          <li>No painel DNS da Cloudflare, adicione os 2 registros mostrados abaixo (CNAME + TXT). Mantenha o CNAME com o ícone laranja <b>Proxied</b>.</li>
+          <li>Em <b>SSL/TLS → Overview</b>, selecione o modo <b>Full</b>.</li>
+          <li>Volte aqui e clique em <b>Verificar DNS</b>. A propagação pode levar de 5 min a algumas horas.</li>
+        </ol>
+      </div>
       <div className="flex gap-2">
         <Input placeholder="seudominio.com.br" value={domain} onChange={(e) => setDomain(e.target.value)} />
         <Button size="sm" onClick={() => addMut.mutate()} disabled={!domain || addMut.isPending}>
           {addMut.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : "Adicionar"}
         </Button>
       </div>
+
 
       {isLoading ? (
         <div className="flex justify-center py-3"><Loader2 className="h-4 w-4 animate-spin" /></div>
