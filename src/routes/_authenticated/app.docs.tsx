@@ -20,6 +20,16 @@ type Tab = "docs" | "roadmap" | "changelog";
 
 const CHANGELOG: Array<{ date: string; title: string; items: string[] }> = [
   {
+    date: "2026-07-14",
+    title: "Integração WhatsApp Business API",
+    items: [
+      "Nova página /app/whatsapp para conectar a conta oficial da Meta (Phone Number ID + Access Token)",
+      "Envio de mensagens direto do CRM via Graph API, sem depender de wa.me",
+      "Tabelas whatsapp_credentials e whatsapp_messages com RLS por dono",
+      "Cada cliente configura suas próprias credenciais individualmente",
+    ],
+  },
+  {
     date: "2026-07-13",
     title: "Automação de follow-up no CRM",
     items: [
@@ -188,7 +198,7 @@ const ROADMAP: Array<{
   { status: "done", phase: "Sites", title: "Analytics do site publicado", desc: "Views, cliques em CTA/WhatsApp/sociais e envios de formulário." },
   { status: "done", phase: "Sites", title: "Domínio próprio por site", desc: "CNAME + TXT de verificação via DNS. SSL automático via Cloudflare proxied." },
   { status: "todo", phase: "CRM", title: "Automação de follow-up", desc: "Sequências por status do lead (WhatsApp/email)." },
-  { status: "todo", phase: "CRM", title: "Integração WhatsApp Business API", desc: "Envio direto do CRM, templates aprovados." },
+  { status: "done", phase: "CRM", title: "Integração WhatsApp Business API", desc: "Envio direto do CRM, templates aprovados." },
   { status: "done", phase: "IA", title: "Copywriting por segmento", desc: "Hints por segmento injetados no prompt do gerador de sites (11 grupos cobrindo as 56 categorias)." },
   { status: "done", phase: "IA", title: "Geração de logotipo", desc: "Logo simples via IA (Gemini flash image) direto no editor do site." },
   { status: "done", phase: "Conta", title: "Dispositivos ativos reais", desc: "Listagem de sessões Supabase (auth.sessions) + revogar individual ou todas." },
@@ -196,7 +206,7 @@ const ROADMAP: Array<{
   { status: "done", phase: "Growth", title: "Programa de indicação", desc: "Código único por perfil, link compartilhável, aplicar código e listar indicações." },
   { status: "done", phase: "Qualidade", title: "Testes e2e do wizard", desc: "Playwright: landing pública + fluxo dos 5 passos do wizard (skip sem E2E_EMAIL)." },
   { status: "done", phase: "CRM", title: "Automação de follow-up", desc: "Modelos por etapa + tarefas agendadas geradas automaticamente ao mover leads no CRM." },
-  { status: "todo", phase: "CRM", title: "WhatsApp Business API", desc: "Envio direto pela API oficial da Meta com templates aprovados." },
+  { status: "done", phase: "CRM", title: "WhatsApp Business API", desc: "Envio direto pela API oficial da Meta com templates aprovados." },
 ];
 
 
