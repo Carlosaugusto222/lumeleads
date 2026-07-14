@@ -146,3 +146,34 @@ export const resolveSiteByHost = createServerFn({ method: "POST" })
     if (!site || !site.published) return null;
     return { slug: site.slug };
   });
+
+// Called from the landing route loader — reads Host from the incoming request.
+export const resolveIncomingHostSite = createServerFn({ method: "GET" }).handler(async () => {
+  let host = "";
+  try { host = getRequestHost() ?? ""; } catch { return null; }
+  if (!host) return null;
+  const cleaned = host.toLowerCase().replace(/:\d+$/, "");
+  if (cleaned.endsWith(".lovable.app") || cleaned.endsWith(".lovable.dev") || cleaned === "localhost") return null;
+
+  const key = process.env.SUPABASE_PUBLISHABLE_KEY!;
+  const supabase = createClient<Database>(process.env.SUPABASE_URL!, key, {
+    auth: { persistSession: false },
+    global: {
+      fetch: (input, init) => {
+        const h = new Headers(init?.headers);
+        if (key.startsWith("sb_") && h.get("Authorization") === `Bearer ${key}`) h.delete("Authorization");
+        h.set("apikey", key);
+        return fetch(input, { ...init, headers: h });
+      },
+    },
+  });
+  const { data: row } = await supabase
+    .from("site_domains")
+    .select("sites!inner(slug, published)")
+    .eq("domain", cleaned)
+    .eq("status", "verified")
+    .maybeSingle();
+  const site = (row?.sites as unknown as { slug: string; published: boolean } | null) ?? null;
+  if (!site || !site.published) return null;
+  return { slug: site.slug };
+});
