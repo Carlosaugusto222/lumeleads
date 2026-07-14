@@ -427,12 +427,20 @@ function DomainsPanel({ siteId }: { siteId: string }) {
   const add = useServerFn(addSiteDomain);
   const verify = useServerFn(verifySiteDomain);
   const del = useServerFn(deleteSiteDomain);
+  const planFn = useServerFn(getMyPlan);
   const qc = useQueryClient();
   const [domain, setDomain] = useState("");
+
+  const { data: planData, isLoading: planLoading } = useQuery({
+    queryKey: ["my-plan"],
+    queryFn: () => planFn(),
+  });
+  const isPaid = planData ? planData.plan.id !== "gratuito" : false;
 
   const { data, isLoading } = useQuery({
     queryKey: ["site-domains", siteId],
     queryFn: () => list({ data: { siteId } }),
+    enabled: isPaid,
   });
 
   const addMut = useMutation({
