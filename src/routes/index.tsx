@@ -1,8 +1,13 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { Sparkles, Zap, Rocket, ArrowRight, Wand2, Palette, Globe2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { resolveIncomingHostSite } from "@/lib/site-domains.functions";
 
 export const Route = createFileRoute("/")({
+  beforeLoad: async () => {
+    const match = await resolveIncomingHostSite();
+    if (match) throw redirect({ to: "/s/$slug", params: { slug: match.slug } });
+  },
   component: Landing,
 });
 

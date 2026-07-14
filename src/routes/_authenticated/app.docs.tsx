@@ -186,7 +186,7 @@ const ROADMAP: Array<{
   { status: "done", phase: "Sites", title: "Templates de tema", desc: "4 layouts distintos: moderno, clássico, bold, minimal." },
   { status: "done", phase: "Segurança", title: "Rate limiting server-side", desc: "consume_rate_limit em buscas, saves, exports e submissões." },
   { status: "done", phase: "Sites", title: "Analytics do site publicado", desc: "Views, cliques em CTA/WhatsApp/sociais e envios de formulário." },
-  { status: "todo", phase: "Sites", title: "Domínio próprio por site", desc: "CNAME + verificação + SSL automático." },
+  { status: "done", phase: "Sites", title: "Domínio próprio por site", desc: "CNAME + TXT de verificação via DNS. SSL automático via Cloudflare proxied." },
   { status: "todo", phase: "CRM", title: "Automação de follow-up", desc: "Sequências por status do lead (WhatsApp/email)." },
   { status: "todo", phase: "CRM", title: "Integração WhatsApp Business API", desc: "Envio direto do CRM, templates aprovados." },
   { status: "done", phase: "IA", title: "Copywriting por segmento", desc: "Hints por segmento injetados no prompt do gerador de sites (11 grupos cobrindo as 56 categorias)." },
