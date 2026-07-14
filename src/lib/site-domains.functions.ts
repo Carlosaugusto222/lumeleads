@@ -47,6 +47,15 @@ export const addSiteDomain = createServerFn({ method: "POST" })
     z.object({ siteId: z.string().uuid(), domain: z.string().min(3).max(253) }).parse(i),
   )
   .handler(async ({ data, context }) => {
+    const { data: sub } = await context.supabase
+      .from("subscriptions")
+      .select("plan_id")
+      .eq("user_id", context.userId)
+      .maybeSingle();
+    const planId = sub?.plan_id ?? "gratuito";
+    if (planId === "gratuito") {
+      throw new Error("Domínio próprio disponível apenas nos planos pagos. Faça upgrade em /app/billing.");
+    }
     const domain = normalizeDomain(data.domain);
     const { data: row, error } = await context.supabase
       .from("site_domains")

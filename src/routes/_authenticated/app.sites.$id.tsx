@@ -25,7 +25,9 @@ import {
   deleteSiteDomain,
 } from "@/lib/site-domains.functions";
 import { generateLogo } from "@/lib/logo.functions";
+import { getMyPlan } from "@/lib/plans.functions";
 import { SiteRenderer, SITE_TEMPLATES, type SiteTemplate } from "@/components/SiteRenderer";
+import { Lock } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/app/sites/$id")({
   component: EditSite,
@@ -425,12 +427,20 @@ function DomainsPanel({ siteId }: { siteId: string }) {
   const add = useServerFn(addSiteDomain);
   const verify = useServerFn(verifySiteDomain);
   const del = useServerFn(deleteSiteDomain);
+  const planFn = useServerFn(getMyPlan);
   const qc = useQueryClient();
   const [domain, setDomain] = useState("");
+
+  const { data: planData, isLoading: planLoading } = useQuery({
+    queryKey: ["my-plan"],
+    queryFn: () => planFn(),
+  });
+  const isPaid = planData ? planData.plan.id !== "gratuito" : false;
 
   const { data, isLoading } = useQuery({
     queryKey: ["site-domains", siteId],
     queryFn: () => list({ data: { siteId } }),
+    enabled: isPaid,
   });
 
   const addMut = useMutation({
@@ -449,6 +459,32 @@ function DomainsPanel({ siteId }: { siteId: string }) {
   });
 
   const target = data?.target ?? "lumeleads.lovable.app";
+
+  if (planLoading) {
+    return <div className="flex justify-center py-3"><Loader2 className="h-4 w-4 animate-spin" /></div>;
+  }
+
+  if (!isPaid) {
+    return (
+      <div className="space-y-3">
+        <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 p-4 text-xs leading-relaxed">
+          <div className="mb-2 flex items-center gap-2 font-semibold text-amber-700 dark:text-amber-400">
+            <Lock className="h-3.5 w-3.5" /> Recurso disponível nos planos pagos
+          </div>
+          <p className="text-muted-foreground">
+            Seu site já está publicado no endereço padrão <b>lumeleads.lovable.app/s/&lt;slug&gt;</b>.
+            Para usar um <b>domínio próprio</b> (ex.: seudominio.com.br), faça upgrade para
+            Starter, Pro ou Agência.
+          </p>
+        </div>
+        <Link to="/app/billing">
+          <Button size="sm" className="bg-gradient-primary text-primary-foreground">
+            Ver planos
+          </Button>
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-3">
