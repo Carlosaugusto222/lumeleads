@@ -226,6 +226,9 @@ function EditSite() {
           <Card title="Analytics">
             <AnalyticsPanel siteId={id} published={site.published} />
           </Card>
+          <Card title="Domínio próprio">
+            <DomainsPanel siteId={id} />
+          </Card>
         </div>
 
         {/* Preview */}
