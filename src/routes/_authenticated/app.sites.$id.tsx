@@ -25,7 +25,9 @@ import {
   deleteSiteDomain,
 } from "@/lib/site-domains.functions";
 import { generateLogo } from "@/lib/logo.functions";
+import { getMyPlan } from "@/lib/plans.functions";
 import { SiteRenderer, SITE_TEMPLATES, type SiteTemplate } from "@/components/SiteRenderer";
+import { Lock } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/app/sites/$id")({
   component: EditSite,
