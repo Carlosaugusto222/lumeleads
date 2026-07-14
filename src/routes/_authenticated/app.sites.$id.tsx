@@ -18,6 +18,12 @@ import {
   type SiteContent,
 } from "@/lib/sites.functions";
 import { getSiteAnalytics } from "@/lib/site-analytics.functions";
+import {
+  listSiteDomains,
+  addSiteDomain,
+  verifySiteDomain,
+  deleteSiteDomain,
+} from "@/lib/site-domains.functions";
 import { generateLogo } from "@/lib/logo.functions";
 import { SiteRenderer, SITE_TEMPLATES, type SiteTemplate } from "@/components/SiteRenderer";
 
