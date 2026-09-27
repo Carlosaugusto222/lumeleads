@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-27T17:27:14.604409+00:00",
+  "generated_at": "2026-09-27T17:29:15.861575+00:00",
   "files": [
     {
       "path": "package-lock.json",
@@ -44,10 +44,6 @@
     {
       "path": "e2e/README.md",
       "bytes": 526
-    },
-    {
-      "path": ".lovable/plan.md",
-      "bytes": 1330
     },
     {
       "path": ".lovable/project.json",
@@ -156,6 +152,10 @@
     {
       "path": "supabase/migrations/20260713124630_26a2358a-27d2-4981-8b4e-a79e60e8121e.sql",
       "bytes": 87
+    },
+    {
+      "path": ".lovable/plan/escolha-de-endereço-na-criação-do-site-2026-09-27.md",
+      "bytes": 1330
     },
     {
       "path": "src/components/TwoFactorSetup.tsx",
@@ -551,7 +551,7 @@
     },
     {
       "path": "src/routes/_authenticated/app.docs.tsx",
-      "bytes": 19005
+      "bytes": 19447
     },
     {
       "path": "src/routes/_authenticated/app.referrals.tsx",
@@ -575,7 +575,7 @@
     },
     {
       "path": "src/routes/_authenticated/app.new.tsx",
-      "bytes": 22369
+      "bytes": 27538
     },
     {
       "path": "src/routes/_authenticated/route.tsx",
@@ -2818,6 +2818,14 @@
     {
       "source": "src/routes/_authenticated/app.new.tsx",
       "target": "@/lib/leads.functions"
+    },
+    {
+      "source": "src/routes/_authenticated/app.new.tsx",
+      "target": "@/lib/plans.functions"
+    },
+    {
+      "source": "src/routes/_authenticated/app.new.tsx",
+      "target": "@/lib/site-domains.functions"
     },
     {
       "source": "src/routes/_authenticated/app.new.tsx",
