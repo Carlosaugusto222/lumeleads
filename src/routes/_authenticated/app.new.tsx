@@ -505,7 +505,11 @@ function NewSite() {
                 </div>
               )}
             </div>
-            <Button type="button" size="lg" onClick={() => genMut.mutate()} disabled={genMut.isPending}
+            <Button
+              type="button"
+              size="lg"
+              onClick={() => genMut.mutate()}
+              disabled={genMut.isPending || planLoading || (addressType === "custom" && !customDomain.trim())}
               className="w-full bg-gradient-primary text-primary-foreground">
               {genMut.isPending ? (<><Loader2 className="h-4 w-4 animate-spin" /> Gerando sua landing...</>) : (<><Sparkles className="h-4 w-4" /> Gerar site com IA</>)}
             </Button>
