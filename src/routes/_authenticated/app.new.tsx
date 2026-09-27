@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import {
   Sparkles, Loader2, Users, PenLine, ArrowRight, ArrowLeft, Check,
   Palette, Image as ImageIcon, Share2, RefreshCw, X, Plus, Wand2,
+  Globe2, Link2, Lock,
 } from "lucide-react";
 import { z } from "zod";
 
@@ -18,6 +19,8 @@ import {
 } from "@/components/ui/select";
 import { generateSite } from "@/lib/sites.functions";
 import { listLeads } from "@/lib/leads.functions";
+import { getMyPlan } from "@/lib/plans.functions";
+import { addSiteDomain } from "@/lib/site-domains.functions";
 import { suggestPalettes, fetchPlacePhotos, fetchInstagramPhotos, fetchStockPhotos, type Palette as PaletteType } from "@/lib/site-wizard.functions";
 
 const newSiteSearchSchema = z.object({
@@ -26,6 +29,16 @@ const newSiteSearchSchema = z.object({
 
 export const Route = createFileRoute("/_authenticated/app/new")({
   validateSearch: newSiteSearchSchema,
+  head: () => ({
+    meta: [
+      { title: "Criar site | LumeLeads" },
+      { name: "description", content: "Crie um site profissional com IA e escolha seu endereço de publicação." },
+      { property: "og:title", content: "Criar site | LumeLeads" },
+      { property: "og:description", content: "Crie um site profissional com IA e escolha seu endereço de publicação." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: NewSite,
 });
 
@@ -52,6 +65,8 @@ function NewSite() {
   const photosFn = useServerFn(fetchPlacePhotos);
   const igFn = useServerFn(fetchInstagramPhotos);
   const stockFn = useServerFn(fetchStockPhotos);
+  const planFn = useServerFn(getMyPlan);
+  const addDomainFn = useServerFn(addSiteDomain);
   const [igHandle, setIgHandle] = useState("");
   const [stockQuery, setStockQuery] = useState("");
 
@@ -72,8 +87,12 @@ function NewSite() {
   const [photoUrl, setPhotoUrl] = useState("");
 
   const [socials, setSocials] = useState<Socials>(emptySocials);
+  const [addressType, setAddressType] = useState<"standard" | "custom">("standard");
+  const [customDomain, setCustomDomain] = useState("");
 
   const { data: leads } = useQuery({ queryKey: ["leads"], queryFn: () => listLeadsFn() });
+  const { data: planData, isLoading: planLoading } = useQuery({ queryKey: ["my-plan"], queryFn: () => planFn() });
+  const isPaid = planData ? planData.plan.id !== "gratuito" : false;
   const selectedLead = useMemo(() => leads?.find((l) => l.id === selectedLeadId), [leads, selectedLeadId]);
 
   useEffect(() => {
@@ -154,8 +173,21 @@ function NewSite() {
           socials,
         },
       }),
-    onSuccess: ({ id }) => {
-      toast.success("Landing gerada!");
+    onSuccess: async ({ id }) => {
+      if (addressType === "custom") {
+        try {
+          await addDomainFn({ data: { siteId: id, domain: customDomain } });
+          toast.success("Site gerado e domínio cadastrado!");
+        } catch (error) {
+          toast.warning(
+            error instanceof Error
+              ? `Site gerado, mas o domínio não foi cadastrado: ${error.message}`
+              : "Site gerado, mas não foi possível cadastrar o domínio.",
+          );
+        }
+      } else {
+        toast.success("Site gerado!");
+      }
       navigate({ to: "/app/sites/$id", params: { id } });
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Erro na geração"),
@@ -415,6 +447,63 @@ function NewSite() {
                 )} />
               <SummaryRow k="Fotos" v={`${photos.length} foto(s)`} />
               <SummaryRow k="Redes" v={Object.values(socials).filter(Boolean).length + " preenchidas"} />
+            </div>
+            <div className="space-y-3 border-t border-border/60 pt-4">
+              <div>
+                <h3 className="text-sm font-semibold">Endereço do site</h3>
+                <p className="text-xs text-muted-foreground">Escolha como o site será acessado depois de publicado.</p>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setAddressType("standard")}
+                  className={`h-auto min-h-24 items-start justify-start whitespace-normal p-4 text-left ${addressType === "standard" ? "border-primary bg-primary/10 ring-1 ring-primary" : ""}`}
+                >
+                  <Globe2 className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+                  <span>
+                    <span className="block font-semibold">Endereço padrão LumeLeads</span>
+                    <span className="mt-1 block text-xs font-normal text-muted-foreground">lumeleads.lovable.app/s/seu-site</span>
+                    <span className="mt-1 block text-xs font-normal text-muted-foreground">Disponível em todos os planos</span>
+                  </span>
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={!isPaid || planLoading}
+                  onClick={() => setAddressType("custom")}
+                  className={`h-auto min-h-24 items-start justify-start whitespace-normal p-4 text-left ${addressType === "custom" ? "border-primary bg-primary/10 ring-1 ring-primary" : ""}`}
+                >
+                  {isPaid ? <Link2 className="mt-0.5 h-5 w-5 shrink-0 text-primary" /> : <Lock className="mt-0.5 h-5 w-5 shrink-0" />}
+                  <span>
+                    <span className="block font-semibold">Domínio próprio</span>
+                    <span className="mt-1 block text-xs font-normal text-muted-foreground">Ex.: minhaempresa.com.br</span>
+                    <span className="mt-1 block text-xs font-normal text-muted-foreground">{isPaid ? "Disponível no seu plano" : "Disponível nos planos pagos"}</span>
+                  </span>
+                </Button>
+              </div>
+              {!planLoading && !isPaid && (
+                <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border/60 bg-muted/40 p-3 text-xs text-muted-foreground">
+                  <span>Seu plano Gratuito usa o endereço padrão do LumeLeads.</span>
+                  <Button type="button" size="sm" variant="outline" onClick={() => navigate({ to: "/app/billing" })}>
+                    Ver planos
+                  </Button>
+                </div>
+              )}
+              {addressType === "custom" && isPaid && (
+                <div className="space-y-1.5">
+                  <Label htmlFor="custom-domain" className="text-xs">Seu domínio</Label>
+                  <Input
+                    id="custom-domain"
+                    value={customDomain}
+                    onChange={(event) => setCustomDomain(event.target.value)}
+                    placeholder="minhaempresa.com.br"
+                    autoCapitalize="none"
+                    autoCorrect="off"
+                  />
+                  <p className="text-xs text-muted-foreground">Após gerar, siga o passo a passo de DNS no editor para ativar o domínio.</p>
+                </div>
+              )}
             </div>
             <Button type="button" size="lg" onClick={() => genMut.mutate()} disabled={genMut.isPending}
               className="w-full bg-gradient-primary text-primary-foreground">
