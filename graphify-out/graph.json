@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-27T17:18:22.236760+00:00",
+  "generated_at": "2026-09-27T17:27:14.604409+00:00",
   "files": [
     {
       "path": "package-lock.json",
@@ -47,15 +47,19 @@
     },
     {
       "path": ".lovable/plan.md",
-      "bytes": 4579
+      "bytes": 1330
     },
     {
       "path": ".lovable/project.json",
       "bytes": 124
     },
     {
+      "path": ".lovasiri/sync.json",
+      "bytes": 80
+    },
+    {
       "path": "src/routeTree.gen.ts",
-      "bytes": 19469
+      "bytes": 19763
     },
     {
       "path": "src/styles.css",
@@ -306,12 +310,16 @@
       "bytes": 3228
     },
     {
+      "path": "src/integrations/supabase/previewAuthStorage.ts",
+      "bytes": 4565
+    },
+    {
       "path": "src/integrations/supabase/types.ts",
-      "bytes": 29348
+      "bytes": 29358
     },
     {
       "path": "src/integrations/supabase/client.ts",
-      "bytes": 2450
+      "bytes": 2481
     },
     {
       "path": "src/integrations/supabase/auth-attacher.ts",
@@ -754,6 +762,14 @@
     {
       "source": "src/routeTree.gen.ts",
       "target": "./routes/_authenticated/app.billing.success"
+    },
+    {
+      "source": "src/routeTree.gen.ts",
+      "target": "./router.tsx"
+    },
+    {
+      "source": "src/routeTree.gen.ts",
+      "target": "./start.ts"
     },
     {
       "source": "src/server.ts",
@@ -1438,6 +1454,10 @@
     {
       "source": "src/integrations/supabase/client.ts",
       "target": "./types"
+    },
+    {
+      "source": "src/integrations/supabase/client.ts",
+      "target": "./previewAuthStorage"
     },
     {
       "source": "src/integrations/supabase/client.ts",
