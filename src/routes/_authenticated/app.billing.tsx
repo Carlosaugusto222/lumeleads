@@ -11,7 +11,7 @@ export const Route = createFileRoute("/_authenticated/app/billing")({
 });
 
 type Plan = {
-  id: "gratuito" | "starter" | "pro" | "agencia";
+  id: "starter" | "pro" | "agencia";
   name: string;
   tagline: string;
   price: { monthly: number; yearly: number };
@@ -20,18 +20,6 @@ type Plan = {
 };
 
 const PLANS: Plan[] = [
-  {
-    id: "gratuito", name: "Gratuito", tagline: "Para explorar a plataforma", price: { monthly: 0, yearly: 0 },
-    features: [
-      { label: "60 leads/mês", on: true }, { label: "5 categorias de negócio", on: true },
-      { label: "10 scripts/mês", on: true }, { label: "2 sites/mês", on: true },
-      { label: "3 edições/mês", on: true }, { label: "3 versões de site", on: true },
-      { label: "Exportação CSV", on: false }, { label: "Link público para clientes", on: true },
-      { label: "Dashboard completo", on: false }, { label: "Busca em todos os municípios do Brasil", on: false },
-      { label: "Criação livre de sites", on: false }, { label: "Baixar HTML do site", on: false },
-      { label: "Documentação", on: true },
-    ],
-  },
   {
     id: "starter", name: "Starter", tagline: "Para freelancers que estão começando", price: { monthly: 47, yearly: 33 },
     features: [
@@ -113,7 +101,7 @@ function BillingPage() {
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-3">
         {PLANS.map((p) => (
           <div key={p.name}
             className={`relative flex flex-col rounded-2xl border p-6 ${p.highlight ? "border-primary bg-primary/5" : "border-border/60 bg-card/40"}`}>
@@ -125,9 +113,7 @@ function BillingPage() {
             <div className="font-semibold">{p.name}</div>
             <div className="text-xs text-muted-foreground">{p.tagline}</div>
             <div className="mt-4">
-              {p.price.monthly === 0
-                ? <div className="font-display text-4xl font-bold">Grátis</div>
-                : (<div><span className="font-display text-4xl font-bold">R$ {cycle === "monthly" ? p.price.monthly : p.price.yearly}</span><span className="text-sm text-muted-foreground">,00/mês</span></div>)}
+              <div><span className="font-display text-4xl font-bold">R$ {cycle === "monthly" ? p.price.monthly : p.price.yearly}</span><span className="text-sm text-muted-foreground">,00/mês</span></div>
             </div>
             <ul className="my-6 flex-1 space-y-2 text-sm">
               {p.features.map((f, i) => (
@@ -140,11 +126,11 @@ function BillingPage() {
             <Button
               className={p.highlight ? "bg-gradient-primary text-primary-foreground" : ""}
               variant={p.highlight ? "default" : "outline"}
-              disabled={p.price.monthly === 0 || loadingId === p.id}
-              onClick={() => p.id !== "gratuito" && upgrade(p.id)}
+              disabled={loadingId === p.id}
+              onClick={() => upgrade(p.id)}
             >
               {loadingId === p.id && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {p.price.monthly === 0 ? "Plano atual" : "Fazer upgrade"}
+              Assinar
             </Button>
           </div>
         ))}
