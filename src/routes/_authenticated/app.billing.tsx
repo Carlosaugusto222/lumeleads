@@ -11,7 +11,7 @@ export const Route = createFileRoute("/_authenticated/app/billing")({
 });
 
 type Plan = {
-  id: "starter" | "pro" | "agencia";
+  id: "starter" | "pro" | "elite";
   name: string;
   tagline: string;
   price: { monthly: number; yearly: number };
@@ -45,7 +45,7 @@ const PLANS: Plan[] = [
     ],
   },
   {
-    id: "agencia", name: "Agência", tagline: "Para agências e equipes", price: { monthly: 197, yearly: 138 },
+    id: "elite", name: "Elite", tagline: "Para agências e equipes", price: { monthly: 197, yearly: 138 },
     features: [
       { label: "3000 leads/mês", on: true }, { label: "Todas as categorias de negócio", on: true },
       { label: "500 scripts/mês", on: true }, { label: "100 sites/mês", on: true },
@@ -63,7 +63,7 @@ function BillingPage() {
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const checkout = useServerFn(createMpCheckout);
 
-  async function upgrade(planId: "starter" | "pro" | "agencia") {
+  async function upgrade(planId: "starter" | "pro" | "elite") {
     try {
       setLoadingId(planId);
       const { initPoint } = await checkout({ data: { planId, cycle } });
