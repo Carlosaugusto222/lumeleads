@@ -56,6 +56,9 @@ export const searchPlaces = createServerFn({ method: "POST" })
 
     const { plan, usage } = await loadPlanAndUsage(context.supabase, context.userId);
     if (!plan) throw new Error("Plano não encontrado");
+    if (plan.id === "gratuito" && (usage.searches ?? 0) > 0) {
+      throw new Error("Seu acesso gratuito expirou. Assine um plano para continuar buscando e liberando mais acessos.");
+    }
     if (plan.monthly_searches !== -1 && (usage.searches ?? 0) >= plan.monthly_searches) {
       throw new Error(`Limite mensal de ${plan.monthly_searches} buscas atingido no plano ${plan.name}.`);
     }
@@ -151,6 +154,9 @@ export const searchPlaces = createServerFn({ method: "POST" })
     }
 
     await context.supabase.rpc("increment_usage", { _user_id: context.userId, _searches: 1, _saved: 0 });
+    if (plan.id === "gratuito") {
+      return { results: results.slice(0, 1) };
+    }
     return { results };
   });
 
