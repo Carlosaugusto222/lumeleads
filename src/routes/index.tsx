@@ -4,6 +4,14 @@ import { Button } from "@/components/ui/button";
 import { resolveIncomingHostSite } from "@/lib/site-domains.functions";
 
 export const Route = createFileRoute("/")({
+  head: () => ({ meta: [
+    { title: "LumeLeads | Prospecção e sites para negócios" },
+    { name: "description", content: "Encontre leads, organize seu CRM e crie sites para negócios com o LumeLeads." },
+    { property: "og:title", content: "LumeLeads | Prospecção e sites para negócios" },
+    { property: "og:description", content: "Encontre leads, organize seu CRM e crie sites para negócios com o LumeLeads." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   beforeLoad: async () => {
     const match = await resolveIncomingHostSite();
     if (match) throw redirect({ to: "/s/$slug", params: { slug: match.slug } });

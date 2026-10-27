@@ -20,6 +20,15 @@ type Tab = "docs" | "roadmap" | "changelog";
 
 const CHANGELOG: Array<{ date: string; title: string; items: string[] }> = [
   {
+    date: "2026-10-27",
+    title: "Correção da busca de leads",
+    items: [
+      "Endereços incompletos do Google Places não interrompem mais a busca com erro de includes",
+      "Cidade, estado e país da busca são preservados quando o Google não fornece esses dados",
+      "Testes de regressão cobrem componentes incompletos e endereços válidos",
+    ],
+  },
+  {
     date: "2026-09-27",
     title: "Escolha de endereço na criação de sites",
     items: [
@@ -193,7 +202,7 @@ const ROADMAP: Array<{
   title: string;
   desc: string;
 }> = [
-  { status: "done", phase: "Core", title: "Busca Google Places + CRM Kanban", desc: "56 categorias, planos, limites por período." },
+  { status: "done", phase: "Core", title: "Busca Google Places + CRM Kanban", desc: "56 categorias, planos, limites por período; busca tolerante a endereços incompletos com testes de regressão." },
   { status: "done", phase: "Core", title: "Wizard de sites em 5 passos", desc: "Lead → Cores → Fotos → Redes → Gerar (IA)." },
   { status: "done", phase: "Admin", title: "Painel Super Admin", desc: "Usuários, planos, categorias, estatísticas." },
   { status: "done", phase: "Admin", title: "Dashboard de métricas", desc: "Séries diárias, MRR e receita por plano." },
