@@ -6,6 +6,7 @@ import {
   useRouter,
   HeadContent,
   Scripts,
+  type ErrorComponentProps,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
@@ -36,7 +37,7 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+function ErrorComponent({ error, reset }: ErrorComponentProps) {
   console.error(error);
   const router = useRouter();
   useEffect(() => {
@@ -99,8 +100,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "LumeLeads — Crie sua landing page com IA em minutos" },
       { name: "twitter:description", content: "A LumeLeads gera landing pages profissionais para o seu negócio a partir de um briefing simples. Sem código, sem designer, publicação em um clique." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/838adc3d-c3db-4e47-b9fe-aa5d700d663c/id-preview-57698270--996ade27-c29a-415c-a580-ebbc3f84522b.lovable.app-1783798314080.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/838adc3d-c3db-4e47-b9fe-aa5d700d663c/id-preview-57698270--996ade27-c29a-415c-a580-ebbc3f84522b.lovable.app-1783798314080.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
