@@ -9,40 +9,40 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as SSlugRouteImport } from './routes/s.$slug'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app.index'
-import { Route as ApiPublicMpWebhookRouteImport } from './routes/api/public/mp-webhook'
-import { Route as AuthenticatedAppWhatsappRouteImport } from './routes/_authenticated/app.whatsapp'
-import { Route as AuthenticatedAppSettingsRouteImport } from './routes/_authenticated/app.settings'
-import { Route as AuthenticatedAppReferralsRouteImport } from './routes/_authenticated/app.referrals'
-import { Route as AuthenticatedAppNewRouteImport } from './routes/_authenticated/app.new'
-import { Route as AuthenticatedAppLeadsRouteImport } from './routes/_authenticated/app.leads'
-import { Route as AuthenticatedAppFollowupsRouteImport } from './routes/_authenticated/app.followups'
-import { Route as AuthenticatedAppDocsRouteImport } from './routes/_authenticated/app.docs'
-import { Route as AuthenticatedAppCrmRouteImport } from './routes/_authenticated/app.crm'
-import { Route as AuthenticatedAppBuscarRouteImport } from './routes/_authenticated/app.buscar'
-import { Route as AuthenticatedAppBillingRouteImport } from './routes/_authenticated/app.billing'
-import { Route as AuthenticatedAppAgendaRouteImport } from './routes/_authenticated/app.agenda'
 import { Route as AuthenticatedAppAdminRouteImport } from './routes/_authenticated/app.admin'
+import { Route as AuthenticatedAppAgendaRouteImport } from './routes/_authenticated/app.agenda'
+import { Route as AuthenticatedAppBillingRouteImport } from './routes/_authenticated/app.billing'
+import { Route as AuthenticatedAppBuscarRouteImport } from './routes/_authenticated/app.buscar'
+import { Route as AuthenticatedAppCrmRouteImport } from './routes/_authenticated/app.crm'
+import { Route as AuthenticatedAppDocsRouteImport } from './routes/_authenticated/app.docs'
+import { Route as AuthenticatedAppFollowupsRouteImport } from './routes/_authenticated/app.followups'
+import { Route as AuthenticatedAppLeadsRouteImport } from './routes/_authenticated/app.leads'
+import { Route as AuthenticatedAppNewRouteImport } from './routes/_authenticated/app.new'
+import { Route as AuthenticatedAppReferralsRouteImport } from './routes/_authenticated/app.referrals'
+import { Route as AuthenticatedAppSettingsRouteImport } from './routes/_authenticated/app.settings'
+import { Route as AuthenticatedAppWhatsappRouteImport } from './routes/_authenticated/app.whatsapp'
+import { Route as ApiPublicMpWebhookRouteImport } from './routes/api/public/mp-webhook'
+import { Route as AuthenticatedAppBillingSuccessRouteImport } from './routes/_authenticated/app.billing.success'
 import { Route as AuthenticatedAppSitesIndexRouteImport } from './routes/_authenticated/app.sites.index'
 import { Route as AuthenticatedAppSitesIdRouteImport } from './routes/_authenticated/app.sites.$id'
-import { Route as AuthenticatedAppBillingSuccessRouteImport } from './routes/_authenticated/app.billing.success'
 
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SSlugRoute = SSlugRouteImport.update({
@@ -55,37 +55,34 @@ const AuthenticatedAppIndexRoute = AuthenticatedAppIndexRouteImport.update({
   path: '/app/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const ApiPublicMpWebhookRoute = ApiPublicMpWebhookRouteImport.update({
-  id: '/api/public/mp-webhook',
-  path: '/api/public/mp-webhook',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedAppWhatsappRoute =
-  AuthenticatedAppWhatsappRouteImport.update({
-    id: '/app/whatsapp',
-    path: '/app/whatsapp',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedAppSettingsRoute =
-  AuthenticatedAppSettingsRouteImport.update({
-    id: '/app/settings',
-    path: '/app/settings',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedAppReferralsRoute =
-  AuthenticatedAppReferralsRouteImport.update({
-    id: '/app/referrals',
-    path: '/app/referrals',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedAppNewRoute = AuthenticatedAppNewRouteImport.update({
-  id: '/app/new',
-  path: '/app/new',
+const AuthenticatedAppAdminRoute = AuthenticatedAppAdminRouteImport.update({
+  id: '/app/admin',
+  path: '/app/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedAppLeadsRoute = AuthenticatedAppLeadsRouteImport.update({
-  id: '/app/leads',
-  path: '/app/leads',
+const AuthenticatedAppAgendaRoute = AuthenticatedAppAgendaRouteImport.update({
+  id: '/app/agenda',
+  path: '/app/agenda',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAppBillingRoute = AuthenticatedAppBillingRouteImport.update({
+  id: '/app/billing',
+  path: '/app/billing',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAppBuscarRoute = AuthenticatedAppBuscarRouteImport.update({
+  id: '/app/buscar',
+  path: '/app/buscar',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAppCrmRoute = AuthenticatedAppCrmRouteImport.update({
+  id: '/app/crm',
+  path: '/app/crm',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAppDocsRoute = AuthenticatedAppDocsRouteImport.update({
+  id: '/app/docs',
+  path: '/app/docs',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAppFollowupsRoute =
@@ -94,36 +91,45 @@ const AuthenticatedAppFollowupsRoute =
     path: '/app/followups',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedAppDocsRoute = AuthenticatedAppDocsRouteImport.update({
-  id: '/app/docs',
-  path: '/app/docs',
+const AuthenticatedAppLeadsRoute = AuthenticatedAppLeadsRouteImport.update({
+  id: '/app/leads',
+  path: '/app/leads',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedAppCrmRoute = AuthenticatedAppCrmRouteImport.update({
-  id: '/app/crm',
-  path: '/app/crm',
+const AuthenticatedAppNewRoute = AuthenticatedAppNewRouteImport.update({
+  id: '/app/new',
+  path: '/app/new',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedAppBuscarRoute = AuthenticatedAppBuscarRouteImport.update({
-  id: '/app/buscar',
-  path: '/app/buscar',
-  getParentRoute: () => AuthenticatedRouteRoute,
+const AuthenticatedAppReferralsRoute =
+  AuthenticatedAppReferralsRouteImport.update({
+    id: '/app/referrals',
+    path: '/app/referrals',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAppSettingsRoute =
+  AuthenticatedAppSettingsRouteImport.update({
+    id: '/app/settings',
+    path: '/app/settings',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAppWhatsappRoute =
+  AuthenticatedAppWhatsappRouteImport.update({
+    id: '/app/whatsapp',
+    path: '/app/whatsapp',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const ApiPublicMpWebhookRoute = ApiPublicMpWebhookRouteImport.update({
+  id: '/api/public/mp-webhook',
+  path: '/api/public/mp-webhook',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedAppBillingRoute = AuthenticatedAppBillingRouteImport.update({
-  id: '/app/billing',
-  path: '/app/billing',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedAppAgendaRoute = AuthenticatedAppAgendaRouteImport.update({
-  id: '/app/agenda',
-  path: '/app/agenda',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedAppAdminRoute = AuthenticatedAppAdminRouteImport.update({
-  id: '/app/admin',
-  path: '/app/admin',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
+const AuthenticatedAppBillingSuccessRoute =
+  AuthenticatedAppBillingSuccessRouteImport.update({
+    id: '/success',
+    path: '/success',
+    getParentRoute: () => AuthenticatedAppBillingRoute,
+  } as any)
 const AuthenticatedAppSitesIndexRoute =
   AuthenticatedAppSitesIndexRouteImport.update({
     id: '/app/sites/',
@@ -135,12 +141,6 @@ const AuthenticatedAppSitesIdRoute = AuthenticatedAppSitesIdRouteImport.update({
   path: '/app/sites/$id',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedAppBillingSuccessRoute =
-  AuthenticatedAppBillingSuccessRouteImport.update({
-    id: '/success',
-    path: '/success',
-    getParentRoute: () => AuthenticatedAppBillingRoute,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -290,11 +290,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -304,11 +304,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/s/$slug': {
@@ -325,81 +325,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/api/public/mp-webhook': {
-      id: '/api/public/mp-webhook'
-      path: '/api/public/mp-webhook'
-      fullPath: '/api/public/mp-webhook'
-      preLoaderRoute: typeof ApiPublicMpWebhookRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/app/whatsapp': {
-      id: '/_authenticated/app/whatsapp'
-      path: '/app/whatsapp'
-      fullPath: '/app/whatsapp'
-      preLoaderRoute: typeof AuthenticatedAppWhatsappRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/app/settings': {
-      id: '/_authenticated/app/settings'
-      path: '/app/settings'
-      fullPath: '/app/settings'
-      preLoaderRoute: typeof AuthenticatedAppSettingsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/app/referrals': {
-      id: '/_authenticated/app/referrals'
-      path: '/app/referrals'
-      fullPath: '/app/referrals'
-      preLoaderRoute: typeof AuthenticatedAppReferralsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/app/new': {
-      id: '/_authenticated/app/new'
-      path: '/app/new'
-      fullPath: '/app/new'
-      preLoaderRoute: typeof AuthenticatedAppNewRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/app/leads': {
-      id: '/_authenticated/app/leads'
-      path: '/app/leads'
-      fullPath: '/app/leads'
-      preLoaderRoute: typeof AuthenticatedAppLeadsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/app/followups': {
-      id: '/_authenticated/app/followups'
-      path: '/app/followups'
-      fullPath: '/app/followups'
-      preLoaderRoute: typeof AuthenticatedAppFollowupsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/app/docs': {
-      id: '/_authenticated/app/docs'
-      path: '/app/docs'
-      fullPath: '/app/docs'
-      preLoaderRoute: typeof AuthenticatedAppDocsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/app/crm': {
-      id: '/_authenticated/app/crm'
-      path: '/app/crm'
-      fullPath: '/app/crm'
-      preLoaderRoute: typeof AuthenticatedAppCrmRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/app/buscar': {
-      id: '/_authenticated/app/buscar'
-      path: '/app/buscar'
-      fullPath: '/app/buscar'
-      preLoaderRoute: typeof AuthenticatedAppBuscarRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/app/billing': {
-      id: '/_authenticated/app/billing'
-      path: '/app/billing'
-      fullPath: '/app/billing'
-      preLoaderRoute: typeof AuthenticatedAppBillingRouteImport
+    '/_authenticated/app/admin': {
+      id: '/_authenticated/app/admin'
+      path: '/app/admin'
+      fullPath: '/app/admin'
+      preLoaderRoute: typeof AuthenticatedAppAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/app/agenda': {
@@ -409,12 +339,89 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppAgendaRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/app/admin': {
-      id: '/_authenticated/app/admin'
-      path: '/app/admin'
-      fullPath: '/app/admin'
-      preLoaderRoute: typeof AuthenticatedAppAdminRouteImport
+    '/_authenticated/app/billing': {
+      id: '/_authenticated/app/billing'
+      path: '/app/billing'
+      fullPath: '/app/billing'
+      preLoaderRoute: typeof AuthenticatedAppBillingRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/buscar': {
+      id: '/_authenticated/app/buscar'
+      path: '/app/buscar'
+      fullPath: '/app/buscar'
+      preLoaderRoute: typeof AuthenticatedAppBuscarRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/crm': {
+      id: '/_authenticated/app/crm'
+      path: '/app/crm'
+      fullPath: '/app/crm'
+      preLoaderRoute: typeof AuthenticatedAppCrmRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/docs': {
+      id: '/_authenticated/app/docs'
+      path: '/app/docs'
+      fullPath: '/app/docs'
+      preLoaderRoute: typeof AuthenticatedAppDocsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/followups': {
+      id: '/_authenticated/app/followups'
+      path: '/app/followups'
+      fullPath: '/app/followups'
+      preLoaderRoute: typeof AuthenticatedAppFollowupsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/leads': {
+      id: '/_authenticated/app/leads'
+      path: '/app/leads'
+      fullPath: '/app/leads'
+      preLoaderRoute: typeof AuthenticatedAppLeadsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/new': {
+      id: '/_authenticated/app/new'
+      path: '/app/new'
+      fullPath: '/app/new'
+      preLoaderRoute: typeof AuthenticatedAppNewRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/referrals': {
+      id: '/_authenticated/app/referrals'
+      path: '/app/referrals'
+      fullPath: '/app/referrals'
+      preLoaderRoute: typeof AuthenticatedAppReferralsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/settings': {
+      id: '/_authenticated/app/settings'
+      path: '/app/settings'
+      fullPath: '/app/settings'
+      preLoaderRoute: typeof AuthenticatedAppSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/whatsapp': {
+      id: '/_authenticated/app/whatsapp'
+      path: '/app/whatsapp'
+      fullPath: '/app/whatsapp'
+      preLoaderRoute: typeof AuthenticatedAppWhatsappRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/api/public/mp-webhook': {
+      id: '/api/public/mp-webhook'
+      path: '/api/public/mp-webhook'
+      fullPath: '/api/public/mp-webhook'
+      preLoaderRoute: typeof ApiPublicMpWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/app/billing/success': {
+      id: '/_authenticated/app/billing/success'
+      path: '/success'
+      fullPath: '/app/billing/success'
+      preLoaderRoute: typeof AuthenticatedAppBillingSuccessRouteImport
+      parentRoute: typeof AuthenticatedAppBillingRoute
     }
     '/_authenticated/app/sites/': {
       id: '/_authenticated/app/sites/'
@@ -429,13 +436,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/sites/$id'
       preLoaderRoute: typeof AuthenticatedAppSitesIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/app/billing/success': {
-      id: '/_authenticated/app/billing/success'
-      path: '/success'
-      fullPath: '/app/billing/success'
-      preLoaderRoute: typeof AuthenticatedAppBillingSuccessRouteImport
-      parentRoute: typeof AuthenticatedAppBillingRoute
     }
   }
 }
