@@ -12,6 +12,14 @@ import { searchPlaces, savePlacesAsLeads, type PlaceResult } from "@/lib/places.
 import { getMyPlan } from "@/lib/plans.functions";
 
 export const Route = createFileRoute("/_authenticated/app/buscar")({
+  head: () => ({ meta: [
+    { title: "Buscar Leads | LumeLeads" },
+    { name: "description", content: "Encontre negócios locais por categoria e localização e organize seus leads no LumeLeads." },
+    { property: "og:title", content: "Buscar Leads | LumeLeads" },
+    { property: "og:description", content: "Encontre negócios locais por categoria e localização no LumeLeads." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   component: BuscarPage,
 });
 

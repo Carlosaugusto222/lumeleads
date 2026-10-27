@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { resolvePlaceAddress, type PlaceAddressComponent } from "./place-address";
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/google_maps";
 
@@ -122,15 +123,14 @@ export const searchPlaces = createServerFn({ method: "POST" })
           websiteUri?: string;
           rating?: number;
           userRatingCount?: number;
-          addressComponents?: Array<{ types: string[]; longText: string; shortText: string }>;
+          addressComponents?: Array<PlaceAddressComponent | null> | null;
           primaryTypeDisplayName?: { text?: string };
         }>;
         nextPageToken?: string;
       };
 
       for (const p of json.places ?? []) {
-        const comps = p.addressComponents ?? [];
-        const findComp = (t: string) => comps.find((c) => c.types.includes(t));
+        const location = resolvePlaceAddress(p.addressComponents, data);
         results.push({
           place_id: p.id,
           name: p.displayName?.text ?? "—",
@@ -140,9 +140,7 @@ export const searchPlaces = createServerFn({ method: "POST" })
           has_website: Boolean(p.websiteUri),
           rating: p.rating ?? null,
           reviews_count: p.userRatingCount ?? null,
-          city: findComp("administrative_area_level_2")?.longText ?? findComp("locality")?.longText ?? data.city,
-          state: findComp("administrative_area_level_1")?.shortText ?? data.state,
-          country: findComp("country")?.longText ?? data.country,
+          ...location,
           category: p.primaryTypeDisplayName?.text ?? data.category,
         });
         if (results.length >= data.limit) break;
