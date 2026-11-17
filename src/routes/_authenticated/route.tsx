@@ -48,7 +48,9 @@ function AppShell() {
   const planQ = useQuery({ queryKey: ["my-plan"], queryFn: () => planFn() });
   const isAdmin = planQ.data?.isAdmin ?? false;
   const items = NAV.filter((n) => !n.adminOnly || isAdmin);
-
+  const currentLabel =
+    items.find((n) => (n.exact ? pathname === n.to : pathname.startsWith(n.to)))?.label ??
+    (pathname.startsWith("/app/settings") ? "Configurações" : undefined);
 
   async function handleSignOut() {
     await qc.cancelQueries();
@@ -60,12 +62,11 @@ function AppShell() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col border-r border-border/50 bg-card/40 backdrop-blur-xl lg:flex">
-        <div className="flex items-center justify-between px-5 py-5">
+        <div className="flex items-center px-5 py-5">
           <Link to="/app" className="flex items-center gap-2 font-display text-lg font-bold">
             <img src="/logo.png" alt="LumeLeads" className="h-7 w-7" width={28} height={28} />
             LumeLeads
           </Link>
-          <NotificationBell />
         </div>
         <nav className="flex-1 space-y-0.5 px-3">
           {items.map((item) => {
@@ -96,8 +97,8 @@ function AppShell() {
             }`}>
             <Settings className="h-4 w-4" /> Configurações
           </Link>
-          <Button size="sm" variant="ghost" onClick={handleSignOut} className="w-full justify-start text-muted-foreground">
-            <LogOut className="h-4 w-4" /> Sair
+          <Button size="sm" variant="ghost" onClick={handleSignOut} className="w-full justify-start text-muted-foreground hover:text-foreground">
+            <LogOut className="h-4 w-4 mr-2" /> Sair
           </Button>
         </div>
       </aside>
@@ -109,9 +110,17 @@ function AppShell() {
             <img src="/logo.png" alt="LumeLeads" className="h-6 w-6" width={24} height={24} />
             LumeLeads
           </Link>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1.5">
             <NotificationBell />
-            <Button size="sm" variant="ghost" onClick={handleSignOut}><LogOut className="h-4 w-4" /></Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={handleSignOut}
+              className="gap-1.5 text-xs text-muted-foreground hover:text-foreground px-2"
+            >
+              <LogOut className="h-4 w-4" />
+              <span>Sair</span>
+            </Button>
           </div>
         </div>
         <div className="flex gap-1 overflow-x-auto px-3 pb-2">
@@ -127,9 +136,36 @@ function AppShell() {
         </div>
       </header>
 
-      <main className="lg:pl-60">
-        <Outlet />
-      </main>
+      {/* Desktop main with top header */}
+      <div className="lg:pl-60">
+        <header className="sticky top-0 z-20 hidden h-14 items-center justify-between border-b border-border/50 bg-background/80 px-6 backdrop-blur-xl lg:flex">
+          <div className="flex items-center gap-2 text-sm font-medium">
+            <span className="text-muted-foreground">LumeLeads</span>
+            {currentLabel && (
+              <>
+                <span className="text-muted-foreground/60">/</span>
+                <span className="text-foreground">{currentLabel}</span>
+              </>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            <NotificationBell />
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={handleSignOut}
+              className="gap-2 text-muted-foreground hover:text-foreground"
+            >
+              <LogOut className="h-4 w-4" />
+              <span>Sair</span>
+            </Button>
+          </div>
+        </header>
+
+        <main>
+          <Outlet />
+        </main>
+      </div>
       <OnboardingVideoDialog />
     </div>
   );
