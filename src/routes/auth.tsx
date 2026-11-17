@@ -16,10 +16,10 @@ const search = z.object({
 });
 
 export const Route = createFileRoute("/auth")({
+  ssr: false,
   validateSearch: (s) => search.parse(s),
   beforeLoad: async () => {
     // If already signed in, bounce to /app
-    if (typeof window === "undefined") return;
     const { data } = await supabase.auth.getSession();
     if (data.session) throw redirect({ to: "/app" });
   },
@@ -34,6 +34,22 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) {
+        navigate({ to: "/app", replace: true });
+      }
+    });
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" || session) {
+        navigate({ to: "/app", replace: true });
+      }
+    });
+
+    return () => authListener.subscription.unsubscribe();
+  }, [navigate]);
 
   useEffect(() => setTab(mode ?? "signin"), [mode]);
   useEffect(() => {
@@ -75,7 +91,7 @@ function AuthPage() {
     setLoading(true);
     try {
       const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
+        redirect_uri: `${window.location.origin}/app`,
       });
       if (result.error) throw result.error;
       if (result.redirected) return;
@@ -89,7 +105,10 @@ function AuthPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-hero px-6 py-12">
       <div className="w-full max-w-md">
-        <Link to="/" className="mb-8 flex items-center justify-center gap-2 font-display text-xl font-bold">
+        <Link
+          to="/"
+          className="mb-8 flex items-center justify-center gap-2 font-display text-xl font-bold"
+        >
           <span className="inline-block h-6 w-6 rounded-md bg-gradient-primary" />
           LumeLeads
         </Link>
@@ -152,8 +171,18 @@ function AuthPage() {
               />
             </div>
 
-            <Button type="submit" disabled={loading} className="w-full bg-gradient-primary text-primary-foreground">
-              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : tab === "signup" ? "Criar minha conta" : "Entrar"}
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-gradient-primary text-primary-foreground"
+            >
+              {loading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : tab === "signup" ? (
+                "Criar minha conta"
+              ) : (
+                "Entrar"
+              )}
             </Button>
           </form>
 
@@ -175,7 +204,9 @@ function AuthPage() {
         </div>
 
         <p className="mt-6 text-center text-xs text-muted-foreground">
-          <Link to="/" className="hover:text-foreground">← Voltar para o site</Link>
+          <Link to="/" className="hover:text-foreground">
+            ← Voltar para o site
+          </Link>
         </p>
       </div>
     </div>

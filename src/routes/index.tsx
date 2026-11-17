@@ -1,7 +1,9 @@
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { Sparkles, Zap, Rocket, ArrowRight, Wand2, Palette, Globe2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { resolveIncomingHostSite } from "@/lib/site-domains.functions";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
@@ -15,11 +17,47 @@ export const Route = createFileRoute("/")({
   beforeLoad: async () => {
     const match = await resolveIncomingHostSite();
     if (match) throw redirect({ to: "/s/$slug", params: { slug: match.slug } });
+    if (typeof window !== "undefined") {
+      const hasAuthParams =
+        window.location.hash.includes("access_token") ||
+        window.location.search.includes("code=");
+      if (hasAuthParams) {
+        const { data } = await supabase.auth.getSession();
+        if (data.session) throw redirect({ to: "/app" });
+      }
+    }
   },
   component: Landing,
 });
 
 function Landing() {
+  const navigate = useNavigate();
+  const [hasSession, setHasSession] = useState(false);
+
+  useEffect(() => {
+    const hasAuthParams =
+      window.location.hash.includes("access_token") ||
+      window.location.search.includes("code=");
+
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) {
+        setHasSession(true);
+        if (hasAuthParams) {
+          navigate({ to: "/app", replace: true });
+        }
+      }
+    });
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      setHasSession(!!session);
+      if (event === "SIGNED_IN" || (session && hasAuthParams)) {
+        navigate({ to: "/app", replace: true });
+      }
+    });
+
+    return () => authListener.subscription.unsubscribe();
+  }, [navigate]);
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Nav */}
@@ -30,19 +68,30 @@ function Landing() {
             LumeLeads
           </Link>
           <div className="flex items-center gap-2">
-            <Link
-              to="/auth"
-              className="rounded-md px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-              Entrar
-            </Link>
-            <Link
-              to="/auth"
-              search={{ mode: "signup" }}
-              className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
-            >
-              Criar conta grátis
-            </Link>
+            {hasSession ? (
+              <Link
+                to="/app"
+                className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+              >
+                Acessar painel
+              </Link>
+            ) : (
+              <>
+                <Link
+                  to="/auth"
+                  className="rounded-md px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  Entrar
+                </Link>
+                <Link
+                  to="/auth"
+                  search={{ mode: "signup" }}
+                  className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+                >
+                  Criar conta grátis
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </nav>
