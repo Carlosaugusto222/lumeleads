@@ -71,7 +71,7 @@ function NewSite() {
   const [stockQuery, setStockQuery] = useState("");
 
   const [step, setStep] = useState(0);
-  const [mode, setMode] = useState<"lead" | "manual">(search.leadId ? "lead" : "lead");
+  const [mode, setMode] = useState<"lead" | "manual">(search.leadId ? "lead" : "manual");
   const [selectedLeadId, setSelectedLeadId] = useState<string>(search.leadId ?? "");
 
   const [businessName, setBusinessName] = useState("");
@@ -101,11 +101,12 @@ function NewSite() {
     setSector(selectedLead.category ?? "");
     setAudience(selectedLead.city ? `Clientes em ${selectedLead.city}` : "");
     setOffer(`Site profissional para ${selectedLead.name}`);
-    if (selectedLead.website && !socials.website) {
-      setSocials((s) => ({ ...s, website: selectedLead.website ?? "" }));
-    }
-    if (selectedLead.phone && !socials.whatsapp) {
-      setSocials((s) => ({ ...s, whatsapp: (selectedLead.phone ?? "").replace(/\D/g, "") }));
+    if (selectedLead.website || selectedLead.phone) {
+      setSocials((s) => ({
+        ...s,
+        website: s.website || (selectedLead.website ?? ""),
+        whatsapp: s.whatsapp || (selectedLead.phone ?? "").replace(/\D/g, ""),
+      }));
     }
   }, [selectedLead, mode]);
 

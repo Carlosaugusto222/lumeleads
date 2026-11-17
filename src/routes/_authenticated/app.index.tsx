@@ -51,7 +51,7 @@ function DashboardPage() {
       <section className="rounded-2xl border border-border/60 bg-card/50 p-6">
         <h2 className="mb-4 font-semibold">Funil de conversão</h2>
         <div className="h-72 w-full">
-          <ResponsiveContainer>
+          <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData} margin={{ top: 20, right: 20, left: 0, bottom: 10 }}>
               <XAxis dataKey="label" tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }} />
               <YAxis tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }} allowDecimals={false} />

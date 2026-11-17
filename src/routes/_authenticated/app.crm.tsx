@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { DndContext, useDraggable, useDroppable, type DragEndEvent, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { toast } from "sonner";
 import { Phone, MessageCircle, Loader2, Search, X, ChevronLeft, ChevronRight, ArrowLeft, Star, Globe } from "lucide-react";
@@ -266,7 +266,10 @@ function LeadDetailDialog({ lead, index, total, onClose, onPrev, onNext }: {
                         {RESULTADOS.map((r) => {
                           const active = r.key === "aberto" ? !["convertido", "perdido"].includes(lead.status) : lead.status === r.map;
                           return (
-                            <button key={r.key} onClick={() => r.map && moveMut.mutate({ id: lead.id, status: r.map })}
+                            <button key={r.key} onClick={() => {
+                              const target = r.map ?? (["convertido", "perdido"].includes(lead.status) ? "follow_up" : null);
+                              if (target && target !== lead.status) moveMut.mutate({ id: lead.id, status: target });
+                            }}
                               className={`rounded-full border px-2.5 py-0.5 text-[11px] ${active ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:bg-muted"}`}>
                               {r.label}
                             </button>
@@ -275,7 +278,7 @@ function LeadDetailDialog({ lead, index, total, onClose, onPrev, onNext }: {
                       </div>
                     } />
                     <InfoRow label="Site" value={lead.website ? (
-                      <a href={lead.website} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-primary hover:underline">
+                      <a href={lead.website.startsWith("http") ? lead.website : `https://${lead.website}`} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-primary hover:underline">
                         <Globe className="h-3 w-3" />{lead.website}
                       </a>
                     ) : <span className="text-muted-foreground">Sem site</span>} />
@@ -299,7 +302,7 @@ function LeadDetailDialog({ lead, index, total, onClose, onPrev, onNext }: {
                     <div className="rounded-lg border p-4 text-sm">
                       <div className="mb-1 font-medium">Site atual do lead</div>
                       {lead.website ? (
-                        <a href={lead.website} target="_blank" rel="noreferrer" className="text-primary hover:underline break-all">{lead.website}</a>
+                        <a href={lead.website.startsWith("http") ? lead.website : `https://${lead.website}`} target="_blank" rel="noreferrer" className="text-primary hover:underline break-all">{lead.website}</a>
                       ) : <div className="text-muted-foreground">Marcado como “tem site”, sem URL cadastrada.</div>}
                     </div>
                   ) : (
@@ -358,6 +361,11 @@ function ScriptBlock({ title, text }: { title: string; text: string }) {
 
 function NotesEditor({ lead, onSave }: { lead: LeadRow; onSave: (notes: string) => void }) {
   const [notes, setNotes] = useState(lead.notes ?? "");
+
+  useEffect(() => {
+    setNotes(lead.notes ?? "");
+  }, [lead.id, lead.notes]);
+
   return (
     <div className="space-y-2">
       <div className="text-xs font-semibold text-muted-foreground">Anotações</div>
@@ -373,6 +381,10 @@ function AgendarForm({ leadId, leadName, onDone }: { leadId: string; leadName: s
   const [title, setTitle] = useState(`Contato com ${leadName}`);
   const [when, setWhen] = useState(() => new Date(Date.now() + 24 * 3600 * 1000).toISOString().slice(0, 16));
   const [notes, setNotes] = useState("");
+
+  useEffect(() => {
+    setTitle(`Contato com ${leadName}`);
+  }, [leadId, leadName]);
   const mut = useMutation({
     mutationFn: () => createFn({ data: { lead_id: leadId, title, starts_at: new Date(when).toISOString(), notes, duration_min: 30 } }),
     onSuccess: () => { toast.success("Agendado"); qc.invalidateQueries({ queryKey: ["appointments"] }); onDone(); },

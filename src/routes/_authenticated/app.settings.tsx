@@ -134,7 +134,10 @@ function SecurityTab() {
       const token = data.session?.access_token;
       if (!token) return;
       try {
-        const payload = JSON.parse(atob(token.split(".")[1]));
+        const raw = token.split(".")[1] ?? "";
+        const base64 = raw.replace(/-/g, "+").replace(/_/g, "/");
+        const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), "=");
+        const payload = JSON.parse(atob(padded));
         if (payload?.session_id) setCurrentSessionId(payload.session_id as string);
       } catch { /* ignore */ }
     });

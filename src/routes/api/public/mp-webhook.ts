@@ -55,7 +55,8 @@ async function handle(request: Request) {
   };
 
   const userId = payment.metadata?.user_id ?? payment.external_reference?.split(":")[0];
-  const planId = payment.metadata?.plan_id ?? payment.external_reference?.split(":")[1];
+  const rawPlanId = payment.metadata?.plan_id ?? payment.external_reference?.split(":")[1];
+  const planId = rawPlanId === "elite" ? "agencia" : rawPlanId;
 
   if (!userId || !planId) return finish("error", "missing_ref");
 
@@ -78,7 +79,7 @@ async function handle(request: Request) {
       .maybeSingle();
     const currentRank = PLAN_ORDER.indexOf(current?.plan_id ?? "gratuito");
     const newRank = PLAN_ORDER.indexOf(planId);
-    if (newRank > currentRank) {
+    if (newRank >= 0 && newRank >= currentRank) {
       await supabaseAdmin
         .from("subscriptions")
         .upsert({ user_id: userId, plan_id: planId, updated_at: new Date().toISOString() });

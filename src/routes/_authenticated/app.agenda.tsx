@@ -48,6 +48,7 @@ function AgendaPage() {
   const delMut = useMutation({
     mutationFn: (id: string) => delFn({ data: { id } }),
     onSuccess: () => { toast.success("Removido"); qc.invalidateQueries({ queryKey: ["appts"] }); },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao remover agendamento"),
   });
 
   return (

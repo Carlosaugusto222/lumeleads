@@ -61,6 +61,7 @@ function WhatsappPage() {
       toast.success("Credenciais removidas");
       qc.invalidateQueries({ queryKey: ["wa-creds"] });
     },
+    onError: (e: Error) => toast.error(e.message),
   });
 
   const sendMut = useMutation({

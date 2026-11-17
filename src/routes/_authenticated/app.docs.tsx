@@ -5,6 +5,13 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/app/docs")({
   beforeLoad: async () => {
+    const { data: sessionData } = await supabase.auth.getSession();
+    const userId = sessionData.session?.user?.id;
+    if (userId) {
+      const { data: rows } = await supabase.from("user_roles").select("role").eq("user_id", userId);
+      if (!rows?.some((r) => r.role === "admin")) throw redirect({ to: "/app" });
+      return;
+    }
     const { data } = await supabase.auth.getUser();
     if (!data.user) throw redirect({ to: "/auth" });
     const { data: rows } = await supabase

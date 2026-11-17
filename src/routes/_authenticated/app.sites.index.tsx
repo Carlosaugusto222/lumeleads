@@ -61,11 +61,15 @@ function SitesList() {
                 </span>
               </div>
               <div className="mt-5 flex flex-wrap gap-2">
-                <Link to="/app/sites/$id" params={{ id: s.id }}><Button size="sm" variant="outline"><Pencil className="h-3.5 w-3.5" /> Editar</Button></Link>
+                <Button asChild size="sm" variant="outline"><Link to="/app/sites/$id" params={{ id: s.id }}><Pencil className="h-3.5 w-3.5" /> Editar</Link></Button>
                 <Button size="sm" variant="outline" onClick={() => publishMut.mutate({ id: s.id, published: !s.published })} disabled={publishMut.isPending}>
                   <Rocket className="h-3.5 w-3.5" />{s.published ? "Despublicar" : "Publicar"}
                 </Button>
-                {s.published && (<a href={`/s/${s.slug}`} target="_blank" rel="noreferrer"><Button size="sm" variant="outline"><ExternalLink className="h-3.5 w-3.5" /> Abrir</Button></a>)}
+                {s.published && (
+                  <Button asChild size="sm" variant="outline">
+                    <a href={`/s/${s.slug}`} target="_blank" rel="noreferrer"><ExternalLink className="h-3.5 w-3.5" /> Abrir</a>
+                  </Button>
+                )}
                 <Button size="sm" variant="ghost" className="ml-auto text-destructive hover:bg-destructive/10 hover:text-destructive"
                   onClick={() => { if (confirm(`Excluir "${s.title}"?`)) deleteMut.mutate(s.id); }} disabled={deleteMut.isPending}>
                   <Trash2 className="h-3.5 w-3.5" />

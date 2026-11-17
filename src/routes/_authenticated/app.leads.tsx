@@ -139,7 +139,7 @@ function LeadsPage() {
                   <div className="truncate font-semibold">{l.name}</div>
                   <div className="text-xs text-muted-foreground">{l.category ?? "—"}</div>
                 </div>
-                <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase ${TIER_STYLES[l.tier as LeadTier]}`}>{l.tier}</span>
+                <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase ${TIER_STYLES[l.tier as LeadTier] ?? ""}`}>{l.tier}</span>
               </div>
               <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
                 <Globe className="h-3 w-3" />
@@ -151,10 +151,12 @@ function LeadsPage() {
               <div className="mt-3 flex flex-wrap gap-2">
                 {l.phone && (
                   <>
-                    <a href={`tel:${l.phone}`}><Button size="sm" variant="outline"><Phone className="h-3 w-3" />Ligar</Button></a>
-                    <a href={`https://wa.me/${l.phone.replace(/\D/g, "")}`} target="_blank" rel="noreferrer">
-                      <Button size="sm" variant="outline"><MessageCircle className="h-3 w-3" />WhatsApp</Button>
-                    </a>
+                    <Button asChild size="sm" variant="outline"><a href={`tel:${l.phone}`}><Phone className="h-3 w-3" />Ligar</a></Button>
+                    <Button asChild size="sm" variant="outline">
+                      <a href={`https://wa.me/${l.phone.replace(/\D/g, "")}`} target="_blank" rel="noreferrer">
+                        <MessageCircle className="h-3 w-3" />WhatsApp
+                      </a>
+                    </Button>
                   </>
                 )}
                 <Button size="sm" variant="ghost" className="ml-auto text-destructive hover:bg-destructive/10 hover:text-destructive"

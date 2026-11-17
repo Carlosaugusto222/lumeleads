@@ -101,16 +101,16 @@ function EditSite() {
   return (
     <div className="mx-auto max-w-7xl px-6 py-6">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <Link to="/app" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
+        <Link to="/app/sites" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
           <ArrowLeft className="h-4 w-4" /> Voltar
         </Link>
         <div className="flex items-center gap-2">
           {site.published && (
-            <a href={`/s/${site.slug}`} target="_blank" rel="noreferrer">
-              <Button size="sm" variant="outline">
+            <Button asChild size="sm" variant="outline">
+              <a href={`/s/${site.slug}`} target="_blank" rel="noreferrer">
                 <ExternalLink className="h-4 w-4" /> Abrir site
-              </Button>
-            </a>
+              </a>
+            </Button>
           )}
           <Button
             size="sm"
@@ -456,6 +456,7 @@ function DomainsPanel({ siteId }: { siteId: string }) {
   const delMut = useMutation({
     mutationFn: (id: string) => del({ data: { id } }),
     onSuccess: () => { toast.success("Removido"); qc.invalidateQueries({ queryKey: ["site-domains", siteId] }); },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao remover"),
   });
 
   const target = data?.target ?? "lumeleads.lovable.app";
@@ -534,9 +535,11 @@ function DomainsPanel({ siteId }: { siteId: string }) {
                   {verifyMut.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : "Verificar DNS"}
                 </Button>
                 {d.status === "verified" && (
-                  <a href={`https://${d.domain}`} target="_blank" rel="noreferrer">
-                    <Button size="sm" variant="outline"><ExternalLink className="h-3 w-3" /> Abrir</Button>
-                  </a>
+                  <Button asChild size="sm" variant="outline">
+                    <a href={`https://${d.domain}`} target="_blank" rel="noreferrer">
+                      <ExternalLink className="h-3 w-3" /> Abrir
+                    </a>
+                  </Button>
                 )}
                 <Button size="sm" variant="ghost" className="ml-auto text-destructive"
                   onClick={() => { if (confirm(`Remover ${d.domain}?`)) delMut.mutate(d.id); }}>Remover</Button>

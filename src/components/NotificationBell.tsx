@@ -36,11 +36,12 @@ export function NotificationBell() {
   });
 
   useEffect(() => {
-    let userId: string | null = null;
+    let cancelled = false;
     let channel: ReturnType<typeof supabase.channel> | null = null;
     (async () => {
       const { data } = await supabase.auth.getUser();
-      userId = data.user?.id ?? null;
+      if (cancelled) return;
+      const userId = data.user?.id ?? null;
       if (!userId) return;
       channel = supabase
         .channel(`notif:${userId}`)
@@ -50,8 +51,12 @@ export function NotificationBell() {
           () => qc.invalidateQueries({ queryKey: ["notifications"] }),
         )
         .subscribe();
+      if (cancelled && channel) {
+        supabase.removeChannel(channel);
+      }
     })();
     return () => {
+      cancelled = true;
       if (channel) supabase.removeChannel(channel);
     };
   }, [qc]);

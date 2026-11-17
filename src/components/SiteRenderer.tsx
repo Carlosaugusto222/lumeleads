@@ -319,9 +319,9 @@ export function SiteRenderer({ content, theme, siteId }: Props) {
             <CaptureForm siteId={siteId} ctaLabel={content.ctaLabel} primary={theme.primary} radius={tpl.radiusBtn}
               onSubmitted={() => track.current("form_submit")} />
           ) : (
-            <a href="#" className="mt-8 inline-flex items-center justify-center bg-white px-6 py-3 text-base font-semibold shadow-lg" style={{ color: theme.primary, borderRadius: tpl.radiusBtn }}>
+            <button type="button" onClick={(e) => e.preventDefault()} className="mt-8 inline-flex items-center justify-center bg-white px-6 py-3 text-base font-semibold shadow-lg" style={{ color: theme.primary, borderRadius: tpl.radiusBtn }}>
               {content.ctaLabel}
-            </a>
+            </button>
           )}
         </div>
       </section>

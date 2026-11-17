@@ -7,10 +7,11 @@ const PLAN_PRICES: Record<string, { monthly: number; yearly: number; name: strin
   starter: { monthly: 47, yearly: 33, name: "Starter" },
   pro: { monthly: 97, yearly: 68, name: "Pro" },
   agencia: { monthly: 197, yearly: 138, name: "Agência" },
+  elite: { monthly: 197, yearly: 138, name: "Elite" },
 };
 
 const CheckoutInput = z.object({
-  planId: z.enum(["starter", "pro", "agencia"]),
+  planId: z.enum(["starter", "pro", "agencia", "elite"]),
   cycle: z.enum(["monthly", "yearly"]).default("monthly"),
 });
 
@@ -22,7 +23,8 @@ export const createMpCheckout = createServerFn({ method: "POST" })
     const token = process.env.MERCADOPAGO_ACCESS_TOKEN;
     if (!token) throw new Error("MERCADOPAGO_ACCESS_TOKEN não configurado");
 
-    const priceCfg = PLAN_PRICES[data.planId];
+    const normalizedPlanId = data.planId === "elite" ? "agencia" : data.planId;
+    const priceCfg = PLAN_PRICES[data.planId] ?? PLAN_PRICES[normalizedPlanId];
     const unitPrice = data.cycle === "yearly" ? priceCfg.yearly : priceCfg.monthly;
     const amountCents = unitPrice * 100;
 
@@ -35,12 +37,12 @@ export const createMpCheckout = createServerFn({ method: "POST" })
     const origin = reqOrigin.startsWith("https://") ? reqOrigin : publicOrigin;
 
     const email = (claims as { email?: string })?.email ?? undefined;
-    const externalRef = `${userId}:${data.planId}:${data.cycle}:${Date.now()}`;
+    const externalRef = `${userId}:${normalizedPlanId}:${data.cycle}:${Date.now()}`;
 
     const body = {
       items: [
         {
-          id: data.planId,
+          id: normalizedPlanId,
           title: `LumeLeads ${priceCfg.name} (${data.cycle === "yearly" ? "anual" : "mensal"})`,
           quantity: 1,
           unit_price: unitPrice,
@@ -56,7 +58,7 @@ export const createMpCheckout = createServerFn({ method: "POST" })
       auto_return: "approved",
       external_reference: externalRef,
       notification_url: `${origin}/api/public/mp-webhook`,
-      metadata: { user_id: userId, plan_id: data.planId, cycle: data.cycle },
+      metadata: { user_id: userId, plan_id: normalizedPlanId, cycle: data.cycle },
     };
 
     const res = await fetch("https://api.mercadopago.com/checkout/preferences", {
@@ -79,11 +81,14 @@ export const createMpCheckout = createServerFn({ method: "POST" })
       throw new Error(json.message ?? "Falha ao criar preferência no Mercado Pago");
     }
 
-    const initPoint = json.init_point ?? json.sandbox_init_point!;
+    const initPoint = json.init_point ?? json.sandbox_init_point;
+    if (!initPoint) {
+      throw new Error("Link de pagamento não retornado pelo Mercado Pago");
+    }
 
     await supabase.from("payments").insert({
       user_id: userId,
-      plan_id: data.planId,
+      plan_id: normalizedPlanId,
       cycle: data.cycle,
       amount_cents: amountCents,
       currency: "BRL",
