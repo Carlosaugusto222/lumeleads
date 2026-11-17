@@ -1,6 +1,6 @@
 # Design system
 
-Generated: 2026-10-27T20:53:36.520326+00:00
+Generated: 2026-11-17T02:32:18.726438+00:00
 
 ## Tokens
 - --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif (src/styles.css)
