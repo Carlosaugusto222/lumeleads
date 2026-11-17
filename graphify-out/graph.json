@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-17T02:43:42.258173+00:00",
+  "generated_at": "2026-11-17T02:56:57.667249+00:00",
   "files": [
     {
       "path": "playwright.config.ts",
@@ -247,7 +247,7 @@
     },
     {
       "path": "src/lib/billing.functions.ts",
-      "bytes": 3966
+      "bytes": 4267
     },
     {
       "path": "src/lib/data-export.functions.ts",
@@ -327,11 +327,11 @@
     },
     {
       "path": "src/components/NotificationBell.tsx",
-      "bytes": 5198
+      "bytes": 5329
     },
     {
       "path": "src/components/SiteRenderer.tsx",
-      "bytes": 17654
+      "bytes": 17705
     },
     {
       "path": "src/components/TwoFactorSetup.tsx",
@@ -363,15 +363,15 @@
     },
     {
       "path": "src/routes/_authenticated/app.admin.tsx",
-      "bytes": 19913
+      "bytes": 20252
     },
     {
       "path": "src/routes/_authenticated/app.whatsapp.tsx",
-      "bytes": 11570
+      "bytes": 11621
     },
     {
       "path": "src/routes/_authenticated/app.agenda.tsx",
-      "bytes": 9364
+      "bytes": 9461
     },
     {
       "path": "src/routes/_authenticated/app.billing.tsx",
@@ -379,7 +379,7 @@
     },
     {
       "path": "src/routes/_authenticated/app.new.tsx",
-      "bytes": 27538
+      "bytes": 27508
     },
     {
       "path": "src/routes/_authenticated/route.tsx",
@@ -387,7 +387,7 @@
     },
     {
       "path": "src/routes/_authenticated/app.sites.$id.tsx",
-      "bytes": 21581
+      "bytes": 21732
     },
     {
       "path": "src/routes/_authenticated/app.followups.tsx",
@@ -395,19 +395,19 @@
     },
     {
       "path": "src/routes/_authenticated/app.crm.tsx",
-      "bytes": 22330
+      "bytes": 22855
     },
     {
       "path": "src/routes/_authenticated/app.leads.tsx",
-      "bytes": 12419
+      "bytes": 12489
     },
     {
       "path": "src/routes/_authenticated/app.sites.index.tsx",
-      "bytes": 4554
+      "bytes": 4646
     },
     {
       "path": "src/routes/_authenticated/app.settings.tsx",
-      "bytes": 12971
+      "bytes": 13163
     },
     {
       "path": "src/routes/_authenticated/app.referrals.tsx",
@@ -423,15 +423,15 @@
     },
     {
       "path": "src/routes/_authenticated/app.docs.tsx",
-      "bytes": 19892
+      "bytes": 20231
     },
     {
       "path": "src/routes/_authenticated/app.index.tsx",
-      "bytes": 4804
+      "bytes": 4831
     },
     {
       "path": "src/routes/api/public/mp-webhook.ts",
-      "bytes": 3440
+      "bytes": 3524
     },
     {
       "path": "src/components/ui/avatar.tsx",
