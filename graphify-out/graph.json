@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-17T02:32:18.726438+00:00",
+  "generated_at": "2026-11-17T02:43:42.258173+00:00",
   "files": [
     {
       "path": "playwright.config.ts",
@@ -347,11 +347,11 @@
     },
     {
       "path": "src/routes/index.tsx",
-      "bytes": 9887
+      "bytes": 11526
     },
     {
       "path": "src/routes/auth.tsx",
-      "bytes": 6408
+      "bytes": 7036
     },
     {
       "path": "src/routes/__root.tsx",
@@ -383,7 +383,7 @@
     },
     {
       "path": "src/routes/_authenticated/route.tsx",
-      "bytes": 5848
+      "bytes": 6008
     },
     {
       "path": "src/routes/_authenticated/app.sites.$id.tsx",
@@ -1505,6 +1505,10 @@
     },
     {
       "source": "src/routes/index.tsx",
+      "target": "react"
+    },
+    {
+      "source": "src/routes/index.tsx",
       "target": "lucide-react"
     },
     {
@@ -1514,6 +1518,10 @@
     {
       "source": "src/routes/index.tsx",
       "target": "@/lib/site-domains.functions"
+    },
+    {
+      "source": "src/routes/index.tsx",
+      "target": "@/integrations/supabase/client"
     },
     {
       "source": "src/routes/auth.tsx",
